@@ -37,6 +37,7 @@
     </main>
   </body>
 </html>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.50.0.min.js"></script>
 <script src="https://unpkg.com/@niivue/niivue@0.32.0/dist/niivue.umd.js">
 </script>
 <script>
@@ -142,4 +143,6 @@ function viewAlbum(albumName) {
     if (err) {
       return alert('There was an error viewing your album: ' + err.message);
     }
+  }
+}
 </script>
