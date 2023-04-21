@@ -35,7 +35,7 @@
 		</select>
     <div>
       <label>Trks To Include: </label>
-      <input type="checkbox" onClick="toggle(this)" id = "toggler"> Toggle All
+      <input type="checkbox" onClick="toggle()" id = "toggler"> Toggle All
       <input type="checkbox" name = "trks" onclick="updateTrks()" />Anterior Frontal
       <input type="checkbox" name = "trks" onclick="updateTrks()" />Arcuate Nucleus-Left
       <input type="checkbox" name = "trks" onclick="updateTrks()" />Arcuate Nucleus-Right
@@ -118,11 +118,11 @@
   function toggle(source) {
     checkboxes = document.getElementsByName('trks');
     for(var i=0;i<checkboxes.length;i++) {
-      checkboxes[i].checked = source.checked;
+      checkboxes[i].checked = document.getElementById("toggler").checked;
     }
     updateTrks()
   }
-  toggle("toggler")
+  toggle()
   function changeVolumeList(subjectData) {
     var volumeList1 = [
 	// first item is background image
