@@ -33,7 +33,13 @@
     <label for="whichScan">Scan:</label>
 		<select name="whichScan" id="whichScan">
 		</select>
-    <div>
+    <table>
+        <tr>
+          <td>Site:</td>
+          <td id = "site">RU</td>
+        </tr>
+        </table>
+	    <div>
       <label>Trks To Include: </label>
       <input type="checkbox" onClick="toggle()" id = "toggler" checked = "checked"> Toggle All
       <input type="checkbox" name = "trks" onclick="updateTrks()" />Anterior Frontal
@@ -112,6 +118,7 @@
         array.push(i)
       }
     }
+    document.getElementById("site").innerHTML = arrayValue[1]
     changeVolumeList([arrayBasedOnSubjectAndSite(arrayValue), array])
     updateTrks()
 	} 
