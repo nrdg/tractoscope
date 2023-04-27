@@ -12,55 +12,33 @@
       <strong>niivue doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <header>
-		<label for="fiberLengthSlider">Length</label>
-		<input type="range" min="1" max="80" value="3" class="slider" id="fiberLengthSlider">
-		<label for="fiberDitherSlider">Dither</label>
-		<input type="range" min="0" max="10" value="1" class="slider" id="fiberDitherSlider">
-		<label for="fiberColor">Choose fiber coloration:</label>
-		<select name="fiberColor" id="fiberColor"">
-		  <option value="Global">Global direction</option>
-		  <option value="Local">Local direction</option>
-		  <option value="DPV0">First Per Vertex Type (if available)</option>
-		  <option value="DPS0">First Per Streamline Type (if available)</option>
-		</select>
-		<label for="fiberDecimation">Fiber reduction:</label>
-		<select name="fiberDecimation" id="fiberDecimation", value = "0"">
-		  <option value="1">100%</option>
-		  <option value="2">50%</option>
-		  <option value="4">25%</option>
-		  <option value="10">10%</option>
-		</select>
+    <!--//////i am having trouble creating the vue type of dropdown-->
     <label for="whichScan">Scan:</label>
 		<select name="whichScan" id="whichScan"></select>
-    <label for="site">Site:</label>
-	    <label id = "site">RU</label>
-	    <div>
-      <label>Trks To Include: </label>
-      <input type="checkbox" onClick="toggle()" id = "toggler" checked = "checked"> Toggle All
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Anterior Frontal
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Arcuate Nucleus-Left
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Arcuate Nucleus-Right
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Anterior Thalamic Radiation-Left
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Anterior Thalamic Radiation-Right
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Cerebellar Granule Cells-Left
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Cerebellar Granule Cells-Right
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Corticospinal Tract-Left
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Corticospinal Tract-Right
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Inferior Fronto-Occipital Fasciculus-Left
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Inferior Fronto-Occipital Fasciculus-Right
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Motor
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Occipital
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Orbital
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Post Parietal
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Superior Longitudianl Fasciculus-Left
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Superior Longitudinal Fasciculus-Right
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Superior Frontal
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Superior Parietal
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Temporal Lobe
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Uncinate Fasciculus-Left
-      <input type="checkbox" name = "trks" onclick="updateTrks()" />Uncinate Fasciculus-Right
-    </div>
-    </header>
+    <!--//////I think this goes in the same vue app as the subject dropdown. when i figure out how to do that then this will be easy-->
+    <label for="session">Session:</label>
+	  <label id = "session">RU</label>
+    <br>
+    
+    <!--//////This is I think fully vue-ed-->
+    <label>Bundles To Include: </label>
+      <div id ='checkedboxes'>
+        
+        <!--//////This should show a dropdown but it just doesn't. This code is taken directly but for some reason just displays text-->
+
+        
+        
+        <label><input type="checkbox" v-model = "toggled" @change="toggle">Toggle All</label>
+        <table>
+          <td v-for="bundleType in bundleTypes">
+            <label>{{bundleType.name}}</label>
+            <input type="checkbox" v-model="bundles" @click="update" :value="bundleType.id">
+          </td>
+        </table>
+      </div>
+
+      
+      </header>
     <main id="container">
         <canvas id="gl1" width="1258" style="width: 100%; height: 80%;" height="800" tabindex="0">
         </canvas>
@@ -69,40 +47,60 @@
 </html>
 <script src="https://unpkg.com/@niivue/niivue@0.32.0/dist/niivue.umd.js">
 </script>
+<script src = "https://unpkg.com/vue@3"></script>
 <script defer>
-  function updateTrks(value) {
-    array = []
-    checkboxes = document.getElementsByName('trks')
-    for(var i=0;i<checkboxes.length;i++) {
-      if (checkboxes[i].checked){
-        array.push(i)
+  //////This works for the checkboxes
+  const vueAppThing = Vue.createApp({
+    data(){
+      return{
+        bundleTypes:[
+          {name: 'Anterior Frontal', id: 0}, 
+          {name: 'Arcuate Fasciculus-Left', id: 1},
+          {name: 'Arcuate Fasciculus-Right', id: 2},
+          {name: 'Anterior Thalamic Radiation-Left', id: 3},
+          {name: 'Anterior Thalamic Radiation-Right', id: 4},
+          {name: 'Cingulate Cingulum-Left', id: 5},
+          {name: 'Cingulate Cingulum-Right', id: 6},
+          {name: 'Corticospinal Tract-Left', id: 7},
+          {name: 'Corticospinal Tract-Right', id: 8},
+          {name: 'Inferior Fronto-Occipital Fasciculus-Left', id: 9},
+          {name: 'Inferior Fronto-Occipital Fasciculus-Right', id: 10},
+          {name: 'Motor', id: 11},
+          {name: 'Occipital', id: 12},
+          {name: 'Orbital', id: 13},
+          {name: 'Post Parietal', id: 14},
+          {name: 'Superior Longitudinal Fasciculus-Left', id: 15},
+          {name: 'Superior Longitudinal Fasciculus-Left', id: 16},
+          {name: 'Superior Frontal', id: 17},
+          {name: 'Superior Parietal', id: 18},
+          {name: 'Temporal Lobe', id: 19},
+          {name: 'Uncinate Fasciculus-Left', id: 20},
+          {name: 'Uncinate Fasciculus-Left', id: 21}
+        ],
+        bundles:[],
+        toggled:false
+      }
+    },
+    methods:{
+      update(){
+        value = document.getElementById("whichScan").value
+        arrayValue = fullArray[value]
+        changeVolumeList([arrayBasedOnSubjectAndSession(arrayValue), this.bundles])
+      },
+      toggle(){
+        this.bundles = []
+        if (this.toggled){
+          for (bundleType in this.bundleTypes){
+            this.bundles.push(bundleType)
+          }
+        this.update()
+        }
       }
     }
-    value = document.getElementById("whichScan").value
-    arrayValue = fullArray[value]
-    changeVolumeList([arrayBasedOnSubjectAndSite(arrayValue), array])
-    
-  }
-  var slider = document.getElementById("fiberLengthSlider");
-	slider.oninput = function() {
-		nv1.setMeshProperty(nv1.meshes[0].id, 'fiberLength', this.value)
-	}
-	var slider2 = document.getElementById("fiberDitherSlider");
-	slider2.oninput = function() {
-		nv1.setMeshProperty(nv1.meshes[0].id, 'fiberDither', this.value * 0.1)
-	}
-	var drop = document.getElementById("fiberColor")
-	drop.onchange = function() {
-		const colorName = document.getElementById("fiberColor").value
-		nv1.setMeshProperty(nv1.meshes[0].id, 'fiberColor', colorName)
-	}
-	var dropD = document.getElementById("fiberDecimation")
-	dropD.onchange = function() {
-		const stride = document.getElementById("fiberDecimation").value
-		nv1.setMeshProperty(nv1.meshes[0].id, 'fiberDecimationStride', stride)
-	}
+  }).mount('#checkedboxes')
+
+  ////// this code is not uniquely dependent on this dataset but it is i assume easily vueable and would be cleaner. (some of this is now also out of data updatetrks and the for loop)
   var dropScan = document.getElementById("whichScan")
-  
   dropScan.onchange = function() {
 		value = document.getElementById("whichScan").value
     arrayValue = fullArray[value]
@@ -113,17 +111,13 @@
         array.push(i)
       }
     }
-    document.getElementById("site").innerHTML = arrayValue[1]
+    document.getElementById("session").innerHTML = arrayValue[1]
     changeVolumeList([arrayBasedOnSubjectAndSite(arrayValue), array])
+    
+    
     updateTrks()
 	} 
-  function toggle(source) {
-    checkboxes = document.getElementsByName('trks');
-    for(var i=0;i<checkboxes.length;i++) {
-      checkboxes[i].checked = document.getElementById("toggler").checked;
-    }
-    updateTrks()
-  }
+  ////// this is not dependent on anything in particular from this dataset
   function changeVolumeList(subjectData) {
     var volumeList1 = [
 	// first item is background image
@@ -151,42 +145,16 @@
   	nv1.setClipPlane([-0.1, 270, 0])	//displays the clip plane. displaced in the x? direction by 0.1. rotated 270 degrees about the z axis. The third number clearly has to do with angle and initial position in the z direction but my experimentation is not leading me to a clear result.
     nv1.loadVolumes(volumeList1)//Displayes the brain.
   }
+  
   changeVolumeList([arrayBasedOnSubjectAndSite(['sub-NDARAA306NT2', 'RU']), []])
-function arrayBasedOnSubjectAndSite(array){
+  //////this is based on this dataset and the structure of the bucket. Is this consistent for all s3 applications you want this for? The reason I didn't iterate through this aws system is that the cors stuff was wrong. Will that not be the case?
+  function arrayBasedOnSubjectAndSite(array){
     id = array[0]
     site = array[1]
     newArray = ["https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_model-DKI_FA.nii.gz",["https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_L_tractography.trk","https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Motor_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Occipital_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Orbital_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-PostParietal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupFrontal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupParietal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Temporal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_R_tractography.trk"]]
     return newArray
   }
-
-var mainArray = []
-var xhttp = new XMLHttpRequest();
-xhttp.onreadystatechange = function(){
-        if (xhttp.readyState == 4 && xhttp.status == 200) {
-                var arrayWithValues = xhttp.responseText.trim().split('\n');
-                for (i = 1; i<arrayWithValues.length; i++){
-                  array = []
-                  l = 0
-                  string = ''
-                  for (l = 0; l< arrayWithValues[i].length; l++){
-                    if (arrayWithValues[i][l]!='\t'){
-                      string = string.concat(arrayWithValues[i][l])
-                    }
-                    if (arrayWithValues[i][l] == '\t'){
-                      array.push(string)
-                      string = ''
-                    }
-                  }
-                  mainArray.push([array[0], array[1]])
-                }
-                console.log(mainArray)
-                
-  };
-};
-console.log(mainArray)
-xhttp.open("GET", "/participants.tsv", true);
-xhttp.send();
-	
+  //////I have code that produces this array from a tsv file.
   fullArray = [
     [
         "sub-NDARAA306NT2",
@@ -7705,7 +7673,7 @@ xhttp.send();
         "CBIC"
     ]
 ]
-
+//////this is dependent on having the array but does change with the array. not vue though
   function createScans(fullArray){
     for (q = 0; q < fullArray.length; q++){
       var option = document.createElement("option");
@@ -7715,5 +7683,4 @@ xhttp.send();
     }
   }
   createScans(fullArray)
-  toggle()
 </script>
