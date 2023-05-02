@@ -12,27 +12,25 @@
       <strong>niivue doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <header>
-    <!--//////i am having trouble creating the vue type of dropdown-->
-    <label for="whichScan">Scan:</label>
-		<select name="whichScan" id="whichScan"></select>
-    <!--//////I think this goes in the same vue app as the subject dropdown. when i figure out how to do that then this will be easy-->
-    <label for="session">Session:</label>
-	  <label id = "session">RU</label>
-    <br>
+     
+    <div id='subjectAndSession'>
+      <label>Subject: </label>   
+      <select v-model="subjectId" @change="update">
+        <option v-for="subject in subjects" :value="subject">{{subject.id}}</option>
+      </select>
+      <label> Session: </label>
+      {{subjectId.session}}
+    </div>
     
-    <!--//////This is I think fully vue-ed-->
-    <label>Bundles To Include: </label>
       <div id ='checkedboxes'>
-        
-        <!--//////This should show a dropdown but it just doesn't. This code is taken directly but for some reason just displays text-->
-
-        
+        <label>Bundles To Include: </label>
+        <br>
         
         <label><input type="checkbox" v-model = "toggled" @change="toggle">Toggle All</label>
         <table>
           <td v-for="bundleType in bundleTypes">
             <label>{{bundleType.name}}</label>
-            <input type="checkbox" v-model="bundles" @click="update" :value="bundleType.id">
+            <input type="checkbox" v-model="bundles" @change="update" :value="bundleType.id">
           </td>
         </table>
       </div>
@@ -48,9 +46,26 @@
 <script src="https://unpkg.com/@niivue/niivue@0.32.0/dist/niivue.umd.js">
 </script>
 <script src = "https://unpkg.com/vue@3"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
 <script defer>
-  //////This works for the checkboxes
-  const vueAppThing = Vue.createApp({
+  //////Vue dropdown fully done.
+  const dropVueApp = Vue.createApp({
+    data(){
+      return{
+        subjects:fullArrayAsClass(returnFullArray()),
+        subjectId:fullArrayAsClass(returnFullArray())[0],
+      }
+    },
+    methods:{
+      update(){
+        changeVolumeList([arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session]), checkboxVueApp.bundles])
+      }
+    }
+  }).mount(subjectAndSession)
+  
+  
+  //////Vue checkboxes fully done.
+  const checkboxVueApp = Vue.createApp({
     data(){
       return{
         bundleTypes:[
@@ -65,17 +80,19 @@
           {name: 'Corticospinal Tract-Right', id: 8},
           {name: 'Inferior Fronto-Occipital Fasciculus-Left', id: 9},
           {name: 'Inferior Fronto-Occipital Fasciculus-Right', id: 10},
-          {name: 'Motor', id: 11},
-          {name: 'Occipital', id: 12},
-          {name: 'Orbital', id: 13},
-          {name: 'Post Parietal', id: 14},
-          {name: 'Superior Longitudinal Fasciculus-Left', id: 15},
-          {name: 'Superior Longitudinal Fasciculus-Left', id: 16},
-          {name: 'Superior Frontal', id: 17},
-          {name: 'Superior Parietal', id: 18},
-          {name: 'Temporal Lobe', id: 19},
-          {name: 'Uncinate Fasciculus-Left', id: 20},
-          {name: 'Uncinate Fasciculus-Left', id: 21}
+          {name: 'Inferior Longitudinal Fasciculus-Left', id: 11},
+          {name: 'Inferior Longitudinal Fasciculus-Right', id: 12},
+          {name: 'Motor', id: 13},
+          {name: 'Occipital', id: 14},
+          {name: 'Orbital', id: 15},
+          {name: 'Posterior Parietal', id: 16},
+          {name: 'Superior Longitudinal Fasciculus-Left', id: 17},
+          {name: 'Superior Longitudinal Fasciculus-Right', id: 18},
+          {name: 'Superior Frontal', id: 19},
+          {name: 'Superior Parietal', id: 20},
+          {name: 'Temporal', id: 21},
+          {name: 'Uncinate Fasciculus-Left', id: 22},
+          {name: 'Uncinate Fasciculus-Right', id: 23}
         ],
         bundles:[],
         toggled:false
@@ -83,9 +100,10 @@
     },
     methods:{
       update(){
-        value = document.getElementById("whichScan").value
-        arrayValue = fullArray[value]
-        changeVolumeList([arrayBasedOnSubjectAndSession(arrayValue), this.bundles])
+        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session]), this.bundles])
+        if (this.bundles.length < 24){
+          this.toggled = false
+        }
       },
       toggle(){
         this.bundles = []
@@ -93,31 +111,34 @@
           for (bundleType in this.bundleTypes){
             this.bundles.push(bundleType)
           }
-        this.update()
         }
+      this.update()
       }
     }
   }).mount('#checkedboxes')
-
-  ////// this code is not uniquely dependent on this dataset but it is i assume easily vueable and would be cleaner. (some of this is now also out of data updatetrks and the for loop)
-  var dropScan = document.getElementById("whichScan")
-  dropScan.onchange = function() {
-		value = document.getElementById("whichScan").value
-    arrayValue = fullArray[value]
-    array = []
-    checkboxes = document.getElementsByName('trks')
-    for(var i=0;i<checkboxes.length;i++) {
-      if (checkboxes[i].checked){
-        array.push(i)
-      }
-    }
-    document.getElementById("session").innerHTML = arrayValue[1]
-    changeVolumeList([arrayBasedOnSubjectAndSite(arrayValue), array])
-    
-    
-    updateTrks()
-	} 
-  ////// this is not dependent on anything in particular from this dataset
+  
+  //////tsv work that is not working yet.
+  /*
+  newArray = []
+  data = fetch("/participants.tsv")
+  var mytsvstr = String(data);
+  var tsvdata = d3.tsvParse(mytsvstr);
+  console.log(tsvdata, 'is the data i hope')
+  
+  
+  data = d3.tsv("participants.tsv")
+  newArray = []
+  console.log(data)
+  data.forEach((e) => {
+      newArray.push([e.participant_id, e.site])
+      //console.log(newArray)
+  })
+  console.log(newArray)
+  console.log(newArray, 'hello')
+  */
+  
+  
+  ////// this is not dependent on anything in particular from this dataset. should be it's own js file.
   function changeVolumeList(subjectData) {
     var volumeList1 = [
 	// first item is background image
@@ -146,16 +167,29 @@
     nv1.loadVolumes(volumeList1)//Displayes the brain.
   }
   
+  //////shows default brain
   changeVolumeList([arrayBasedOnSubjectAndSite(['sub-NDARAA306NT2', 'RU']), []])
-  //////this is based on this dataset and the structure of the bucket. Is this consistent for all s3 applications you want this for? The reason I didn't iterate through this aws system is that the cors stuff was wrong. Will that not be the case?
+  
+  //////can be in a diff js file. also can adapt to include other similarly structured s3 buckets.
   function arrayBasedOnSubjectAndSite(array){
     id = array[0]
     site = array[1]
     newArray = ["https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_model-DKI_FA.nii.gz",["https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_L_tractography.trk","https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Motor_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Occipital_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Orbital_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-PostParietal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_R_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupFrontal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupParietal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Temporal_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_L_tractography.trk", "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/"+id+"/ses-HBNsite"+site+"/clean_bundles/"+id+"_ses-HBNsite"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_R_tractography.trk"]]
     return newArray
   }
-  //////I have code that produces this array from a tsv file.
-  fullArray = [
+
+
+  function fullArrayAsClass(fullArray){
+    classArray = []
+    for (i=0; i<fullArray.length; i++){
+      classArray.push({id: fullArray[i][0], session: fullArray[i][1]})
+    }
+    return classArray
+  }
+  
+  //////needs to be through the tsv rather than the array. can also be in a different file
+  function returnFullArray(){
+    fullArray = [
     [
         "sub-NDARAA306NT2",
         "RU"
@@ -7672,15 +7706,7 @@
         "sub-ndarvn280jtn",
         "CBIC"
     ]
-]
-//////this is dependent on having the array but does change with the array. not vue though
-  function createScans(fullArray){
-    for (q = 0; q < fullArray.length; q++){
-      var option = document.createElement("option");
-      option.text = String(fullArray[q][0]);
-      option.value = q
-      dropScan.add(option);
-    }
-  }
-  createScans(fullArray)
+  ]
+  return fullArray
+  }  
 </script>
