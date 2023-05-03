@@ -7564,3 +7564,5 @@ function changeVolumeList(subjectData) {
   ]
   return fullArray
   }  
+
+export {changeVolumeList, arrayBasedOnSubjectAndSite, fullArrayAsClass, returnFullarray}
