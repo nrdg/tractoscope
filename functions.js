@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 function changeVolumeList(subjectData) {
     var volumeList1 = [
 	// first item is background image
@@ -15135,5 +15134,3 @@ function changeVolumeList(subjectData) {
   return fullArray
   }  
 
-export {changeVolumeList, arrayBasedOnSubjectAndSite, fullArrayAsClass, returnFullarray}
->>>>>>> 5cb06f9cdaf42785cd0e3055ce75ce62fda00ebd
