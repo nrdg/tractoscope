@@ -7565,9 +7565,3 @@ function changeVolumeList(subjectData) {
   ]
   return fullArray
   }  
-
-<<<<<<< HEAD
-//export {changeVolumeList, arrayBasedOnSubjectAndSite, fullArrayAsClass, returnFullarray}
-=======
-//export {changeVolumeList, arrayBasedOnSubjectAndSite, fullArrayAsClass, returnFullarray}
->>>>>>> 4d1f1f375b3faa7755e3ddb48ffadc84b911f90b
