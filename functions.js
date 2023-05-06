@@ -1,4 +1,3 @@
-/*
 function changeVolumeList(subjectData) {
     var volumeList1 = [
 	// first item is background image
@@ -26,7 +25,6 @@ function changeVolumeList(subjectData) {
   	nv1.setClipPlane([-0.1, 270, 0])	//displays the clip plane. displaced in the x? direction by 0.1. rotated 270 degrees about the z axis. The third number clearly has to do with angle and initial position in the z direction but my experimentation is not leading me to a clear result.
     nv1.loadVolumes(volumeList1)//Displayes the brain.
   }
-*/
   function arrayBasedOnSubjectAndSite(array, prefix){
     id = array[0]
     site = array[1]
