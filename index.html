@@ -87,7 +87,7 @@
     },
     methods:{
       update(){
-        changeVolumeList([arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session]), checkboxVueApp.bundles])
+        changeVolumeList([arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session], "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"), checkboxVueApp.bundles])
       }
     }
   }).mount(subjectAndSession)
@@ -129,7 +129,7 @@
     },
     methods:{
       update(){
-        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session]), this.bundles])
+        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"), this.bundles])
         if (this.bundles.length < 24){
           this.toggled = false
         }
@@ -171,7 +171,7 @@
   
   
   //////shows default brain
-  defaultValue = arrayBasedOnSubjectAndSite(['sub-NDARAA306NT2', 'RU'])
+  defaultValue = arrayBasedOnSubjectAndSite(['sub-NDARAA306NT2', 'RU'], "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated")
   console.log(defaultValue)
   changeVolumeList([defaultValue, []])
   
