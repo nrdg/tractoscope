@@ -74,9 +74,10 @@
     }
   	
   	nv1.setClipPlane([-0.1, 270, 0])	//displays the clip plane. displaced in the x? direction by 0.1. rotated 270 degrees about the z axis. The third number clearly has to do with angle and initial position in the z direction but my experimentation is not leading me to a clear result.
+    console.log(volumeList1)
     nv1.loadVolumes(volumeList1)//Displayes the brain.
   }
-  //////Vue dropdown fully done.
+  //////Vue dropdown fully done.a
   const dropVueApp = Vue.createApp({
     data(){
       return{
@@ -170,7 +171,9 @@
   
   
   //////shows default brain
-  changeVolumeList([arrayBasedOnSubjectAndSite(['sub-NDARAA306NT2', 'RU']), []])
+  defaultValue = arrayBasedOnSubjectAndSite(['sub-NDARAA306NT2', 'RU'])
+  console.log(defaultValue)
+  changeVolumeList([defaultValue, []])
   
   //////can be in a diff js file. also can adapt to include other similarly structured s3 buckets.
 </script>
