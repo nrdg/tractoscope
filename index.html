@@ -13,13 +13,7 @@
     </noscript>
     <header>
     
-    <div id='whichBucket'>
-        <label>Choose Dataset: </label>
-        <select v-model="datasetSelection" @change="update">
-          <option v-for="dataset in defaultDatasets": value="dataset">{{dataset.name}}</option>
-          <option value = "other">{{Other}}</option>
-        </select>
-    </div>
+    
     <div id='subjectAndSession'>
       <label>Subject: </label>   
       <select v-model="subjectId" @change="update">
@@ -58,6 +52,7 @@
 <script defer>
   
   //////Vue dropdown fully done
+  /*
   const datasetVueApp = Vue.createApp({
     data(){
       return{
@@ -71,6 +66,8 @@
       }
     }
   }).mount(whichBucket)
+
+  */
   const dropVueApp = Vue.createApp({
     data(){
       return{
