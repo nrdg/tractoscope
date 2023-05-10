@@ -62,7 +62,7 @@
     data(){
       return{
         datasets:[{name: 'Healthy Brain Network', s3Prefix: "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"}, {name: 'test', s3Prefix: 'url'}],
-        datasetPrefix: datasets[0],
+        datasetPrefix: {name: 'Healthy Brain Network', s3Prefix: "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"},
       }
     },
     methods:{
