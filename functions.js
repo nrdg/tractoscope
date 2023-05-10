@@ -32,6 +32,7 @@ function changeVolumeList(subjectData) {
     return newArray
   }
   function initialize(){
+    array = d3.tsv('participants.tsv')
     const makeRealArray = async () => {
         const a = await array
         newArray = []
