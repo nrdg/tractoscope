@@ -33,10 +33,14 @@ function changeVolumeList(subjectData) {
     return newArray
   }
   function initialize(prefix){
+    
     string = prefix+'/derivatives/afq/participants.tsv'
-    array = d3.tsv(string)
+    file = get(string)
+    array = d3.tsv('/participants.tsv')
+    console.log(array)
     const makeRealArray = async () => {
         const a = await array
+        console.log(a[0].participant_id, a[0].site)
         newArray = []
         for (i = 0; i< a.length; i++){
             newArray.push([a[i].participant_id, a[i].site])
