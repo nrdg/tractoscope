@@ -61,7 +61,7 @@
   const datasetVueApp = Vue.createApp({
     data(){
       return{
-        datasets:[{name: 'Healthy Brain Network', s3Prefix: "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"}],
+        datasets:[{name: 'Healthy Brain Network', s3Prefix: "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"}, {name: 'test', s3Prefix: 'url'}],
         datasetPrefix: datasets[0]
       }
     },
@@ -74,8 +74,8 @@
   const dropVueApp = Vue.createApp({
     data(){
       return{
-        subjects:fullArrayAsClass(returnFullArray()),
-        subjectId:fullArrayAsClass(returnFullArray())[0],
+        subjects:[],
+        subjectId:[],
       }
     },
     methods:{
@@ -84,6 +84,9 @@
       }
     }
   }).mount(subjectAndSession)
+  
+  initialize()
+  
   tableau_20 = [
     [0.12156862745098039, 0.4666666666666667, 0.7058823529411765],
     [0.6823529411764706, 0.7803921568627451, 0.9098039215686274],
@@ -185,6 +188,6 @@
   
   
   //////shows default brain
-  changeVolumeList([arrayBasedOnSubjectAndSite(['sub-NDARAA306NT2', 'RU'], "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"), []])
+  
   
 </script>
