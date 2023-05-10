@@ -41,7 +41,8 @@ function changeVolumeList(subjectData) {
         for (i = 0; i< a.length; i++){
             newArray.push([a[i].participant_id, a[i].site])
         };
-        console.log(newArray)
+        const b = await newArray
+        console.log(b)
         classArray = []
         for (i=0; i<newArray.length; i++){
             classArray.push({id: newArray[i][0], session: newArray[i][1]})
