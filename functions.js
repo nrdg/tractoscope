@@ -45,8 +45,8 @@ function changeVolumeList(subjectData) {
         }
         dropVueApp.subjects = classArray
         dropVueApp.subjectId = classArray[0]
+        changeVolumeList([arrayBasedOnSubjectAndSite(['sub-NDARAA306NT2', 'RU'], "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"), []])
     };
     makeRealArray()
-    changeVolumeList([arrayBasedOnSubjectAndSite(['sub-NDARAA306NT2', 'RU'], "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"), []])
   }
   
