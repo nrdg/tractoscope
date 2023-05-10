@@ -12,7 +12,15 @@
       <strong>niivue doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <header>
-    
+      <div id='whichBucket'>
+        <label>Choose Dataset: </label>
+        <select v-model="dataset" @change="update">
+          <option v-for="dataset in datasets" :value="dataset">{{dataset.name}}</option>
+        </select>
+        <input v-if="showBoxes" v-model="otherName" placeholder="Type the name of the dataset you want to use." />
+        <input v-if="showBoxes" v-model="otherPrefix" placeholder="Type the url prefix to the bucket. This is everything before /derivatives."/>
+        <button v-if="showBoxes"v-model="done" @click="entered">Done</button>
+      </div>
     
     <div id='subjectAndSession'>
       <label>Subject: </label>   
@@ -50,24 +58,43 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script type="text/javascript" src = "./functions.js"></script>
 <script defer>
-  
-  //////Vue dropdown fully done
-  /*
-  const datasetVueApp = Vue.createApp({
+  const dropVueApp2 = Vue.createApp({
     data(){
       return{
-        datasets:[{name: 'Healthy Brain Network', s3Prefix: "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"}, {name: 'test', s3Prefix: 'url'}],
-        datasetPrefix: {name: 'Healthy Brain Network', s3Prefix: "https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated"},
+        datasets:[
+          {name: 'Healthy Brain Network', prefix: 'https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated'},
+          {name:'Other'}
+        ],
+        dataset:{name: 'Healthy Brain Network', prefix: 'https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated'},
+        showBoxes: false,
+        otherName: '',
+        otherPrefix: '',
+        done: false
       }
     },
     methods:{
       update(){
-        console.log('hello')
+        if (this.dataset.name == 'Other'){
+          this.showBoxes = true
+        }
+        else{
+          initialize(this.dataset.prefix)
+        }
+      },
+      entered(){
+        this.datasets.pop()
+        this.datasets.push({name:this.otherName, prefix: this.otherPrefix})
+        this.dataset = {name:this.otherName, prefix: this.otherPrefix}
+        this.datasets.push({name:'Other'})
+        this.showBoxes = false
+        this.otherName = ''
+        this.otherPrefix = ''
+        this.done = false
+        this.update()
       }
     }
-  }).mount(whichBucket)
+  }).mount('#whichBucket')
 
-  */
   const dropVueApp = Vue.createApp({
     data(){
       return{
