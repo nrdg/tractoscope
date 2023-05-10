@@ -38,7 +38,7 @@ function changeVolumeList(subjectData) {
     console.log(array)
     const makeRealArray = async () => {
         const a = await array
-        console.log(a[0].participant_id, a[0].site)
+        console.log(a[1].participant_id, a[1].site)
         newArray = []
         for (i = 0; i< a.length; i++){
             newArray.push([a[i].participant_id, a[i].site])
