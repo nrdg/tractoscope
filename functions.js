@@ -33,11 +33,33 @@ function changeVolumeList(subjectData) {
     return newArray
   }
   function initialize(prefix){
+    console.log(prefix)
+    array = d3.tsv('https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/participants.tsv')
+    console.log(array)
+    const makeRealArray = async () => {
+    const a = await array
+    newArray = []
+    for (i = 0; i< a.length; i++){
+        newArray.push([a[i].participant_id, a[i].site])
+    };
+    classArray = []
+        for (i=0; i<newArray.length; i++){
+        classArray.push({id: newArray[i][0], session: newArray[i][1]})
+        }
+    
+    dropVueApp.subjects = classArray
+    dropVueApp.subjectId = classArray[0]
+    console.log(classArray)
+    };
+    makeRealArray()
+  }
+  /*
+  function initialize(prefix){
     string = prefix+'/derivatives/afq/participants.tsv'
     array = d3.tsv('./participants.tsv')
     console.log(array)
     const makeRealArray = async () => {
-        const a = await array
+        const a = await arraycheck different row
         console.log(a[1].participant_id, a[1].site)
         newArray = []
         for (i = 0; i< a.length; i++){
@@ -56,4 +78,4 @@ function changeVolumeList(subjectData) {
     };
     makeRealArray()
   }
-  
+  */
