@@ -35,9 +35,15 @@ function changeVolumeList(subjectData) {
   function initialize(prefix){
     console.log(prefix)
     array = d3.tsv('https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/participants.tsv')
+    array.then((a) => {
+        console.log(a[1], 'please work please')
+    })
+    
+    /*
     console.log(array)
     const makeRealArray = async () => {
     const a = await array
+    console.log(a[1])
     newArray = []
     for (i = 0; i< a.length; i++){
         newArray.push([a[i].participant_id, a[i].site])
@@ -52,6 +58,7 @@ function changeVolumeList(subjectData) {
     console.log(classArray)
     };
     makeRealArray()
+    */
   }
   /*
   function initialize(prefix){
