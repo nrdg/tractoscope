@@ -16,7 +16,7 @@ function changeVolumeList(subjectData, opacityValue) {
     for (var q = 0; q<subjectData[1].length; q++){
       
       nv1.loadMeshes([
-    	 {url: subjectData[0][1][subjectData[1][q]], rgba255 : [0, 0, 255, 255]},
+    	 {url: subjectData[0][1][subjectData[1][q]], rgba255 : [0, 255, 0, 255],},
     	])//displays the fiber
     }
   	
