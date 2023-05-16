@@ -33,12 +33,17 @@
       </div>
 
       <div id='scanType'>
-        <label>Subject: </label>   
+        <label>Scan Type: </label>   
         <select v-model="scan" @change="update">
           <option v-for="scan in scans" :value="scan">{{scan.name}}</option>
         </select>
       </div>
-    
+      
+      <div id="opacity">
+        <label>Opacity: </label>
+        <input type="range" min="0" max="1" step="0.01" class="slider" v-model="opacity" @change="update"/>
+      </div>
+
       <div id ='checkedboxes'>
         <label>Bundles To Include: </label>
         <br>
@@ -119,7 +124,7 @@
     methods:{
       update(){
         console.log(this.subjectId)
-        changeVolumeList([arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles])
+        changeVolumeList([arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity)
       }
     }
   }).mount(subjectAndSession)
@@ -133,11 +138,22 @@
     },
     methods:{
       update(){
-        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, this.scan.url), checkboxVueApp.bundles])
+        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, this.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity)
       }
     }
   }).mount(scanType)
-
+  const sliderVueApp = Vue.createApp({
+    data(){
+      return{
+        opacity:1
+      }
+    },
+    methods:{
+      update(){
+        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], this.opacity)
+      }
+    }
+  }).mount(opacity)
   const checkboxVueApp = Vue.createApp({
     data(){
       return{
@@ -149,7 +165,7 @@
     },
     methods:{
       update(){
-        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), this.bundles])
+        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), this.bundles], sliderVueApp.opacity)
         if (this.bundles.length < 24){
           this.toggled = false
         }

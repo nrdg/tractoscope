@@ -1,12 +1,10 @@
-function changeVolumeList(subjectData) {
+function changeVolumeList(subjectData, opacityValue) {
     var volumeList1 = [
 	// first item is background image
 	 {
-	   url: subjectData[0][0],//"./images/RAS.nii.gz", "./images/spm152.nii.gz",
-
-     //url: "httpes://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives/afq/sub-NDARAA947ZG5/ses-HBNsiteCBIC/sub-NDARAA947ZG5_ses-HBNsiteCBIC_acq-64dir_space-T1w_desc-preproc_dwi_model-DKI_AWF.nii.gz",
-     colorMap: "gray",
-	   opacity: 1,
+	   url: subjectData[0][0],
+	   colorMap: "gray",
+	   opacity: opacityValue,
 	   visible: true,
 	 },
 	]
