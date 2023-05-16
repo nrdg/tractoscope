@@ -12,7 +12,9 @@ function initialize(prefix){
         }
         dropVueApp.subjects = classArray
         dropVueApp.subjectId = classArray[0]
-        changeVolumeList([arrayBasedOnSubjectAndSite(newArray[0], prefix), checkboxVueApp.bundles])
+        dropVueApp3.scans = findAllScans(dropVueApp.subjectId.id, dropVueApp.subjectId.session, prefix)
+        dropVueApp3.scan = findAllScans(dropVueApp.subjectId.id, dropVueApp.subjectId.session, prefix)[0]
+        changeVolumeList([arrayBasedOnSubjectAndSite(newArray[0], prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity)
     };
     makeRealArray()
   }
