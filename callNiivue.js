@@ -14,18 +14,9 @@ async function changeVolumeList(subjectData, opacityValue) {
   	nv1.setSliceType(nv1.sliceTypeRender)//all three directions of slices are displayed
   	nv1.attachTo('gl1')//attaches the entire image to the canvas.
     for (var q = 0; q<subjectData[1].length; q++){
-      
-      	/*
-		nv1.loadMeshes([
-    	 {url: subjectData[0][1][subjectData[1][q]], rgba255 : [0, 255, 0, 255],},
+      	nv1.loadMeshes([
+    	 {url: subjectData[0][1][subjectData[1][q]], rgba255: [0, 255, 0, 255],},
     	])//displays the fiber
-		*/
-		await nv1.loadMeshes([
-			{
-			  url: "./BrainMesh_ICBM152.lh.mz3",
-			  rgba255: [222, 164, 164, 255],
-			},
-		])
     }
   	
   	nv1.setClipPlane([-0.1, 270, 0])	//displays the clip plane. displaced in the x? direction by 0.1. rotated 270 degrees about the z axis. The third number clearly has to do with angle and initial position in the z direction but my experimentation is not leading me to a clear result.
