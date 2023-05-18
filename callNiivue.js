@@ -16,7 +16,7 @@ function changeVolumeList(subjectData, opacityValue) {
     for (var q = 0; q<subjectData[1].length; q++){
       
       nv1.loadMeshes([
-    	 {url: "./BrainMesh_ICBM152.lh.mz3", rgba255 : [0, 255, 0, 255],},
+    	 {url: "./BrainMesh_ICBM152.lh.mz3", rgba255 : [0, sliderVueApp.opacity*255, 0, 255],},
     	])//displays the fiber
     }
   	
