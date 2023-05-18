@@ -41,7 +41,7 @@
       
       <div id="opacity">
         <label>Opacity: </label>
-        <input type="range" min="0" max="1" step="0.01" class="slider" v-model="opacity" @change="update"/>
+        <input type="range" min="-1" max="1" step="0.01" class="slider" v-model="opacity" @change="update"/>
       </div>
 
       <div id ='checkedboxes'>
@@ -61,6 +61,17 @@
         <canvas id="gl1" width="1258" style="width: 100%; height: 80%;" height="700" tabindex="0">
         </canvas>
     </main>
+    <label>Controls: </label>
+    <ul>
+      <li>Scroll to move the clip plane along the default axis. </li>
+      <li>Left Click and move the mouse to rotate the camera around.</li>
+      <li>Right Click and move the mouse to rotate the clip plane.</li>
+      <li>Click C to cycle through the default clip plane options. The final option is no clip plane. Zooming is possible in that state by scrolling.</li>
+      <li>Click V to cycle through the default slice type options.</li>
+      <li>Pressing H or L rotates the scene in opposite directions about the vertical axis.</li>
+      <li>Pressing J or K rotates the scene in opposite directions about one of the horizontal axes.</li>
+      
+    </ul>
   </body>
 </html>
 <script src="https://unpkg.com/@niivue/niivue@0.32.0/dist/niivue.umd.js"></script>
@@ -123,7 +134,6 @@
     },
     methods:{
       update(){
-        console.log(this.subjectId)
         changeVolumeList([arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity)
       }
     }
