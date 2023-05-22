@@ -26,6 +26,7 @@ function returnColorArray(){
         for (j = 0; j<3; j++){
             array.push(tableau_20[i][j]*255)
         }
+        array.push(255)
         rgbarray.push(array)
     }
     return rgbarray

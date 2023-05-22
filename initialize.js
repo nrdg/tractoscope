@@ -14,7 +14,7 @@ function initialize(prefix){
         dropVueApp.subjectId = classArray[0]
         dropVueApp3.scans = await findAllScans(dropVueApp.subjectId.id, dropVueApp.subjectId.session, prefix)
         dropVueApp3.scan = dropVueApp3.scans[0]
-        changeVolumeList([arrayBasedOnSubjectAndSite(newArray[0], prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity)
+        initializeVolumeList([arrayBasedOnSubjectAndSite(newArray[0], prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity, checkboxVueApp.colorsSelected)
     };
     makeRealArray()
   }

@@ -41,7 +41,7 @@
       
       <div id="opacity">
         <label>Opacity: </label>
-        <input type="range" min="-1" max="1" step="0.01" class="slider" v-model="opacity" @change="update"/>
+        <input type="range" min="0.01" max="1" step="0.01" class="slider" v-model="opacity" @change="update"/>
       </div>
 
       <div id ='checkedboxes'>
@@ -74,7 +74,7 @@
     </ul>
   </body>
 </html>
-<script src="https://unpkg.com/@niivue/niivue@0.32.0/dist/niivue.umd.js"></script>
+<script src="./niivue.umd.js"></script>
 <script src = "https://unpkg.com/vue@3"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script type="text/javascript" src = "./colorArray.js"></script>
@@ -83,6 +83,7 @@
 <script type="text/javascript" src = "./callNiivue.js"></script>
 <script type="text/javascript" src = "./initialize.js"></script>
 <script tyoe="text/javascript" src = "./findScans.js"></script>
+<script tyoe="text/javascript" src = "./changeNiivue.js"></script>
 <script defer>
   
   const dropVueApp2 = Vue.createApp({
@@ -134,7 +135,7 @@
     },
     methods:{
       update(){
-        changeVolumeList([arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity)
+        changeVolumeList([arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity, checkboxVueApp.colorsSelected)
       }
     }
   }).mount(subjectAndSession)
@@ -148,19 +149,19 @@
     },
     methods:{
       update(){
-        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, this.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity)
+        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, this.scan.url), checkboxVueApp.bundles], sliderVueApp.opacity, checkboxVueApp.colorsSelected)
       }
     }
   }).mount(scanType)
   const sliderVueApp = Vue.createApp({
     data(){
       return{
-        opacity:1
+        opacity:0.1
       }
     },
     methods:{
       update(){
-        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], this.opacity)
+        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], this.opacity, checkboxVueApp.colorsSelected)
       }
     }
   }).mount(opacity)
@@ -170,12 +171,17 @@
         bundleTypes:returnBundleTypes(),
         bundles:[],
         toggled:false,
-        colors:returnColorArray()
+        colors:returnColorArray(),
+        colorsSelected:[]
       }
     },
     methods:{
       update(){
-        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), this.bundles], sliderVueApp.opacity)
+        this.colorsSelected = []
+        for (j = 0; j < (this.bundles.length); j++){
+          this.colorsSelected.push(this.colors[this.bundleTypes[this.bundles[j]].colorNumber])
+        }
+        changeVolumeList([arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), this.bundles], sliderVueApp.opacity, this.colorsSelected)
         if (this.bundles.length < 24){
           this.toggled = false
         }
