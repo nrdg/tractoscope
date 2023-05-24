@@ -19,8 +19,8 @@
         </select>
         <input v-if="showBoxes" v-model="otherName" placeholder="Type the name of the dataset you want to use." />
         <input v-if="showBoxes" v-model="otherPrefix" placeholder="Type the url prefix to the bucket. This is everything before /derivatives."/>
-        <input type="checkbox" v-if="showBoxes"v-model="done" @click="entered"/>
-        <label v-if="showBoxes">Done</label>
+        <button v-if="showBoxes" @click="entered">Done</button>
+        
       </div>
       
       <div id='subjectAndSession'>
@@ -110,10 +110,13 @@
         this.nv1.loadVolumes(this.volumeList1)//Displayes the brain.
       },
     changeVolume(volumeUrl){
+      console.log(volumeUrl)
       this.volumeList1[0].url = volumeUrl;
       this.nv1.loadVolumes(this.volumeList1);
+      console.log('volumesLoaded')
       if (checkboxVueApp.bundles.length == 0){
-        this.nv1.drawScene();
+        console.log('bundles length is 0')
+        //this.nv1.drawScene();
       }
       },
     async changeMeshes(subjectData, colors){
@@ -145,7 +148,7 @@
         showBoxes: false,
         otherName: '',
         otherPrefix: '',
-        done: false
+        //done: false
       }
     },
     methods:{
@@ -166,7 +169,7 @@
         this.showBoxes = false
         this.otherName = ''
         this.otherPrefix = ''
-        this.done = false
+        //this.done = false
         this.update()
       },
       initializeSite(){
