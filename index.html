@@ -25,9 +25,10 @@
       
       <div id='subjectAndSession'>
         <label>Subject: </label>   
-        <select v-model="subjectId" @change="update">
-          <option v-for="subject in subjects" :value="subject">{{subject.id}}</option>
-        </select>
+        <input type="text" v-model="subjectName" list="subjectDropdown" @change="update" value="subject">
+        <datalist id="subjectDropdown">
+          <option v-for="subject in subjects" :value=subject.id>{{subject.id}}</option>
+        </datalist>
         <label> Session: </label>
         {{subjectId.session}}
       </div>
@@ -181,6 +182,7 @@
             }
             dropVueApp.subjects = classArray
             dropVueApp.subjectId = classArray[0]
+            dropVueApp.subjectName = classArray[0].id
             dropVueApp3.scans = await this.findAllScans()
             dropVueApp3.scan = dropVueApp3.scans[0]
             niivueVueApp.initializeVolumeList([this.arrayBasedOnSubjectAndSite(newArray[0], this.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], checkboxVueApp.colorsSelected)
@@ -200,7 +202,7 @@
                 classArray.push({id: newArray[i][0], session: newArray[i][1]})
             }
             dropVueApp.subjects = classArray
-            dropVueApp.subjectId = classArray[0]
+            dropVueApp.subjectId = classArray[0].id
             dropVueApp3.scans = await this.findAllScans()
             dropVueApp3.scan = dropVueApp3.scans[0]
             array = this.arrayBasedOnSubjectAndSite(newArray[0], this.dataset.prefix, dropVueApp3.scan.url)
@@ -238,10 +240,17 @@
       return{
         subjects:[],
         subjectId:[],
+        subjectName:'',
       }
     },
     methods:{
-      update(){
+      async update(){
+        for (i = 0; i < this.subjects.length; i++){
+          if (this.subjects[i].id == this.subjectName){
+            this.subjectId = this.subjects[i]
+            break
+          }
+        }
         array = dropVueApp2.arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url)
         niivueVueApp.changeVolume(array[0])
         if (checkboxVueApp.bundles.length > 0){
