@@ -25,7 +25,7 @@
       
       <div id='subjectAndSession'>
         <label>Subject: </label>   
-        <input type="text" v-model="subjectName" list="subjectDropdown" @change="update" value="subject">
+        <input type="text" v-model="subjectName" list="subjectDropdown" @change="update">
         <datalist id="subjectDropdown">
           <option v-for="subject in subjects" :value=subject.id>{{subject.id}}</option>
         </datalist>
@@ -76,7 +76,7 @@
       </header>
   </body>
 </html>
-<script src="./niivue.umd.js"></script>
+<script src="https://niivue.github.io/niivue/features/niivue.umd.js"></script>
 <script src = "https://unpkg.com/vue@3"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script defer>
@@ -319,7 +319,7 @@
             this.bundles.push(bundleType)
           }
         }
-      this.update()
+        this.update()
       },
       returnColorArray(){
         tableau_20 = [
