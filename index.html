@@ -109,11 +109,10 @@
         this.nv1.setClipPlane([-0.1, 270, 0])//displays the clip plane. displaced in the x? direction by 0.1. rotated 270 degrees about the z axis. The third number clearly has to do with angle and initial position in the z direction but my experimentation is not leading me to a clear result.
         this.nv1.loadVolumes(this.volumeList1)//Displayes the brain.
       },
-    changeVolume(volumeUrl){
-      console.log(volumeUrl)
+    async changeVolume(volumeUrl){
       this.volumeList1 = [{url: volumeUrl, colorMap: "gray",}] 
       this.nv1.loadVolumes(this.volumeList1);
-      console.log('volumesLoaded')
+      this.nv1.updateGLVolume()
       },
     async changeMeshes(subjectData, colors){
       bundleUrls = []
