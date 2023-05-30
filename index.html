@@ -222,9 +222,13 @@
             }
             dropVueApp.subjects = classArray
             dropVueApp.subjectId = classArray[0]
+            console.log('helloooooooooooo')
             dropVueApp3.scans = await this.findAllScans()
             dropVueApp3.scan = dropVueApp3.scans[0]
             niivueVueApp.initializeVolumeList([this.arrayBasedOnSubjectAndSite(newArray[0], this.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], checkboxVueApp.colorsSelected)
+            v = checkboxVueApp.findRealBundles()
+            checkboxVueApp.bundlesPresentlyAvailable = await v
+            checkboxVueApp.bundleTypes = checkboxVueApp.returnBundleTypes()
         };
         makeRealArray()
       },
@@ -244,6 +248,9 @@
             dropVueApp.subjectId = classArray[0]
             dropVueApp3.scans = await this.findAllScans()
             dropVueApp3.scan = dropVueApp3.scans[0]
+            v = checkboxVueApp.findRealBundles()
+            checkboxVueApp.bundlesPresentlyAvailable = await v
+            checkboxVueApp.bundleTypes = checkboxVueApp.returnBundleTypes()
             array = this.arrayBasedOnSubjectAndSite(newArray[0], this.dataset.prefix, dropVueApp3.scan.url)
             niivueVueApp.changeVolume(array[0])
             if (checkboxVueApp.bundles.length > 0){
@@ -255,7 +262,7 @@
       arrayBasedOnSubjectAndSite(array, prefix, postFix){
         id = array[0]
         site = array[1]
-        newArray = [prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+postFix+'.nii.gz',[prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_L_tractography.trk",prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Motor_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Occipital_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Orbital_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-PostParietal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupFrontal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupParietal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Temporal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_R_tractography.trk"]]
+        newArray = [prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+postFix+'.nii.gz',checkboxVueApp.returnBundleLinkList()]
         return newArray
       },
       async findAllScans(){
@@ -289,6 +296,9 @@
         if (checkboxVueApp.bundles.length > 0){
           niivueVueApp.changeMeshes([array, checkboxVueApp.bundles], checkboxVueApp.colorsSelected)
         }
+        v = checkboxVueApp.findRealBundles()
+        checkboxVueApp.bundlesPresentlyAvailable = await v
+        checkboxVueApp.bundleTypes = checkboxVueApp.returnBundleTypes()
       }
     }
   }).mount(subjectAndSession)
@@ -325,10 +335,12 @@
     }
   }).mount(zoom)
 
+
   const checkboxVueApp = Vue.createApp({
     data(){
       return{
-        bundleTypes:this.returnBundleTypes(),
+        bundlesPresentlyAvailable:[],
+        bundleTypes:[],
         bundles:[],
         toggled:false,
         colors:this.returnColorArray(),
@@ -338,6 +350,24 @@
       }
     },
     methods:{
+      async findRealBundles(){
+        array = []
+        newArray = this.returnBundleLinkList()
+        for (i = 0; i<newArray.length; i++){
+            response = await fetch(newArray[i])
+            if (response.ok){
+                array.push(i)
+            }
+        }
+        return array
+      },
+      returnBundleLinkList(){
+        id = dropVueApp.subjectId.id
+        prefix = dropVueApp2.dataset.prefix
+        site = dropVueApp.subjectId.session
+        newArray = [prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_L_tractography.trk",prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Motor_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Occipital_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Orbital_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-PostParietal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_R_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupFrontal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupParietal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Temporal_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_L_tractography.trk", prefix+"/derivatives/afq/"+id+"/ses-"+dropVueApp2.dataset.name+"site"+site+"/clean_bundles/"+id+"_ses-"+dropVueApp2.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_R_tractography.trk"]
+        return newArray
+      },
       displayBoxes(){
         this.showBoxes=true
       },
@@ -423,10 +453,16 @@
                 {name: 'Uncinate Fasciculus-Left', id: 22, colorNumber: 16},
                 {name: 'Uncinate Fasciculus-Right', id: 23, colorNumber: 17}
             ]
-        return bundleTypes
+        finalBundleTypes = []
+        for (i=0; i<this.bundlesPresentlyAvailable.length; i++){
+          finalBundleTypes.push(bundleTypes[this.bundlesPresentlyAvailable[i]])
+        }
+        console.log(checkboxVueApp.bundlesPresentlyAvailable)
+        return finalBundleTypes
       }
     }
   }).mount('#checkedboxes')
   
   dropVueApp2.initializeSite()  
+
 </script>
