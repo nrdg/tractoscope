@@ -43,9 +43,13 @@
         <div v-if="show">
           <label>Scan Type: </label>   
           <select v-model="scan" @change="update">
-            <option v-for="scan in scans" :value="scan">{{scan.name}}</option>
+            <option v-for="scan in scans" :value="scan">{{scan}}</option>
           </select>
         </div>
+      </div>
+
+      <div id = 'download'>
+        <button @click="downloadFile">Download NIFTI File</button>
       </div>
       
       <div id="zoom" >
@@ -105,6 +109,26 @@
 <script src = "https://unpkg.com/vue@3"></script>
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <script defer>
+  const downloadScanApp = Vue.createApp({
+    methods:{
+      downloadFile(){
+        url = dropVueApp2.arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan)[0]
+        console.log(url)
+        fileName = dropVueApp.subjectId.id+'_'+dropVueApp.subjectId.session+'_'+dropVueApp3.scan+'.nii'
+        fetch(url)
+          .then(res => res.blob())
+          .then(res => {
+            const aElement = document.createElement('a');
+            aElement.setAttribute('download', fileName);
+            const href = URL.createObjectURL(res);
+            aElement.href = href;
+            aElement.setAttribute('target', '_blank');
+            aElement.click();
+            URL.revokeObjectURL(href);
+          });
+      }
+    }
+  }).mount(download)
   const niivueVueApp = Vue.createApp({
     data(){
       return{
@@ -133,12 +157,12 @@
         ]
         this.nv1.setSliceType(this.nv1.sliceTypeRender)//all three directions of slices are displayed if removed.
         this.nv1.attachTo('gl1')//attaches the entire image to the canvas.
-      bundleUrls = []
-      for (var q = 0; q<subjectData[1].length; q++){
-            this.nv1.loadMeshes([{url: subjectData[0][1][subjectData[1][q]], rgba255: colors[q]}])
-        }
-      await this.nv1.loadMeshes(bundleUrls)//displays the fiber
-      for (var q = 0; q<subjectData[1].length; q++){
+        bundleUrls = []
+        for (var q = 0; q<subjectData[1].length; q++){
+              this.nv1.loadMeshes([{url: subjectData[0][1][subjectData[1][q]], rgba255: colors[q]}])
+          }
+        await this.nv1.loadMeshes(bundleUrls)//displays the fiber
+        for (var q = 0; q<subjectData[1].length; q++){
             this.nv1.setMeshProperty(this.nv1.meshes[q].id, "fiberColor", "Fixed")
         }
         this.nv1.setClipPlane([-0.1, 270, 0])//displays the clip plane. displaced in the x? direction by 0.1. rotated 270 degrees about the z axis. The third number clearly has to do with angle and initial position in the z direction but my experimentation is not leading me to a clear result.
@@ -222,10 +246,9 @@
             }
             dropVueApp.subjects = classArray
             dropVueApp.subjectId = classArray[0]
-            console.log('helloooooooooooo')
             dropVueApp3.scans = await this.findAllScans()
             dropVueApp3.scan = dropVueApp3.scans[0]
-            niivueVueApp.initializeVolumeList([this.arrayBasedOnSubjectAndSite(newArray[0], this.dataset.prefix, dropVueApp3.scan.url), checkboxVueApp.bundles], checkboxVueApp.colorsSelected)
+            niivueVueApp.initializeVolumeList([this.arrayBasedOnSubjectAndSite(newArray[0], this.dataset.prefix, dropVueApp3.scan), checkboxVueApp.bundles], checkboxVueApp.colorsSelected)
             v = checkboxVueApp.findRealBundles()
             checkboxVueApp.bundlesPresentlyAvailable = await v
             checkboxVueApp.bundleTypes = checkboxVueApp.returnBundleTypes()
@@ -238,6 +261,17 @@
             const a = await array
             newArray = []
             for (i = 0; i< a.length; i++){
+                for (j = 0; j<newArray.length; j++){
+                  if (a[i].participant_id == newArray[j][0]){
+                    if (typeof newArray[j][1] == "string"){
+                      array = [newArray[j][1], a[i].site]
+                      newArray[j][1] = array
+                    }
+                    else{
+                      newArray[j][q].push(a[i].site)
+                    }
+                  }
+                }
                 newArray.push([a[i].participant_id, a[i].site])
             };
             classArray = []
@@ -251,7 +285,7 @@
             v = checkboxVueApp.findRealBundles()
             checkboxVueApp.bundlesPresentlyAvailable = await v
             checkboxVueApp.bundleTypes = checkboxVueApp.returnBundleTypes()
-            array = this.arrayBasedOnSubjectAndSite(newArray[0], this.dataset.prefix, dropVueApp3.scan.url)
+            array = this.arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], this.dataset.prefix, dropVueApp3.scan)
             niivueVueApp.changeVolume(array[0])
             if (checkboxVueApp.bundles.length > 0){
               niivueVueApp.changeMeshes([array, checkboxVueApp.bundles], checkboxVueApp.colorsSelected)
@@ -262,7 +296,8 @@
       arrayBasedOnSubjectAndSite(array, prefix, postFix){
         id = array[0]
         site = array[1]
-        newArray = [prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+postFix+'.nii.gz',checkboxVueApp.returnBundleLinkList()]
+        console.log(id, site)
+        newArray = [prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+postFix+'.nii.gz', checkboxVueApp.returnBundleLinkList()]
         return newArray
       },
       async findAllScans(){
@@ -271,7 +306,7 @@
         for (i = 0; i<scanType.length; i++){
             response = await fetch(this.dataset.prefix+"/derivatives/afq/"+dropVueApp.subjectId.id+"/ses-"+this.dataset.name+"site"+dropVueApp.subjectId.session+"/"+dropVueApp.subjectId.id+"_ses-"+this.dataset.name+"site"+dropVueApp.subjectId.session+"_acq-64dir_space-T1w_desc-preproc_dwi_"+scanType[i]+'.nii.gz')
             if (response.ok){
-                array.push({url: scanType[i], name: scanType[i]})
+                array.push(scanType[i])
             }
         }
         return array
@@ -291,7 +326,7 @@
     },
     methods:{
       async update(){
-        array = dropVueApp2.arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url)
+        array = dropVueApp2.arrayBasedOnSubjectAndSite([this.subjectId.id, this.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan)
         niivueVueApp.changeVolume(array[0])
         if (checkboxVueApp.bundles.length > 0){
           niivueVueApp.changeMeshes([array, checkboxVueApp.bundles], checkboxVueApp.colorsSelected)
@@ -313,7 +348,7 @@
     },
     methods:{
       update(){
-        array = dropVueApp2.arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, this.scan.url) 
+        array = dropVueApp2.arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, this.scan) 
         niivueVueApp.changeVolume(array[0])
         if (checkboxVueApp.bundles.length > 0){
           niivueVueApp.changeMeshes([array, checkboxVueApp.bundles], checkboxVueApp.colorsSelected)
@@ -379,7 +414,7 @@
         for (j = 0; j < (this.bundles.length); j++){
           this.colorsSelected.push(this.colors[this.bundleTypes[this.bundles[j]].colorNumber])
         }
-        niivueVueApp.changeMeshes([dropVueApp2.arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan.url), this.bundles], this.colorsSelected)
+        niivueVueApp.changeMeshes([dropVueApp2.arrayBasedOnSubjectAndSite([dropVueApp.subjectId.id, dropVueApp.subjectId.session], dropVueApp2.dataset.prefix, dropVueApp3.scan), this.bundles], this.colorsSelected)
         if (this.bundles.length < 24){
           this.toggled = false
         }
@@ -457,7 +492,6 @@
         for (i=0; i<this.bundlesPresentlyAvailable.length; i++){
           finalBundleTypes.push(bundleTypes[this.bundlesPresentlyAvailable[i]])
         }
-        console.log(checkboxVueApp.bundlesPresentlyAvailable)
         return finalBundleTypes
       }
     }
