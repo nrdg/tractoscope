@@ -34,8 +34,7 @@
           <select v-model="subjectId" @change="update">
             <option v-for="subject in subjects" :value="subject">{{subject.id}}</option>
           </select>
-          <label> Session: </label>
-          {{subjectId.session}}
+          <label>Session: {{subjectId.session}}</label>
         </div>
       </div>
 
@@ -83,7 +82,7 @@
       <div id = 'niivueVue'>
         <main id="container">
           <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-          <canvas id="gl1" width="1258" style="width: 100%; height: 100%;" height="800" tabindex="0">
+          <canvas id="gl1" width="1258" style="width: 100%; height: 100%;" height="1200" tabindex="0">
           </canvas>
         </main>
         <button v-if="!controlsDisplayed" @click="showControls">Show Controls</button>
@@ -242,7 +241,7 @@
             };
             classArray = []
             for (i=0; i<newArray.length; i++){
-                classArray.push({id: newArray[i][0], session: newArray[i][1]})
+                classArray.push({id: newArray[i][0], session: newArray[i][1], sessions: []})
             }
             dropVueApp.subjects = classArray
             dropVueApp.subjectId = classArray[0]
@@ -276,7 +275,12 @@
             };
             classArray = []
             for (i=0; i<newArray.length; i++){
-                classArray.push({id: newArray[i][0], session: newArray[i][1]})
+              if (typeof newArray[j][1] == "string"){
+                classArray.push({id: newArray[i][0], session: newArray[i][1], sessions: []})
+              }
+              else{
+                classArray.push({id: newArray[i][0], session: newArray[i][1][0], sessions: newArray[i][1]})
+              }
             }
             dropVueApp.subjects = classArray
             dropVueApp.subjectId = classArray[0]
@@ -297,6 +301,7 @@
         id = array[0]
         site = array[1]
         console.log(id, site)
+        console.log(dropVueApp.subjectId.sessions.length)
         newArray = [prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+postFix+'.nii.gz', checkboxVueApp.returnBundleLinkList()]
         return newArray
       },
@@ -321,6 +326,7 @@
       return{
         subjects:[],
         subjectId:[],
+        session:'',
         show:true,
       }
     },
