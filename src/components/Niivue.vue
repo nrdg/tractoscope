@@ -11,6 +11,26 @@ export default {
     subjectId: Object,
     bundleTypes: Array
   },
+  watch: {
+    subjectId: function(newVal, oldVal) {
+      if (newVal!=oldVal){
+        this.changeVolume()
+        if (this.bundlesSelected.length > 0){
+          this.changeMeshes()
+        }
+      }
+    },
+    scanType: function(newVal, oldVal) {
+      if (newVal!=oldVal){
+        this.changeVolume()
+      }
+    },
+    bundlesSelected: function(newVal, oldVal){
+      if (newVal!=oldVal){
+        this.changeMeshes()
+      }
+    }
+  },
   data(){
     return {
       volumeList: [],
@@ -27,7 +47,7 @@ export default {
     hideControls(){
       this.controlsDisplayed=false
     },
-    async initializeVolumeList(){
+    initializeVolumeList(){
         this.nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}))
 
         const array = this.arrayBasedOnSubjectAndSite()
@@ -48,11 +68,11 @@ export default {
         this.nv.setClipPlane([-0.1, 270, 0])//displays the clip plane. displaced in the x? direction by 0.1. rotated 270 degrees about the z axis. The third number clearly has to do with angle and initial position in the z direction but my experimentation is not leading me to a clear result.
         this.nv.loadVolumes(this.volumeList)//Displayes the brain.
     },
-    async changeVolume(){
+    changeVolume(){
         console.log("arraysubsite:"+this.arrayBasedOnSubjectAndSite)
         this.volumeList = [
             {
-                url: this.arrayBasedOnSubjectAndSite[0],
+                url: this.arrayBasedOnSubjectAndSite()[0],
 
                 colorMap: "gray",
             }
@@ -73,8 +93,9 @@ export default {
       return newArray
     },
     async changeMeshes(){
+      console.log('hellloooo')
       this.colorsSelected = []
-      for (j = 0; j < (this.bundlesSelected.length); j++){
+      for (let j = 0; j < (this.bundlesSelected.length); j++){
         this.colorsSelected.push(this.colors[this.bundleTypes[this.bundlesSelected[j]].colorNumber])
       }
       var bundleUrls = []
@@ -122,7 +143,6 @@ export default {
       }
   },
   mounted() {
-    console.log("mounted Niivue.vue to canvas")
     this.initializeVolumeList()
   },
 }
@@ -131,7 +151,8 @@ export default {
 
 <template>
     <label>Zoom: </label>
-    <input type="range" min="0.01" max="1" step="0.01" class="slider" v-model="zoom" @change="changZoom"/>
-    <canvas id="gl" width="1258" style="width: 100%; height: 100%;" height="1200" tabindex="0">
-    </canvas>
+    <input type="range" min="0.01" max="0.5" step="0.01" class="slider" v-model="zoom" @change="changeZoom"/>
+    <div>
+      <canvas id="gl" width="1258" style="width: 100%; height: 100%;" height="1200" tabindex="0"></canvas>
+    </div>
 </template>

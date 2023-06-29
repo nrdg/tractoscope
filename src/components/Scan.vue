@@ -2,11 +2,10 @@
 export default {
     props: {
         scans: Array,
-        show: Boolean
     },
     data(){
         return {
-            scan: '',
+            scan: 'model-DKI_FA',
         }
     },
     methods:{
@@ -18,10 +17,10 @@ export default {
 </script>
 
 <template>
-    <div v-if="show">
-          <label>Scan Type: </label>   
-          <select v-model="scan" @change="update">
-            <option v-for="scan in scans" :value="scan">{{scan}}</option>
-          </select>
-    </div>
+    
+        <label>Scan Type: </label>   
+        <select v-model="scan" @change="update">
+        <option v-for="scan in scans" :value="scan">{{scan}}</option>
+        </select>
+    
 </template>
