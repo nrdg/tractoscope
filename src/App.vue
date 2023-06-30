@@ -7,6 +7,7 @@
   </div>
   <Download :subjectId="subjectId" :dataset="dataset" :scanType="scanType" />
   <Niivue :subjectId="subjectId" :allBundleLinks="allBundleLinks" :bundlesSelected="bundlesSelected" :colors="colors" :dataset="dataset" :scanType="scanType" :bundleTypes="bundleTypes"/>
+  <Controls/>
 </template>
 
 <script>
@@ -16,6 +17,7 @@ import Download from './components/Download.vue'
 import Dataset from './components/Dataset.vue'
 import Scan from './components/Scan.vue'
 import Bundles from './components/Bundles.vue'
+import Controls from './components/Controls.vue'
 import * as d3 from 'd3'
 
 export default {
@@ -157,7 +159,8 @@ export default {
     Dataset,
     Scan,
     Subject,
-    Bundles
+    Bundles,
+    Controls
   }
 }
 </script>
