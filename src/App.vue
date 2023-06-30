@@ -90,7 +90,6 @@ export default {
       this.scanCheck()
       this.bundleCheck()
       console.log('did it root')
-      this.$root.$emit("volumeChange", "it rooted");
     },
     bundleCheck(){
       const id = this.subjectId.id
