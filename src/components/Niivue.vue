@@ -14,20 +14,26 @@ export default {
   watch: {
     subjectId: function(newVal, oldVal) {
       if (newVal!=oldVal){
-        this.changeVolume()
-        if (this.bundlesSelected.length > 0){
-          this.changeMeshes()
+        if (typeof this.scanType != "undefined" && typeof this.scanType != "undefined"){
+          this.changeVolume()
+          if (this.bundlesSelected.length > 0){
+            this.changeMeshes()
+          }
         }
       }
     },
     scanType: function(newVal, oldVal) {
       if (newVal!=oldVal){
-        this.changeVolume()
+        if (typeof this.scanType != "undefined" && typeof this.scanType != "undefined"){
+          this.changeVolume()
+        }
       }
     },
     bundlesSelected: function(newVal, oldVal){
       if (newVal!=oldVal){
-        this.changeMeshes()
+        if (typeof this.scanType != "undefined"){
+          this.changeMeshes()
+        }
       }
     }
   },
@@ -88,8 +94,6 @@ export default {
       const id = this.subjectId.id
       const site = this.subjectId.session
       const newArray = [this.dataset.prefix+"/derivatives/afq/"+id+"/ses-"+this.dataset.name+"site"+site+"/"+id+"_ses-"+this.dataset.name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+this.scanType+'.nii.gz']
-      console.log("generated array")
-      console.log("array: \n\n"+newArray)
       return newArray
     },
     async changeMeshes(){

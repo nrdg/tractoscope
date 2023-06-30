@@ -1,11 +1,11 @@
 <template>
-  <Dataset :dataset="dataset" @datasetChange="initializeDataset" @showOtherComponents="toggleComponents"/>
+  <Dataset @datasetChange="initializeDataset" @showOtherComponents="toggleComponents"/>
   <div v-if="show">
     <Subject :subjects="subjects" @subjectChange="changedSubjectSession"/>
     <Scan @changedScan="scanChange" :scans="scans"/>
     <Bundles @changedMesh="meshChange" :bundleTypes="bundleTypes"/>
   </div>
-  <Download :subjectId="subjectId" :dataset="dataset" :scanType="scanType"/>
+  <Download :subjectId="subjectId" :dataset="dataset" :scanType="scanType" />
   <Niivue :subjectId="subjectId" :allBundleLinks="allBundleLinks" :bundlesSelected="bundlesSelected" :colors="colors" :dataset="dataset" :scanType="scanType" :bundleTypes="bundleTypes"/>
 </template>
 
@@ -39,45 +39,46 @@ export default {
     scanChange(scan) {
       this.scanType = scan
     },
-    initializeDataset(newDataset){
+    async initializeDataset(newDataset){
       this.dataset = newDataset
-      console.log(this.dataset.prefix+'/derivatives/afq/participants.tsv')
+      console.log("tsvlink: "+this.dataset.prefix+'/derivatives/afq/participants.tsv')
       const array = d3.tsv(newDataset.prefix+'/derivatives/afq/participants.tsv')
-      const makeRealArray = async () => {
-          const a = await array
-          console.log(array)
-          var newArray = []
-          for (var i = 0; i< a.length; i++){
-            for (var j = 0; j<newArray.length; j++){
-              if (a[i].participant_id == newArray[j][0]){
-                if (typeof newArray[j][1] == "string"){
-                  var array = [newArray[j][1], a[i].site]
-                  newArray[j][1] = array
-                }
-                else{
-                  newArray[j][q].push(a[i].site)
-                }
-              }
-            }
-            newArray.push([a[i].participant_id, a[i].site])
-          };
-          var classArray = []
-          for (i=0; i<newArray.length; i++){
+      console.log("array b4 async:",array)
+
+      var a = await array
+      console.log("array afta async",array)
+      console.log("var a:",a)
+      var newArray = []
+      for (var i = 0; i< a.length; i++){
+        for (var j = 0; j<newArray.length; j++){
+          if (a[i].participant_id == newArray[j][0]){
             if (typeof newArray[j][1] == "string"){
-              classArray.push({id: newArray[i][0], session: newArray[i][1], multipleSessions: false})
+              var fakearray = [newArray[j][1], a[i].site]
+              newArray[j][1] = fakearray
             }
             else{
-              classArray.push({id: newArray[i][0], session: newArray[i][1][0], sessions: newArray[i][1], multipleSessions: true})
+              newArray[j][q].push(a[i].site)
             }
           }
-          this.subjects = classArray
-          console.log(this.subjects[10])
-          this.subjectId = classArray[0]
-          this.scanCheck()
-          this.scanType = this.scans[0]
-          this.bundleTypes = this.returnBundleTypes()
-        };
-        makeRealArray()
+        }
+        newArray.push([a[i].participant_id, a[i].site])
+      };
+      var classArray = []
+      for (i=0; i<newArray.length; i++){
+        if (typeof newArray[j][1] == "string"){
+          classArray.push({id: newArray[i][0], session: newArray[i][1], multipleSessions: false})
+        }
+        else{
+          classArray.push({id: newArray[i][0], session: newArray[i][1][0], sessions: newArray[i][1], multipleSessions: true})
+        }
+      }
+      this.subjects = classArray
+      console.log(this.subjects[10])
+      this.subjectId = classArray[0]
+      const v = await this.scanCheck()
+      this.scanType = this.scans[0]
+      console.log("scantype:",this.scanType)
+      this.bundleTypes = this.returnBundleTypes()
     },
     toggleComponents(bool){
       this.show = bool
@@ -141,14 +142,14 @@ export default {
     }
   },
   mounted() {
-    //this.initializeDataset({name: 'HBN', prefix: 'https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated'})
-    this.dataset = {name: 'HBN', prefix: 'https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated'}
+    this.initializeDataset({name: 'HBN', prefix: 'https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated'})
+    //this.dataset = {name: 'HBN', prefix: 'https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated'}
     //this.subjectId = { id: "sub-NDARAA306NT2", session: "RU", multipleSessions: false }
-    this.subjects = [{ id: "sub-NDARAA306NT2", session: "RU", multipleSessions: false }, { id: "sub-NDARAA536PTU", session: "SI", multipleSessions: false }]
-    this.scanCheck()
-    //this.scanType = this.scans[0]
-    this.bundleTypes = this.returnBundleTypes()
-    this.bundleCheck()
+    // this.subjects = [{ id: "sub-NDARAA306NT2", session: "RU", multipleSessions: false }, { id: "sub-NDARAA536PTU", session: "SI", multipleSessions: false }]
+    // this.scanCheck()
+    // //this.scanType = this.scans[0]
+    // this.bundleTypes = this.returnBundleTypes()
+    // this.bundleCheck()
   },
   components:{
     Download,
