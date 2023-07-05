@@ -13,7 +13,7 @@ export default {
   },
   watch: {
     subjectId: function(newVal, oldVal) {
-      if (newVal!=oldVal){
+      if (newVal.id!=oldVal.id || newVal.session != oldVal.session){
         if (typeof this.scanType != "undefined" && typeof this.scanType != "undefined"){
           this.changeVolume()
           if (this.bundlesSelected.length > 0){
