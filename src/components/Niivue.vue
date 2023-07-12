@@ -154,7 +154,16 @@ export default {
 </script>
 
 <template>
+    <div id="zoom">
     <label>Zoom: </label>
     <input type="range" min="0.01" max="0.5" step="0.01" class="slider" v-model="zoom" @change="changeZoom"/>
+    </div>
     <canvas id="gl" tabindex="0"></canvas>
 </template>
+
+<style>
+#zoom{
+  background-color: white;
+  display: "block";
+}
+</style>
