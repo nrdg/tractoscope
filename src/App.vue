@@ -6,7 +6,9 @@
     <Bundles @changedMesh="meshChange" :bundleTypes="bundleTypes"/>
   </div>
   <Download :subjectId="subjectId" :dataset="dataset" :scanType="scanType" />
+  <div id="niivue">
   <Niivue :subjectId="subjectId" :allBundleLinks="allBundleLinks" :bundlesSelected="bundlesSelected" :colors="colors" :dataset="dataset" :scanType="scanType" :bundleTypes="bundleTypes"/>
+  </div>
   <Controls/>
 </template>
 
@@ -163,3 +165,11 @@ export default {
   }
 }
 </script>
+
+<style>
+#niivue{
+  height: 80vh;
+  width: 95vw;
+  margin:auto;
+}
+</style>

@@ -156,7 +156,5 @@ export default {
 <template>
     <label>Zoom: </label>
     <input type="range" min="0.01" max="0.5" step="0.01" class="slider" v-model="zoom" @change="changeZoom"/>
-    <div>
-      <canvas id="gl" width="1258" style="width: 100%; height: 100%;" height="1200" tabindex="0"></canvas>
-    </div>
+    <canvas id="gl" tabindex="0"></canvas>
 </template>
