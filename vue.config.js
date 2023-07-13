@@ -1,3 +1,5 @@
 module.exports = {
-  publicPath: '/hbn_viewer/'
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/'
+    : '/hbn_viewer/'
 }
