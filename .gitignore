@@ -13,3 +13,6 @@ package-lock.json
 *.njsproj
 *.sln
 *.sw?
+
+# OS stuff
+.DS_Store
