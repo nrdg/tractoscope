@@ -1,12 +1,16 @@
 <template>
+  <div id="options">
   <Dataset @datasetChange="initializeDataset" @showOtherComponents="toggleComponents"/>
-  <div v-if="show">
+  <div id="options" v-if="show">
     <Subject :subjects="subjects" @subjectChange="changedSubjectSession"/>
     <Scan @changedScan="scanChange" :scans="scans"/>
     <Bundles @changedMesh="meshChange" :bundleTypes="bundleTypes"/>
   </div>
   <Download :subjectId="subjectId" :dataset="dataset" :scanType="scanType" />
+  </div>
+  <div id="niivue">
   <Niivue :subjectId="subjectId" :allBundleLinks="allBundleLinks" :bundlesSelected="bundlesSelected" :colors="colors" :dataset="dataset" :scanType="scanType" :bundleTypes="bundleTypes"/>
+  </div>
   <Controls/>
 </template>
 
@@ -163,3 +167,14 @@ export default {
   }
 }
 </script>
+
+<style>
+#niivue{
+  height: 80vh;
+  width: 95vw;
+  margin:auto;
+}
+#options{
+  display: inline-block;
+}
+</style>
