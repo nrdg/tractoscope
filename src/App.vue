@@ -47,13 +47,8 @@ export default {
     },
     async initializeDataset(newDataset){
       this.dataset = newDataset
-      console.log("tsvlink: "+this.dataset.prefix+'/derivatives/afq/participants.tsv')
       const array = d3.tsv(newDataset.prefix+'/derivatives/afq/participants.tsv')
-      console.log("array b4 async:",array)
-
       var a = await array
-      console.log("array afta async",array)
-      console.log("var a:",a)
       var newArray = []
       for (var i = 0; i< a.length; i++){
         for (var j = 0; j<newArray.length; j++){
@@ -79,11 +74,9 @@ export default {
         }
       }
       this.subjects = classArray
-      console.log(this.subjects[10])
       this.subjectId = classArray[0]
       const v = await this.scanCheck()
       this.scanType = this.scans[0]
-      console.log("scantype:",this.scanType)
       this.bundleTypes = this.returnBundleTypes()
     },
     toggleComponents(bool){
@@ -93,7 +86,6 @@ export default {
       this.subjectId = subjectId
       this.scanCheck()
       this.bundleCheck()
-      console.log('did it root')
     },
     bundleCheck(){
       const id = this.subjectId.id

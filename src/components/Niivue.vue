@@ -97,7 +97,6 @@ export default {
       return newArray
     },
     async changeMeshes(){
-      console.log('hellloooo')
       this.colorsSelected = []
       for (let j = 0; j < (this.bundlesSelected.length); j++){
         this.colorsSelected.push(this.colors[this.bundleTypes[this.bundlesSelected[j]].colorNumber])
