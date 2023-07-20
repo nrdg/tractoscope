@@ -1,5 +1,7 @@
 <script>
 export default {
+    name: "Bundles",
+    emits: ["changedMesh"],
     props: {
         bundleTypes: Array,
 

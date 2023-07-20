@@ -1,5 +1,7 @@
 <script>
 export default {
+    name: "Scan",
+    emits: ["changedScan"],
     props: {
         scans: Array,
     },
@@ -17,10 +19,10 @@ export default {
 </script>
 
 <template>
-    
-        <label>Scan Type: </label>   
+
+        <label>Scan Type: </label>
         <select v-model="scan" @change="update">
         <option v-for="scan in scans" :value="scan">{{scan}}</option>
         </select>
-    
+
 </template>

@@ -1,5 +1,7 @@
 <script>
 export default {
+    name: "Dataset",
+    emits: ["showOtherComponents","datasetChange"],
     data(){
         return {
             dataset: {name: 'HBN', prefix: 'https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated'},

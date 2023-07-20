@@ -1,23 +1,31 @@
 <script>
 export default {
+    name: "subject",
+    emits: ["subjectChange"],
     props: {
         subjects: Array,
     },
     data(){
         return {
             subjectId:{id: 'sub-NDARAA306NT2', session: 'RU', multipleSessions: false},
+            options:[]
         }
     },
     methods:{
         update(){
             this.$emit("subjectChange", this.subjectId)
+        },
+        initOptions(){
+            for(subject in this.subjects){
+                this.options.push({value: subject, text: subject.id})
+            }
         }
-    }
+    },
 }
 </script>
 
 <template>
-    <label>Subject: </label>   
+    <label>Subject: </label>
     <select v-model="subjectId" @change="update">
         <option v-for="subject in subjects" :value="subject">{{subject.id}}</option>
     </select>
