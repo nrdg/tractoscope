@@ -79,6 +79,7 @@ export default {
       const v = await this.scanCheck()
       this.scanType = this.scans[0]
       this.bundleTypes = this.returnBundleTypes()
+      this.bundleCheck()
     },
     toggleComponents(bool){
       this.show = bool

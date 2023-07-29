@@ -31,7 +31,7 @@ export default {
     },
     bundlesSelected: function(newVal, oldVal){
       if (newVal!=oldVal){
-        if (typeof this.scanType != "undefined"){
+        if (typeof this.bundlesSelected != "undefined"){
           this.changeMeshes()
         }
       }
@@ -97,7 +97,6 @@ export default {
       return newArray
     },
     async changeMeshes(){
-      console.log('hellloooo')
       this.colorsSelected = []
       for (let j = 0; j < (this.bundlesSelected.length); j++){
         this.colorsSelected.push(this.colors[this.bundleTypes[this.bundlesSelected[j]].colorNumber])
