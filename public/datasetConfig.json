@@ -264,8 +264,7 @@
           "model-DKI_AWF",
           "model-DKI_MD",
           "model-DKI_MK",
-          "model-DTI_FA"
-       ],
+          "model-DTI_FA"],
        "bundles":[
           {
              "name":"Anterior Frontal",

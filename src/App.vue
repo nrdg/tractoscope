@@ -71,7 +71,10 @@ async function updateScans(){
   scans.value = []
   var scansToCheck = null
   if(dataset.value.hasOwnProperty('scans')){
-    scansToCheck = dataset.value.scans
+    let datasetScans = dataset.value.scans
+    let defaultScans = datasetConfig.default.scans
+    let x = datasetScans.concat(defaultScans)
+    scansToCheck = [...new Set(x)]
   }else{
     console.log("dataset", dataset.value.name," does not contain scans, using defaults")
     scansToCheck = datasetConfig.default.scans
@@ -82,6 +85,8 @@ async function updateScans(){
     let doesLinkExist = await checkLink(link)
     if(doesLinkExist){
       scans.value.push(element)
+    }else{
+      console.log("doesnt exist",element)
     }
   }
   if(scans.value.length < 1){
