@@ -1,7 +1,8 @@
 <template>
 <DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
 <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
-<SiteSelect v-if="showSiteSelect" v-model:site="site" :sites="sites"/>
+<ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
+<ListSelect v-model:value="scan" :list="scans"/>
 <div id="vars">
   <ul>
     <li>dataset = {{ dataset?.name }}</li>
@@ -17,7 +18,7 @@
 <script setup>
 import SubjectSelect from './components/SubjectSelect.vue';
 import DatasetSelect from './components/DatasetSelect.vue';
-import SiteSelect from './components/SiteSelect.vue';
+import ListSelect from './components/ListSelect.vue';
 
 import { updateSubjectList,getVolumeLink,checkLink } from './utilites/DatasetLogic';
 
