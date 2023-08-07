@@ -14,7 +14,7 @@ const props = defineProps({
             return value.every(element => typeof element == 'string' )
         },
     },
-    value: {} //this prop has no requriments as it is only set by this component, not read
+    value: {required:true} //this prop has no requriments as it is only set by this component, not read
 })
 const emit = defineEmits(["update:value"])
 

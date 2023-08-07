@@ -17,10 +17,7 @@ const props = defineProps({
             return value.every(element => element.hasOwnProperty('name') && element.hasOwnProperty('prefix'));
         }
     },
-    dataset:{
-        type:Object,
-        required: true,
-    }
+    dataset:{required: true,}
 })
 const emit = defineEmits(['update:dataset'])
 

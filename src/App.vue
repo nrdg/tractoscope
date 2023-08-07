@@ -3,6 +3,7 @@
 <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
 <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
 <ListSelect v-model:value="scan" :list="scans"/>
+<bundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
 <div id="vars">
   <ul>
     <li>dataset = {{ dataset?.name }}</li>
@@ -11,6 +12,8 @@
     <li>site = {{ site }}</li>
     <li>scans = {{ scans }}</li>
     <li>scan = {{ scan }}</li>
+    <li>bundles = {{ bundles }}</li>
+    <li>selectedBundles = {{ selectedBundles }}</li>
   </ul>
 </div>
 </template>
@@ -20,11 +23,12 @@ import SubjectSelect from './components/SubjectSelect.vue';
 import DatasetSelect from './components/DatasetSelect.vue';
 import ListSelect from './components/ListSelect.vue';
 
-import { updateSubjectList,getVolumeLink,checkLink } from './utilites/DatasetLogic';
+import { updateSubjectList,getVolumeLink,getBundleLink,checkLink } from './utilites/DatasetLogic';
 
 import datasetConfig from '/public/datasetConfig.json'
 
-import {ref,computed,onMounted, watch,toRaw} from 'vue';
+import {ref,computed, watch} from 'vue';
+import BundleSelect from './components/BundleSelect.vue';
 
 
 const datasets = datasetConfig.datasets
@@ -35,10 +39,10 @@ const sites = ref([])
 const site = ref(null)
 const scans = ref([])
 const scan = ref(null)
-const test = ref(["test","test2"])
+const bundles = ref([])
+const selectedBundles = ref([])
 
-//this is a little messy but it handles all edge cases without erroring.
-//Maybe this should be inside of SiteSelect component for readability? though that would make it always rendered, whichmaybe slower?
+//Maybe this should be inside of SiteSelect component for readability? though that would make it always rendered, which is maybe slower?
 const showSiteSelect = computed({
   get(){
     if(sites.value.length > 1){
@@ -67,6 +71,8 @@ function updateSite(){
     sites.value = subject.value.site
   }
 }
+
+//updateScans and updateBundles are very similar, maybe make into one reuseable function
 async function updateScans(){
   scans.value = []
   var scansToCheck = null
@@ -86,16 +92,40 @@ async function updateScans(){
     if(doesLinkExist){
       scans.value.push(element)
     }else{
-      console.log("doesnt exist",element)
+      console.log("scan does not exist: ",element) //should this be included in production?
     }
   }
   if(scans.value.length < 1){
     throw new Error("no scans exist for subject",{value:subject.value})
   }
 }
+async function updateBundles(){
+  bundles.value = []
+  var bundlesToCheck = null
+  if(dataset.value.hasOwnProperty('bundles')){
+    let datasetBundles = dataset.value.bundles
+    let defaultBundles = datasetConfig.default.bundles
+    let x = datasetBundles.concat(defaultBundles)
+    bundlesToCheck = [...new Set(x)]
+  }else{
+    console.log("dataset",dataset.value.name," does not contain bundles, using defaults")
+    bundlesToCheck = datasetConfig.defualt.bundles
+  }
+
+  for(let element of bundlesToCheck){
+    let link = getBundleLink(dataset.value,subject.value,site.value,element)
+    let doesLinkExist = await checkLink(link)
+    if(doesLinkExist){
+      bundles.value.push(element)
+    }else{
+      console.log("bundle does not exist: ",element)
+    }
+  }
+}
 watch(subject, async () => {
   updateSite()
   await updateScans()
   scan.value = scans.value[0]
+  updateBundles()
 })
 </script>
