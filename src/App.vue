@@ -147,6 +147,13 @@ watch(subject, async (newVal) => {
     bundles.value = []
     const newBundles = await updateBundles()
     bundles.value = newBundles
+    let previouslySelectedBundles = selectedBundles.value
+    selectedBundles.value = []
+    previouslySelectedBundles.forEach((element) => {
+      if(bundles.value.includes(element)){
+        selectedBundles.value.push(element)
+      }
+    })
   }
 })
 </script>
