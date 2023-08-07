@@ -3,9 +3,9 @@
 <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
 <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
 <ListSelect v-model:value="scan" :list="scans"/>
-<bundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
+<BundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
 <div id="vars">
-  <ul>
+  <!-- <ul>
     <li>dataset = {{ dataset?.name }}</li>
     <li>subject = {{ subject }}</li>
     <li>sites = {{ sites }}</li>
@@ -14,7 +14,16 @@
     <li>scan = {{ scan }}</li>
     <li>bundles = {{ bundles }}</li>
     <li>selectedBundles = {{ selectedBundles }}</li>
-  </ul>
+  </ul> -->
+  <div id="niivue">
+    <NiivueRender
+    :dataset="dataset"
+    :subject="subject"
+    :site="site"
+    :scan="scan"
+    :bundles="selectedBundles"
+    />
+  </div>
 </div>
 </template>
 
@@ -22,6 +31,7 @@
 import SubjectSelect from './components/SubjectSelect.vue';
 import DatasetSelect from './components/DatasetSelect.vue';
 import ListSelect from './components/ListSelect.vue';
+import NiivueRender from './components/NiivueRender.vue';
 
 import { updateSubjectList,getVolumeLink,getBundleLink,checkLink } from './utilites/DatasetLogic';
 
@@ -122,10 +132,20 @@ async function updateBundles(){
     }
   }
 }
-watch(subject, async () => {
-  updateSite()
-  await updateScans()
-  scan.value = scans.value[0]
-  updateBundles()
+watch(subject, async (newVal,oldVal) => {
+  if(newVal){
+    updateSite() //fix that if this is called before its finished it fucks up and has duplicates
+    await updateScans()
+    scan.value = scans.value[0]
+    await updateBundles()
+  }
 })
 </script>
+
+<style>
+#niivue{
+  height: 80vh;
+  width: 96vw;
+  margin: auto;
+}
+</style>

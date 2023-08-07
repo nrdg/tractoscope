@@ -59,12 +59,10 @@ export function getBundleLink(dataset,subjectId,site,bundle){
     return link
 }
 
-//this function works, but is fetching the whole file, which is farily slow, (around 4 seconds to load all scans on 50mbps connection)
-//also throws an error in console if scan doesn't exist, which is not desired. though the functionality of the page is unaffected
-//using method: 'head' does not work as it is blocked by cors policy
+//this is still sorta slow, dispite in theory only fetching the
 export async function checkLink(url) {
     try {
-        const response = await fetch(url)
+        const response = await fetch(url,{method: 'GET',headers:{'range' : 'bytes=0-1'}})
         return (response.status >= 200 && response.status <= 299);
     } catch (error) {
         return false;
