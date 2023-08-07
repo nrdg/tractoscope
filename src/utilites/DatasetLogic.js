@@ -59,7 +59,8 @@ export function getBundleLink(dataset,subjectId,site,bundle){
     return link
 }
 
-//this is still sorta slow, dispite in theory only fetching the
+// this is still fairly slow, dispite in theory only fetching the first byte of the file
+// this may be due to a aws limitation/restriction
 export async function checkLink(url) {
     try {
         const response = await fetch(url,{method: 'GET',headers:{'range' : 'bytes=0-1'}})

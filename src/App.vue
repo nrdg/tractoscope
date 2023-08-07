@@ -82,10 +82,9 @@ function updateSite(){
   }
 }
 
-//updateScans and updateBundles are very similar, maybe make into one reuseable function
 async function updateScans(){
-  scans.value = []
   var scansToCheck = null
+  const output = []
   if(dataset.value.hasOwnProperty('scans')){
     let datasetScans = dataset.value.scans
     let defaultScans = datasetConfig.default.scans
@@ -100,18 +99,19 @@ async function updateScans(){
     let link = getVolumeLink(dataset.value,subject.value,site.value,element)
     let doesLinkExist = await checkLink(link)
     if(doesLinkExist){
-      scans.value.push(element)
+      output.push(element)
     }else{
       console.log("scan does not exist: ",element) //should this be included in production?
     }
   }
-  if(scans.value.length < 1){
+  if(output.length < 1){
     throw new Error("no scans exist for subject",{value:subject.value})
   }
+  return output
 }
 async function updateBundles(){
-  bundles.value = []
   var bundlesToCheck = null
+  const output = []
   if(dataset.value.hasOwnProperty('bundles')){
     let datasetBundles = dataset.value.bundles
     let defaultBundles = datasetConfig.default.bundles
@@ -126,18 +126,25 @@ async function updateBundles(){
     let link = getBundleLink(dataset.value,subject.value,site.value,element)
     let doesLinkExist = await checkLink(link)
     if(doesLinkExist){
-      bundles.value.push(element)
+      output.push(element)
     }else{
       console.log("bundle does not exist: ",element)
     }
   }
+
+  return output
 }
-watch(subject, async (newVal,oldVal) => {
+watch(subject, async (newVal) => {
   if(newVal){
-    updateSite() //fix that if this is called before its finished it fucks up and has duplicates
-    await updateScans()
+    updateSite()
+    scans.value = []
+    let newScans = await updateScans()
+    scans.value = newScans
     scan.value = scans.value[0]
-    await updateBundles()
+
+    bundles.value = []
+    const newBundles = await updateBundles()
+    bundles.value = newBundles
   }
 })
 </script>
