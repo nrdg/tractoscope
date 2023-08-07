@@ -1,6 +1,6 @@
 <template>
     <Multiselect :searchable="true"
-    placeholder="bundles"
+    placeholder="select bundles"
     mode='tags'
     :groups="true"
     v-model="selectedBundles"
