@@ -140,7 +140,9 @@ watch(subject, async (newVal) => {
     scans.value = []
     let newScans = await updateScans()
     scans.value = newScans
-    scan.value = scans.value[0]
+    if(!scans.value.includes(scan.value)){
+      scan.value = scans.value[0]
+    }
 
     bundles.value = []
     const newBundles = await updateBundles()
