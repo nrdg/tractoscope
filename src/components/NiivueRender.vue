@@ -1,7 +1,7 @@
 <script setup>
 import {Niivue} from '@niivue/niivue'
 import {onMounted,ref,watch} from 'vue';
-import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
+import { checkLink, getVolumeLink, getBundleLink,toRaw } from '../utilites/DatasetLogic';
 
 const props = defineProps({
     // subject: {type: Object, required: true,
@@ -68,17 +68,15 @@ async function loadBundles(){
     const bundleUrls = []
     props.bundles.forEach((element) => {
         let url = getBundleLink(props.dataset,props.subject,props.site,element)
-        let x = {url:url, rbga255:element.rgba255}
-        console.log(x)
+        let color = element.rgba255
+        let x = {url:url, rgba255: color}
         bundleUrls.push(x)
     })
-    console.log(bundleUrls)
     await nv.loadMeshes(bundleUrls)
     for(let i = 0; i<bundleUrls.length; i++){
-        nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
+        await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
     }
 }
-
 //must be cleaner way to watch multiple objects?
 watch(() => props.subject, () => {
     updateVolume()
