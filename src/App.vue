@@ -95,19 +95,37 @@ async function updateScans(){
     scansToCheck = datasetConfig.default.scans
   }
 
-  for (let element of scansToCheck){
-    let link = getVolumeLink(dataset.value,subject.value,site.value,element)
-    let doesLinkExist = await checkLink(link)
-    if(doesLinkExist){
-      output.push(element)
+  // for (let element of scansToCheck){
+  //   let link = getVolumeLink(dataset.value,subject.value,site.value,element)
+  //   let doesLinkExist = await checkLink(link)
+  //   if(doesLinkExist){
+  //     output.push(element)
+  //   }
+  // }
+
+  //this should probably be made into its own function that can be reused, function checkLink
+  let x = scansToCheck.map(async (item) => {
+    let link = getVolumeLink(dataset.value,subject.value,site.value,item)
+    if(await checkLink(link)){
+      return item
     }else{
-      console.log("scan does not exist: ",element) //should this be included in production?
+      return false
+    }
+  })
+
+  let checkedLinks = await Promise.all(x)
+
+  for(let item of checkedLinks){
+    if(item){
+      output.push(item)
     }
   }
-  if(output.length < 1){
-    throw new Error("no scans exist for subject",{value:subject.value})
-  }
   return output
+
+  // if(output.length < 1){
+  //   throw new Error("no scans exist for subject",{value:subject.value})
+  // }
+  // return output
 }
 async function updateBundles(){
   var bundlesToCheck = null
@@ -122,16 +140,22 @@ async function updateBundles(){
     bundlesToCheck = datasetConfig.defualt.bundles
   }
 
-  for(let element of bundlesToCheck){
-    let link = getBundleLink(dataset.value,subject.value,site.value,element)
-    let doesLinkExist = await checkLink(link)
-    if(doesLinkExist){
-      output.push(element)
+  let x = bundlesToCheck.map(async (item) => {
+    let link = getBundleLink(dataset.value,subject.value,site.value,item)
+    if(await checkLink(link)){
+      return item
     }else{
-      console.log("bundle does not exist: ",element)
+      return false
+    }
+  })
+
+  let checkedLinks = await Promise.all(x)
+
+  for(let item of checkedLinks){
+    if(item){
+      output.push(item)
     }
   }
-
   return output
 }
 watch(subject, async (newVal) => {
