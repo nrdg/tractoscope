@@ -1,9 +1,11 @@
 <template>
-<DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
-<SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
-<ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
-<ListSelect v-model:value="scan" :list="scans"/>
-<BundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
+<div id = "menu">
+  <DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
+  <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
+  <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
+  <ListSelect v-model:value="scan" :list="scans"/>
+  <BundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
+</div>
 <div id="vars">
   <!-- <ul>
     <li>dataset = {{ dataset?.name }}</li>
@@ -187,5 +189,13 @@ watch(subject, async (newVal) => {
   height: 80vh;
   width: 96vw;
   margin: auto;
+}
+#menu{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#menu > * {
+    padding: 10px 10px;      /* Adds some padding to each child item */
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup>
 import {Niivue} from '@niivue/niivue'
 import {onMounted,ref,watch} from 'vue';
-import { checkLink, getVolumeLink, getBundleLink,toRaw } from '../utilites/DatasetLogic';
+import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
 
 const props = defineProps({
     // subject: {type: Object, required: true,
@@ -91,7 +91,9 @@ watch(() => props.site, () => {
     updateVolume()
 })
 watch(() => props.bundles, () => {
-    loadBundles()
+    if(nv){
+        loadBundles()
+    }
 })
 </script>
 

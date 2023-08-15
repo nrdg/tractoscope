@@ -4,10 +4,16 @@
     v-model="subject"
     :value="subject"
     :searchable="true"
-    :close-on-select="true"/>
+    :close-on-select="true"
+    class="test"/>
+<div>
+<button @click="incrementSubject(-1)">&lt;</button>
+<button @click="incrementSubject(1)">&gt;</button>
+</div>
 </template>
 
-<style src = "@vueform/multiselect/themes/default.css"></style>
+<style scoped src = "@vueform/multiselect/themes/default.css">
+</style>
 
 <script setup>
 import {watch,ref, computed, onMounted} from 'vue'
@@ -43,8 +49,19 @@ function getOptions(list){
         return []
     }
 }
+function incrementSubject(increment){
+    let index = props.subjectList.indexOf(subject.value)
+    index += increment
+    if(index >= 0 && index < props.subjectList.length){
+        let x = props.subjectList[index]
+        subject.value = props.subjectList[index]
+    }
+}
 watch(() => props.subjectList, () => {
     options.value = getOptions(props.subjectList)
     subject.value = options.value[0].value
 })
 </script>
+
+<style>
+</style>
