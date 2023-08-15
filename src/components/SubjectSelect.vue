@@ -2,7 +2,7 @@
 <Multiselect
     :options="options"
     v-model="subject"
-    :value="subject"
+    :value="props.subject"
     :searchable="true"
     :close-on-select="true"
     class="test"/>
