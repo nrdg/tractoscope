@@ -1,5 +1,6 @@
 <template>
 <div>
+Dataset:
 <select v-model="selectedDataset">
     <option v-for="dataset in props.datasets" :key="dataset.id" :value="dataset">{{ dataset.name }}</option>
 </select>
