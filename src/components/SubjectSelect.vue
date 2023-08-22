@@ -1,12 +1,6 @@
 <template>
-<Multiselect
-    :options="options"
-    v-model="subject"
-    :value="props.subject"
-    :searchable="true"
-    :close-on-select="true"
-    class="test"/>
-<div>
+<div id="buttons">
+<SearchableListSelect v-model:selected="subject" :list="props.subjectList" id="select"/>
 <button @click="incrementSubject(-1)">&lt;</button>
 <button @click="incrementSubject(1)">&gt;</button>
 </div>
@@ -17,7 +11,7 @@
 
 <script setup>
 import {watch,ref, computed, onMounted} from 'vue'
-import Multiselect from '@vueform/multiselect'
+import SearchableListSelect from './SearchableListSelect.vue';
 
 const props = defineProps({
     subject: {}, //this prop has no requirments as it is only set by this component, not read
@@ -63,5 +57,13 @@ watch(() => props.subjectList, () => {
 })
 </script>
 
-<style>
+<style scoped>
+.buttons{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.select{
+    padding-left: 0px;
+    padding-right: 0px;
+}
 </style>

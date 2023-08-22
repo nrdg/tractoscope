@@ -1,4 +1,5 @@
 <template>
+{{ subject }}
 <div id = "menu">
   <DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
   <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
@@ -30,17 +31,17 @@
 </template>
 
 <script setup>
-import SubjectSelect from './components/SubjectSelect.vue';
 import DatasetSelect from './components/DatasetSelect.vue';
 import ListSelect from './components/ListSelect.vue';
 import NiivueRender from './components/NiivueRender.vue';
+import SubjectSelect from './components/SubjectSelect.vue';
+import BundleSelect from './components/BundleSelect.vue';
 
 import { updateSubjectList,getVolumeLink,getBundleLink,checkLink } from './utilites/DatasetLogic';
 
 import datasetConfig from '/public/datasetConfig.json'
 
 import {ref,computed, watch} from 'vue';
-import BundleSelect from './components/BundleSelect.vue';
 
 
 const datasets = datasetConfig.datasets
