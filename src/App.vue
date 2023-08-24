@@ -1,5 +1,4 @@
 <template>
-{{ subject }}
 <div id = "menu">
   <DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
   <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
@@ -7,26 +6,14 @@
   <ListSelect v-model:value="scan" :list="scans"/>
   <BundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
 </div>
-<div id="vars">
-  <!-- <ul>
-    <li>dataset = {{ dataset?.name }}</li>
-    <li>subject = {{ subject }}</li>
-    <li>sites = {{ sites }}</li>
-    <li>site = {{ site }}</li>
-    <li>scans = {{ scans }}</li>
-    <li>scan = {{ scan }}</li>
-    <li>bundles = {{ bundles }}</li>
-    <li>selectedBundles = {{ selectedBundles }}</li>
-  </ul> -->
-  <div id="niivue">
-    <NiivueRender
-    :dataset="dataset"
-    :subject="subject"
-    :site="site"
-    :scan="scan"
-    :bundles="selectedBundles"
-    />
-  </div>
+<div id="niivue">
+  <NiivueRender
+  :dataset="dataset"
+  :subject="subject"
+  :site="site"
+  :scan="scan"
+  :bundles="selectedBundles"
+  />
 </div>
 </template>
 
@@ -98,14 +85,6 @@ async function updateScans(){
     scansToCheck = datasetConfig.default.scans
   }
 
-  // for (let element of scansToCheck){
-  //   let link = getVolumeLink(dataset.value,subject.value,site.value,element)
-  //   let doesLinkExist = await checkLink(link)
-  //   if(doesLinkExist){
-  //     output.push(element)
-  //   }
-  // }
-
   //this should probably be made into its own function that can be reused, function checkLink
   let x = scansToCheck.map(async (item) => {
     let link = getVolumeLink(dataset.value,subject.value,site.value,item)
@@ -125,11 +104,12 @@ async function updateScans(){
   }
   return output
 
-  // if(output.length < 1){
-  //   throw new Error("no scans exist for subject",{value:subject.value})
-  // }
-  // return output
+  if(output.length < 1){
+    throw new Error("no scans exist for subject",{value:subject.value})
+  }
+  return output
 }
+
 async function updateBundles(){
   var bundlesToCheck = null
   const output = []
@@ -161,6 +141,7 @@ async function updateBundles(){
   }
   return output
 }
+
 watch(subject, async (newVal) => {
   if(newVal){
     updateSite()
@@ -183,6 +164,8 @@ watch(subject, async (newVal) => {
     })
   }
 })
+
+
 </script>
 
 <style>

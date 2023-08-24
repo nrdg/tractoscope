@@ -36,6 +36,7 @@ const props = defineProps({
 })
 
 var nv = null
+var zoom = 0.1
 
 function loadVolume(volumeLink){
     nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}))
@@ -77,6 +78,30 @@ async function loadBundles(){
         await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
     }
 }
+function changeZoom(){
+      nv.scene.volScaleMultiplier = zoom*10;
+      nv.drawScene()
+}
+function downloadNifti(){
+    console.log(props.subject)
+    const fileName = props.subject.id+'_'+props.site+'_'+props.scan+'.nii.gz'
+    const volumeLink = getVolumeLink(props.dataset,props.subject,props.site,props.scan)
+    if (checkLink(volumeLink)){
+        fetch(volumeLink)
+        .then(res => res.blob())
+        .then(res => {
+            const aElement = document.createElement('a');
+            aElement.setAttribute('download', fileName);
+            const href = URL.createObjectURL(res);
+            aElement.href = href;
+            aElement.setAttribute('target', '_blank');
+            aElement.click();
+            URL.revokeObjectURL(href);
+    });
+    }else{
+        throw new Error("volumeLink failed check, likely does not exist",{value: volumeLink})
+    }
+}
 //must be cleaner way to watch multiple objects?
 watch(() => props.subject, () => {
     updateVolume()
@@ -99,11 +124,14 @@ watch(() => props.bundles, () => {
 
 <template>
     <canvas id="gl"></canvas>
+    <div>C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera | Zoom:
+        <input type="range" min="0.01" max="0.5" step="0.01" class="slider" v-model="zoom" @input="changeZoom"/>
+        <button id="download" @click = "downloadNifti" >Download NIFTI file</button> </div>
 </template>
 
 <style scoped>
-#zoom{
-  background-color: white;
-  display: "block";
+#download{
+    float: right;
 }
+
 </style>
