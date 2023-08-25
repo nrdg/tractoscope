@@ -133,5 +133,7 @@ watch(() => props.bundles, () => {
 #download{
     float: right;
 }
-
+#gl{
+    border: 1px solid black;
+}
 </style>
