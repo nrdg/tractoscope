@@ -3,6 +3,7 @@
   <DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
   <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
   <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
+  <div v-if="!showSiteSelect">site: {{ sites[0] }}</div>
   <ListSelect v-model:value="scan" :list="scans"/>
   <BundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
 </div>
