@@ -1,8 +1,9 @@
 {
     "datasets":[
-       {
+      {
           "name":"HBN",
           "prefix":"https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated",
+          "participantList":"/derivatives/afq/participants.tsv",
           "scans":[
              "model-DKI_FA",
              "b0",
@@ -254,10 +255,15 @@
                 ]
              }
           ]
-       }
+       },
+       {
+         "name":"HCP",
+         "prefix":"https://open-neurodata.s3.amazonaws.com/rokem/hcp1200"
+      }
     ],
     "default":{
-       "scans":[
+         "participantList":"/afq/participants.tsv",
+         "scans":[
           "model-DKI_FA",
           "b0",
           "model-CSD_APM",
@@ -265,16 +271,16 @@
           "model-DKI_MD",
           "model-DKI_MK",
           "model-DTI_FA"
-       ],
-       "bundles":[
-          {
-             "name":"Anterior Frontal",
-             "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk",
-             "rgba255":[
-                31,
-                119,
-                180,
-                255
+         ],
+         "bundles":[
+            {
+               "name":"Anterior Frontal",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk",
+               "rgba255":[
+                  31,
+                  119,
+                  180,
+                  255
              ]
           },
           {
