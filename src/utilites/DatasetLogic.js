@@ -1,12 +1,18 @@
-import filePathConfig from "/public/filePathConfig.json"
+import datasetConfig from "/public/datasetConfig.json"
 import * as d3 from 'd3'
 
 export async function updateSubjectList(dataset){
     if(dataset){
-        const filePath = filePathConfig.participantList
-        const x = await d3.tsv(dataset.prefix+filePath)
-        const subjectList = combindDuplicateSites(x)
-        return subjectList
+        if (dataset.hasOwnProperty('participantList')){
+            const x = await d3.tsv(dataset.prefix+dataset.participantList)
+            const subjectList = combindDuplicateSites(x)
+            return subjectList
+        }else{
+            console.log("dataset does not contain participants filepath, using default")
+            const x = await d3.tsv(dataset.prefix+datasetConfig.default.participantList)
+            const subjectList = combindDuplicateSites(x)
+            return subjectList
+        }
     } else {
         throw new Error("Dataset is not defined");
     }
