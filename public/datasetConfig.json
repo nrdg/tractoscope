@@ -258,7 +258,8 @@
        },
        {
          "name":"HCP",
-         "prefix":"https://open-neurodata.s3.amazonaws.com/rokem/hcp1200"
+         "prefix":"https://open-neurodata.s3.amazonaws.com/rokem/hcp1200",
+         "participantList":"/afq/participants.tsv"
       }
     ],
     "default":{

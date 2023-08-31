@@ -103,8 +103,6 @@ async function updateScans(){
       output.push(item)
     }
   }
-  return output
-
   if(output.length < 1){
     throw new Error("no scans exist for subject",{value:subject.value})
   }
@@ -142,6 +140,9 @@ async function updateBundles(){
   }
   return output
 }
+watch(dataset, (newVal) => {
+  initalizeSubjectList()
+})
 
 watch(subject, async (newVal) => {
   if(newVal){

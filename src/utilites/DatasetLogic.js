@@ -4,7 +4,8 @@ import * as d3 from 'd3'
 export async function updateSubjectList(dataset){
     if(dataset){
         if (dataset.hasOwnProperty('participantList')){
-            const x = await d3.tsv(dataset.prefix+dataset.participantList)
+            let link = dataset.prefix+dataset.participantList
+            const x = await d3.tsv(link)
             const subjectList = combindDuplicateSites(x)
             return subjectList
         }else{
