@@ -123,7 +123,9 @@ watch(() => props.bundles, () => {
 </script>
 
 <template>
-    <canvas id="gl"></canvas>
+    <div id = "canvas">
+        <canvas id="gl">Your system doesn't support canvas</canvas>
+    </div>
     <div>C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera | Zoom:
         <input type="range" min="0.01" max="0.5" step="0.01" class="slider" v-model="zoom" @input="changeZoom"/>
         <button id="download" @click = "downloadNifti" >Download NIFTI file</button> </div>
@@ -133,7 +135,8 @@ watch(() => props.bundles, () => {
 #download{
     float: right;
 }
-#gl{
-    border: 1px solid black;
+#canvas{
+    width: 100vh;
+    height: 80vh;
 }
 </style>
