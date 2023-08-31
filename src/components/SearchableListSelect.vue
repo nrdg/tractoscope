@@ -16,13 +16,6 @@ const props = defineProps({
     list: {
         type: Array,
         required: true,
-        // validator: value => {
-        //     return value.every(item => {
-        //         if(typeof(item) == 'Object'){
-        //             return item.hasOwnAttribute('id')
-        //         }
-        //     })
-        // }
     },
     selected: {
         type: [String, Object],

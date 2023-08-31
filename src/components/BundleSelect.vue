@@ -16,12 +16,6 @@ const props = defineProps({
     bundles: {
         type: Array,
         required: true,
-        // validator: (value) => {         // validator not currently working
-        //     value.every(element => {
-        //         console.log(element.name)
-        //         return element.hasOwnProperty('name')
-        //     })
-        // }
     },
     selectedBundles: {type:Array,
         required:true

@@ -4,11 +4,6 @@ import {onMounted,ref,watch} from 'vue';
 import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
 
 const props = defineProps({
-    // subject: {type: Object, required: true,
-    //     validator: (value) => {
-    //         return value.hasOwnProperty('id') && value.hasOwnProperty('site')
-    //     }
-    // },
     subject: {},
     dataset:{
         type:Object,
@@ -22,13 +17,6 @@ const props = defineProps({
         required: false
     },
     scan: {},
-    // scan:{
-    //     type: String,
-    //     required: true,
-    //     validator: (value) => {
-    //         return value.every(element => element.hasOwnProperty('fileName'))
-    //     }
-    // },
     site:{
         type: String,
         required: false,
@@ -102,6 +90,7 @@ function downloadNifti(){
         throw new Error("volumeLink failed check, likely does not exist",{value: volumeLink})
     }
 }
+
 //must be cleaner way to watch multiple objects?
 watch(() => props.subject, () => {
     updateVolume()
