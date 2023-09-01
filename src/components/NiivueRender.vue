@@ -28,7 +28,7 @@ var zoom = 0.1
 
 function loadVolume(volumeLink){
     nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}))
-    nv.setSliceType(nv.sliceTypeRender)
+    nv.setSliceType(nv.sliceTypeMultiplanar);
     nv.attachTo('gl')
     nv.setClipPlane([-0.1, 270, 0])
     const volumeList = [
@@ -112,7 +112,7 @@ watch(() => props.bundles, () => {
 </script>
 
 <template>
-    <div id = "canvas">
+    <div id = "canvas-container">
         <canvas id="gl">Your system doesn't support canvas</canvas>
     </div>
     <div>C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera | Zoom:
@@ -124,8 +124,11 @@ watch(() => props.bundles, () => {
 #download{
     float: right;
 }
-#canvas{
+#canvas-container{
     width: 100vh;
     height: 80vh;
+}
+#gl{
+    border: black 1px solid;
 }
 </style>
