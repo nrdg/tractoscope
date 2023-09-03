@@ -1,4 +1,5 @@
 <script setup>
+import ToolTip from './ToolTip.vue';
 import {Niivue} from '@niivue/niivue'
 import {onMounted,ref,watch} from 'vue';
 import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
@@ -25,6 +26,7 @@ const props = defineProps({
 
 var nv = null
 var zoom = 0.1
+const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
 
 function loadVolume(volumeLink){
     nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}))
@@ -115,9 +117,15 @@ watch(() => props.bundles, () => {
     <div id = "canvas-container">
         <canvas id="gl">Your system doesn't support canvas</canvas>
     </div>
-    <div>C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera | Zoom:
-        <input type="range" min="0.01" max="0.5" step="0.01" class="slider" v-model="zoom" @input="changeZoom"/>
-        <button id="download" @click = "downloadNifti" >Download NIFTI file</button> </div>
+    <div class="bottom-bar">
+        <div class="tooltip">
+            <ToolTip :tip="tip">Controls</ToolTip>
+        </div>
+        <div class="zoom">
+                Zoom: <input type="range" min="0.01" max="0.5" step="0.01" class="slider" v-model="zoom" @input="changeZoom"/>
+        </div>
+        <button id="download" @click = "downloadNifti" >Download NIFTI file</button>
+    </div>
 </template>
 
 <style scoped>
@@ -130,5 +138,8 @@ watch(() => props.bundles, () => {
 }
 #gl{
     border: black 1px solid;
+}
+#bottom-bar{
+    display: inline;
 }
 </style>

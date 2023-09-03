@@ -19,6 +19,7 @@
 </template>
 
 <script setup>
+import ToolTip from './components/ToolTip.vue'
 import DatasetSelect from './components/DatasetSelect.vue';
 import ListSelect from './components/ListSelect.vue';
 import NiivueRender from './components/NiivueRender.vue';
