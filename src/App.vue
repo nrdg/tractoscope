@@ -1,13 +1,5 @@
 <template>
-<div id = "menu">
-  <DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
-  <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
-  <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
-  <div v-if="!showSiteSelect">site: {{ sites[0] }}</div>
-  <ListSelect v-model:value="scan" :list="scans"/>
-  <BundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
-</div>
-<div id="niivue">
+<div id = "app">
   <NiivueRender
   :dataset="dataset"
   :subject="subject"
@@ -15,6 +7,14 @@
   :scan="scan"
   :bundles="selectedBundles"
   />
+  <div class = "vertical-menu">
+    <DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
+    <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
+    <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
+    <div v-if="!showSiteSelect">site: {{ sites[0] }}</div>
+    <ListSelect v-model:value="scan" :list="scans"/>
+    <BundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
+  </div>
 </div>
 </template>
 
@@ -172,17 +172,30 @@ watch(subject, async (newVal) => {
 </script>
 
 <style>
+#app{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+}
 #niivue{
   height: 80vh;
   width: 96vw;
   margin: auto;
 }
-#menu{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.vertical-menu{
+  display: grid;
+  justify-content: left;
+  align-items: left;
+  align-content: start;
+  width: 100vw;
+  padding: 10px;
 }
-#menu > * {
-    padding: 10px 10px;      /* Adds some padding to each child item */
+.vertical-menu > * {
+    padding-bottom: 20px;
+}
+
+.vertical-menu > *:last-child {
+    padding-bottom: 0;
 }
 </style>
