@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class = "search-select">
       <input v-model="searchQuery" placeholder="Search Subjects..." @input="filterList" />
       <select v-model="selected">
         <option v-for="item in filteredList" :value="item">
@@ -37,3 +37,12 @@ const filteredList = computed({
     }
 })
 </script>
+
+<style scoped>
+.search-select {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    width: 200px;
+}
+</style>
