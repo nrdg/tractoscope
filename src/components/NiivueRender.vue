@@ -136,7 +136,7 @@ watch(() => props.bundles, () => {
 }
 #canvas-container{
     width: 110vh;
-    height: 95vh;
+    height: 93vh;
 }
 #gl{
     align-self: left;
