@@ -1,14 +1,10 @@
 <script setup>
+import ToolTip from './ToolTip.vue';
 import {Niivue} from '@niivue/niivue'
 import {onMounted,ref,watch} from 'vue';
 import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
 
 const props = defineProps({
-    // subject: {type: Object, required: true,
-    //     validator: (value) => {
-    //         return value.hasOwnProperty('id') && value.hasOwnProperty('site')
-    //     }
-    // },
     subject: {},
     dataset:{
         type:Object,
@@ -22,13 +18,6 @@ const props = defineProps({
         required: false
     },
     scan: {},
-    // scan:{
-    //     type: String,
-    //     required: true,
-    //     validator: (value) => {
-    //         return value.every(element => element.hasOwnProperty('fileName'))
-    //     }
-    // },
     site:{
         type: String,
         required: false,
@@ -37,10 +26,11 @@ const props = defineProps({
 
 var nv = null
 var zoom = 0.1
+const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
 
 function loadVolume(volumeLink){
     nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}))
-    nv.setSliceType(nv.sliceTypeRender)
+    nv.setSliceType(nv.sliceTypeMultiplanar);
     nv.attachTo('gl')
     nv.setClipPlane([-0.1, 270, 0])
     const volumeList = [
@@ -102,6 +92,7 @@ function downloadNifti(){
         throw new Error("volumeLink failed check, likely does not exist",{value: volumeLink})
     }
 }
+
 //must be cleaner way to watch multiple objects?
 watch(() => props.subject, () => {
     updateVolume()
@@ -123,17 +114,37 @@ watch(() => props.bundles, () => {
 </script>
 
 <template>
-    <canvas id="gl"></canvas>
-    <div>C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera | Zoom:
-        <input type="range" min="0.01" max="0.5" step="0.01" class="slider" v-model="zoom" @input="changeZoom"/>
-        <button id="download" @click = "downloadNifti" >Download NIFTI file</button> </div>
+    <div id="app">
+        <div id = "canvas-container">
+            <canvas id="gl">Your system doesn't support canvas</canvas>
+        </div>
+        <div class="bottom-bar">
+            <div class="tooltip">
+                <ToolTip :tip="tip">Controls</ToolTip>
+            </div>
+            <div class="zoom">
+                    Zoom: <input type="range" min="0.01" max="0.5" step="0.01" v-model="zoom" @input="changeZoom"/>
+            </div>
+            <button id="download" @click = "downloadNifti" >Download NIFTI file</button>
+        </div>
+    </div>
 </template>
 
 <style scoped>
-#download{
-    float: right;
+#app{
+    display: grid;
+}
+#canvas-container{
+    width: 110vh;
+    height: 93vh;
 }
 #gl{
-    border: 1px solid black;
+    align-self: left;
+    border: black 1px solid;
+}
+.bottom-bar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 </style>
