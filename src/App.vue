@@ -124,7 +124,7 @@ async function updateBundles(){
     bundlesToCheck = [...new Set(x)]
   }else{
     console.log("dataset",dataset.value.name," does not contain bundles, using defaults")
-    bundlesToCheck = datasetConfig.defualt.bundles
+    bundlesToCheck = datasetConfig.default.bundles
   }
 
   let x = bundlesToCheck.map(async (item) => {
