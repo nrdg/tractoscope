@@ -67,11 +67,11 @@ export function getBundleLink(dataset,subjectId,site,bundle){
     const name = dataset.name
     const prefix = dataset.prefix
     if(dataset.name == "HBN"){
-        let link = prefix+"/afq/"+id+"/ses-"+name+"site"+site+"/clean_bundles/"+id+"_ses-"+name+"site"+site+fileName
-        return link
+        var link = prefix+"/afq/"+id+"/ses-"+name+"site"+site+"/clean_bundles/"+id+"_ses-"+name+"site"+site+fileName
     }else{
+        // var link = prefix+"/afq/"+id+"/"+site+"/bundles/"+id+"_"+fileName
     }
-
+    return link
 }
 
 // this is still fairly slow, dispite in theory only fetching the first byte of the file
