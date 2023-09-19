@@ -42,7 +42,11 @@ export function getVolumeLink(dataset,subjectId,site,scan){
     }if(subjectId.hasOwnProperty("id")){
         id = subjectId.id
     }
-    let link = prefix+"/afq/"+id+"/ses-"+name+"site"+site+"/"+id+"_ses-"+name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+scan+'.nii.gz'
+    if(dataset.name == "HBN"){
+        var link = prefix+"/afq/"+id+"/ses-"+name+"site"+site+"/"+id+"_ses-"+name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+scan+'.nii.gz'
+    }else{
+        var link = prefix+"/afq/"+id+"/"+site+"/"+id+"_dwi_"+scan+".nii.gz"
+    }
     return link
 }
 
@@ -62,8 +66,12 @@ export function getBundleLink(dataset,subjectId,site,bundle){
     }
     const name = dataset.name
     const prefix = dataset.prefix
-    let link = prefix+"/afq/"+id+"/ses-"+name+"site"+site+"/clean_bundles/"+id+"_ses-"+name+"site"+site+fileName
-    return link
+    if(dataset.name == "HBN"){
+        let link = prefix+"/afq/"+id+"/ses-"+name+"site"+site+"/clean_bundles/"+id+"_ses-"+name+"site"+site+fileName
+        return link
+    }else{
+    }
+
 }
 
 // this is still fairly slow, dispite in theory only fetching the first byte of the file
