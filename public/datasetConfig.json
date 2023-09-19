@@ -2,8 +2,8 @@
     "datasets":[
       {
           "name":"HBN",
-          "prefix":"https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated",
-          "participantList":"/derivatives/afq/participants.tsv",
+          "prefix":"https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives",
+          "participantList":"/afq/participants.tsv",
           "scans":[
              "model-DKI_FA",
              "b0",

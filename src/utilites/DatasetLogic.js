@@ -42,7 +42,7 @@ export function getVolumeLink(dataset,subjectId,site,scan){
     }if(subjectId.hasOwnProperty("id")){
         id = subjectId.id
     }
-    let link = prefix+"/derivatives/afq/"+id+"/ses-"+name+"site"+site+"/"+id+"_ses-"+name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+scan+'.nii.gz'
+    let link = prefix+"/afq/"+id+"/ses-"+name+"site"+site+"/"+id+"_ses-"+name+"site"+site+"_acq-64dir_space-T1w_desc-preproc_dwi_"+scan+'.nii.gz'
     return link
 }
 
@@ -62,7 +62,7 @@ export function getBundleLink(dataset,subjectId,site,bundle){
     }
     const name = dataset.name
     const prefix = dataset.prefix
-    let link = prefix+"/derivatives/afq/"+id+"/ses-"+name+"site"+site+"/clean_bundles/"+id+"_ses-"+name+"site"+site+fileName
+    let link = prefix+"/afq/"+id+"/ses-"+name+"site"+site+"/clean_bundles/"+id+"_ses-"+name+"site"+site+fileName
     return link
 }
 
