@@ -1,36 +1,39 @@
 <script setup>
-import {computed} from 'vue'
+import { computed, defineProps, defineEmits } from 'vue'
 
-props = defineProps({
-    items: {type: Array, required: True},
-    selected:{type: Array, required: True}
+
+const props = defineProps({
+    items: {type: Array, required: true},
+    selected:{type: Array, required: true}
 })
 
-emit = defineEmits(['update:selected'])
+const emit = defineEmits(['update:selected'])
 
-selected = computed({
+const selected = computed({
     get(){
         return props.selected
     },
     set(value){
-        emit('update:selected',value)
+        let x = selected.value
+        x.push(value)
+        emit('update:selected',x)
     }
 })
 
-filteredItems = computed({
-    get(){
-        var x = props.items
-        return x.filter(item => !selected.includes(item));
-    }
+const filteredItems = computed(() => {
+    return props.items.filter(item => !props.selected.includes(item))
 })
+
+
 
 function removeItem(item){
-    var x = selected.value.remove(item)
-    selected.value = x
+    const updatedSelection = selected.value.filter(selectedItem => selectedItem !== item);
+    emit('update:selected',updatedSelection)
 }
 </script>
 
 <template>
+    {{ selected }}
     <div id="multiselect">
         <select v-model="selected">
             <option v-for="item in filteredItems" :value="item">{{ item.name }}</option>

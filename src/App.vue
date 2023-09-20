@@ -13,18 +13,17 @@
     <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
     <div v-if="!showSiteSelect">site: {{ sites[0] }}</div>
     <ListSelect v-model:value="scan" :list="scans"/>
-    <BundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
+    <MultiSelect v-model:selected="selectedBundles" :items="bundles"/>
   </div>
 </div>
 </template>
 
 <script setup>
-import ToolTip from './components/ToolTip.vue'
 import DatasetSelect from './components/DatasetSelect.vue';
 import ListSelect from './components/ListSelect.vue';
 import NiivueRender from './components/NiivueRender.vue';
 import SubjectSelect from './components/SubjectSelect.vue';
-import BundleSelect from './components/BundleSelect.vue';
+import MultiSelect from './components/MultiSelect.vue';
 
 import { updateSubjectList,getVolumeLink,getBundleLink,checkLink } from './utilites/DatasetLogic';
 
