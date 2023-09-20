@@ -156,9 +156,6 @@ watch(() => props.subject, async () => {
 watch(() => props.scan, () => {
     updateVolume()
 })
-watch(() => props.dataset, () => {
-    updateVolume()
-})
 watch(() => props.site, () => {
     updateVolume()
 })
