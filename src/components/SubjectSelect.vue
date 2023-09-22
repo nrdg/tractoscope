@@ -6,7 +6,7 @@
 </div>
 </template>
 
-<style scoped src = "@vueform/multiselect/themes/default.css">
+<style>
 </style>
 
 <script setup>
