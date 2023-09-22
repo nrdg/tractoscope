@@ -32,7 +32,6 @@ function removeItem(item){
 }
 function toggleAll(){
    if(selected.value.length > 0){
-        console.log("deleteing all thigns")
         emit('update:selected',[])
     }else{
         emit('update:selected',props.items)
@@ -47,7 +46,7 @@ function toggleAll(){
         </select>
         <button @click="toggleAll()">toggle all</button>
         <div id="scrollBox">
-            <ul>
+            <ul id="remove">
                 <li v-for="item in selected"><button @click="removeItem(item)">x</button>{{ item.name }}</li>
             </ul>
         </div>
@@ -61,10 +60,14 @@ function toggleAll(){
   justify-content: space-between;
 }
 #scrollBox {
-border: none;
-padding: 5px;
-width: 200px;
-height: 200px;
-overflow: scroll;
+  border: none;
+  padding: 5px;
+  width: 200px;
+  max-height: 200px;
+  overflow: auto;
+}
+ul#remove {
+    list-style-type: none;
+    padding: 0;
 }
 </style>
