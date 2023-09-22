@@ -30,17 +30,27 @@ function removeItem(item){
     const updatedSelection = selected.value.filter(selectedItem => selectedItem !== item);
     emit('update:selected',updatedSelection)
 }
+function toggleAll(){
+   if(selected.value.length > 0){
+        console.log("deleteing all thigns")
+        emit('update:selected',[])
+    }else{
+        emit('update:selected',props.items)
+    }
+}
 </script>
 
 <template>
-    {{ selected }}
     <div id="multiselect">
         <select v-model="selected">
             <option v-for="item in filteredItems" :value="item">{{ item.name }}</option>
         </select>
-        <ul>
-            <li v-for="item in selected" @click="removeItem(item)">{{ item.name }}</li>
-        </ul>
+        <button @click="toggleAll()">toggle all</button>
+        <div id="scrollBox">
+            <ul>
+                <li v-for="item in selected"><button @click="removeItem(item)">x</button>{{ item.name }}</li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -49,5 +59,12 @@ function removeItem(item){
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+#scrollBox {
+border: none;
+padding: 5px;
+width: 200px;
+height: 200px;
+overflow: scroll;
 }
 </style>
