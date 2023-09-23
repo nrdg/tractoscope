@@ -9,17 +9,6 @@ const props = defineProps({
 
 const emit = defineEmits(['update:selected'])
 
-// const selected = computed({
-//     get(){
-//         return props.selected
-//     },
-//     set(value){
-//         let x = selected.value
-//         x.push(value)
-//         emit('update:selected',x)
-//     }
-// })
-
 const selected = computed({
     get(){
         return props.selected;
@@ -47,10 +36,6 @@ function toggleAll(){
         emit('update:selected',props.items)
     }
 }
-
-watch(() => selected.value, (newVal,oldVal) => {
-    console.log("selected changed")
-})
 </script>
 
 <template>
