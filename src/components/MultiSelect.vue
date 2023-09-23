@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineProps, defineEmits } from 'vue'
+import { computed, defineProps, defineEmits, watch } from 'vue'
 
 
 const props = defineProps({
@@ -9,16 +9,26 @@ const props = defineProps({
 
 const emit = defineEmits(['update:selected'])
 
+// const selected = computed({
+//     get(){
+//         return props.selected
+//     },
+//     set(value){
+//         let x = selected.value
+//         x.push(value)
+//         emit('update:selected',x)
+//     }
+// })
+
 const selected = computed({
     get(){
-        return props.selected
+        return props.selected;
     },
     set(value){
-        let x = selected.value
-        x.push(value)
-        emit('update:selected',x)
+        const newValue = [...selected.value, value];
+        emit('update:selected', newValue);
     }
-})
+});
 
 const filteredItems = computed(() => {
     return props.items.filter(item => !props.selected.includes(item))
@@ -37,6 +47,10 @@ function toggleAll(){
         emit('update:selected',props.items)
     }
 }
+
+watch(() => selected.value, (newVal,oldVal) => {
+    console.log("selected changed")
+})
 </script>
 
 <template>
