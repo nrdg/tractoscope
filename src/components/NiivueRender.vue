@@ -55,26 +55,6 @@ async function updateVolume(){
     }
 
 }
-// async function loadBundles(){
-//     if(nv.meshes.length){
-//         if(nv.meshes.length > 0){
-//             for(let i = 0; i < nv.meshes.length; i++){
-//                 nv.removeMesh(nv.meshes[i])
-//             }
-//         }
-//     }
-//     const bundleUrls = []
-//     props.bundles.forEach((element) => {
-//         let url = getBundleLink(props.dataset,props.subject,props.site,element)
-//         let color = element.rgba255
-//         let x = {url:url, rgba255: color}
-//         bundleUrls.push(x)
-//     })
-//     await nv.loadMeshes(bundleUrls)
-//     for(let i = 0; i<bundleUrls.length; i++){
-//         await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
-//     }
-// }
 
 function deleteBundles(bundles){
     for(let i = 0; i < bundles.length; i++){
