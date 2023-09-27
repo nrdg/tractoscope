@@ -13,7 +13,7 @@
     <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
     <div v-if="!showSiteSelect">site: {{ sites[0] }}</div>
     <ListSelect v-model:value="scan" :list="scans"/>
-    <MultiSelect v-model:selected="selectedBundles" :items="bundles"/>
+    <MultiSelect v-model:selected="selectedBundles" :items="bundles" v-if="bundles.length > 0"/>
   </div>
 </div>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
 import ToolTip from './ToolTip.vue';
-import {Niivue} from '@niivue/niivue'
+import {NVMesh, Niivue} from '@niivue/niivue'
 import {onMounted,ref,watch} from 'vue';
 import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
 
@@ -35,7 +35,7 @@ function loadVolume(volumeLink){
     nv.setClipPlane([-0.1, 270, 0])
     const volumeList = [
         {url: volumeLink,
-        colorMap: "gray"
+        colorMap: "gray",
         }
     ]
     nv.loadVolumes(volumeList)
@@ -55,19 +55,58 @@ async function updateVolume(){
     }
 
 }
-async function loadBundles(){
-    const bundleUrls = []
-    props.bundles.forEach((element) => {
-        let url = getBundleLink(props.dataset,props.subject,props.site,element)
-        let color = element.rgba255
-        let x = {url:url, rgba255: color}
-        bundleUrls.push(x)
-    })
-    await nv.loadMeshes(bundleUrls)
-    for(let i = 0; i<bundleUrls.length; i++){
-        await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
+// async function loadBundles(){
+//     if(nv.meshes.length){
+//         if(nv.meshes.length > 0){
+//             for(let i = 0; i < nv.meshes.length; i++){
+//                 nv.removeMesh(nv.meshes[i])
+//             }
+//         }
+//     }
+//     const bundleUrls = []
+//     props.bundles.forEach((element) => {
+//         let url = getBundleLink(props.dataset,props.subject,props.site,element)
+//         let color = element.rgba255
+//         let x = {url:url, rgba255: color}
+//         bundleUrls.push(x)
+//     })
+//     await nv.loadMeshes(bundleUrls)
+//     for(let i = 0; i<bundleUrls.length; i++){
+//         await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
+//     }
+// }
+
+function deleteBundles(bundles){
+    for(let i = 0; i < bundles.length; i++){
+        let url = getBundleLink(props.dataset,props.subject,props.site,bundles[i])
+        nv.removeMeshByUrl(url)
     }
 }
+async function loadBundles(bundles){
+    const meshes = []
+    for(let i = 0; i < bundles.length; i++){
+        let bundle = bundles[i]
+        let url = getBundleLink(props.dataset,props.subject,props.site,bundle)
+        let color = bundle.rgba255
+        let x = {url:url, rgba255: color}
+        meshes.push(x)
+    }
+    await nv.loadMeshes(meshes)
+}
+async function updateBundles(newBundles,oldBundles){
+    const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
+    const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
+
+    if(removedBundles.length > 0){
+        deleteBundles(removedBundles)
+    }
+
+    if(addedBundles.length > 0){
+        await loadBundles(newBundles)
+    }
+
+}
+
 function changeZoom(){
       nv.scene.volScaleMultiplier = zoom*10;
       nv.drawScene()
@@ -106,9 +145,9 @@ watch(() => props.dataset, () => {
 watch(() => props.site, () => {
     updateVolume()
 })
-watch(() => props.bundles, () => {
+watch(() => props.bundles, (newVal,oldVal) => {
     if(nv){
-        loadBundles()
+        updateBundles(newVal,oldVal)
     }
 })
 </script>
