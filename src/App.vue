@@ -12,8 +12,13 @@
     <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
     <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
     <div v-if="!showSiteSelect">site: {{ sites[0] }}</div>
-    <ListSelect v-model:value="scan" :list="scans"/>
-    <MultiSelect v-model:selected="selectedBundles" :items="bundles" v-if="bundles.length > 0"/>
+    <div>
+      Scan: <ListSelect v-model:value="scan" :list="scans"/>
+    </div>
+    <div v-if="bundles.length > 0">
+      Select Bundles:
+      <MultiSelect v-model:selected="selectedBundles" :items="bundles"/>
+    </div>
   </div>
 </div>
 </template>
