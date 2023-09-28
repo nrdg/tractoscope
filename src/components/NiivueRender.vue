@@ -82,7 +82,8 @@ async function loadBundle(bundle){
     let url = getBundleLink(props.dataset,props.subject,props.site,bundle)
     let color = bundle.rgba255
     let meshOptions = {url:url, rgba255: color, gl: nv.gl}
-    nv.addMeshFromUrl(meshOptions);
+    await nv.addMeshFromUrl(meshOptions);
+    return
   } else {
     console.error('WebGL context is not initialized');
   }
@@ -99,7 +100,11 @@ async function updateBundles(newBundles,oldBundles){
         for(let i=0;i<addedBundles.length;i++){
             let bundle = addedBundles[i]
             await loadBundle(bundle)
+            console.log("bundle finished loading")
         }
+    }
+    for(let i=0; i<nv.meshes.length;i++){
+                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
     }
 
 }
