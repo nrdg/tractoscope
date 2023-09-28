@@ -100,7 +100,6 @@ async function updateBundles(newBundles,oldBundles){
         for(let i=0;i<addedBundles.length;i++){
             let bundle = addedBundles[i]
             await loadBundle(bundle)
-            console.log("bundle finished loading")
         }
     }
     for(let i=0; i<nv.meshes.length;i++){
