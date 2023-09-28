@@ -73,6 +73,20 @@ async function loadBundles(bundles){
     }
     await nv.loadMeshes(meshes)
 }
+async function loadBundle(bundle){
+  if (!nv.initialized) {
+    await nv.init();
+  }
+
+  if (nv.gl) {
+    let url = getBundleLink(props.dataset,props.subject,props.site,bundle)
+    let color = bundle.rgba255
+    let meshOptions = {url:url, rgba255: color, gl: nv.gl}
+    nv.addMeshFromUrl(meshOptions);
+  } else {
+    console.error('WebGL context is not initialized');
+  }
+}
 async function updateBundles(newBundles,oldBundles){
     const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
     const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
@@ -82,7 +96,10 @@ async function updateBundles(newBundles,oldBundles){
     }
 
     if(addedBundles.length > 0){
-        await loadBundles(newBundles)
+        for(let i=0;i<addedBundles.length;i++){
+            let bundle = addedBundles[i]
+            await loadBundle(bundle)
+        }
     }
 
 }
