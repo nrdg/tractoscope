@@ -139,8 +139,11 @@ function downloadNifti(){
 //must be cleaner way to watch multiple objects?
 watch(() => props.subject, async () => {
     await updateVolume()
+    if(nv){
+        nv.setSliceType(nv.sliceTypeMultiplanar); //not sure why this is needed but if removed slice type changes to 3d
+    }
     if(props.bundles.length > 0){
-        await loadBundles(props.bundles)
+        loadBundles(props.bundles)
     }
 })
 watch(() => props.scan, () => {
