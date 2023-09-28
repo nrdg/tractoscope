@@ -171,7 +171,7 @@ watch(() => props.bundles, (newVal,oldVal) => {
             <div class="zoom">
                     Zoom: <input type="range" min="0.01" max="0.5" step="0.01" v-model="zoom" @input="changeZoom"/>
             </div>
-            <button id="download" @click = "downloadNifti" >Download NIFTI file</button> {{ bundles }}
+            <button id="download" @click = "downloadNifti" >Download NIFTI file</button>
         </div>
     </div>
 </template>
