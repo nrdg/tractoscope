@@ -46,7 +46,8 @@ async function updateVolume(){
     if(props.subject && props.dataset && props.site && props.scan){
         const volumeLink = getVolumeLink(props.dataset,props.subject,props.site,props.scan)
         if (await checkLink(volumeLink)){
-            loadVolume(volumeLink)
+            await loadVolume(volumeLink)
+            return
         }else{
             throw new Error("link failed check",{value: volumeLink});
         }
@@ -72,6 +73,9 @@ async function loadBundles(bundles){
         meshes.push(x)
     }
     await nv.loadMeshes(meshes)
+    for(let i=0; i<nv.meshes.length;i++){
+                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
+    }
 }
 async function loadBundle(bundle){
   if (!nv.initialized) {
@@ -113,7 +117,6 @@ function changeZoom(){
       nv.drawScene()
 }
 function downloadNifti(){
-    console.log(props.subject)
     const fileName = props.subject.id+'_'+props.site+'_'+props.scan+'.nii.gz'
     const volumeLink = getVolumeLink(props.dataset,props.subject,props.site,props.scan)
     if (checkLink(volumeLink)){
@@ -134,8 +137,11 @@ function downloadNifti(){
 }
 
 //must be cleaner way to watch multiple objects?
-watch(() => props.subject, () => {
-    updateVolume()
+watch(() => props.subject, async () => {
+    await updateVolume()
+    if(props.bundles.length > 0){
+        await loadBundles(props.bundles)
+    }
 })
 watch(() => props.scan, () => {
     updateVolume()
@@ -165,7 +171,7 @@ watch(() => props.bundles, (newVal,oldVal) => {
             <div class="zoom">
                     Zoom: <input type="range" min="0.01" max="0.5" step="0.01" v-model="zoom" @input="changeZoom"/>
             </div>
-            <button id="download" @click = "downloadNifti" >Download NIFTI file</button>
+            <button id="download" @click = "downloadNifti" >Download NIFTI file</button> {{ bundles }}
         </div>
     </div>
 </template>
