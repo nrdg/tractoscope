@@ -1,7 +1,7 @@
 <script setup>
 import ToolTip from './ToolTip.vue';
-import {NVMesh, Niivue} from '@niivue/niivue'
-import {onMounted,ref,watch} from 'vue';
+import {Niivue} from '@niivue/niivue'
+import {onMounted,watch} from 'vue';
 import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
 
 const props = defineProps({
@@ -28,18 +28,20 @@ var nv = null
 var zoom = 0.1
 const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
 
-function loadVolume(volumeLink){
-    nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}))
-    nv.setSliceType(nv.sliceTypeMultiplanar);
-    nv.attachTo('gl')
-    nv.setClipPlane([-0.1, 270, 0])
-    const volumeList = [
-        {url: volumeLink,
-        colorMap: "gray",
-        }
-    ]
-    nv.loadVolumes(volumeList)
-    nv.updateGLVolume()
+onMounted(() => {
+  nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}));
+  nv.attachTo("gl");
+  nv.setSliceType(nv.sliceTypeMultiplanar);
+  nv.setClipPlane([-0.1, 270, 0])
+});
+
+async function loadVolume(volumeLink){
+    if(nv){
+        const volumeList = [{url: volumeLink,colorMap: "gray",}]
+
+        await nv.loadVolumes(volumeList)
+        await nv.updateGLVolume()
+    }
 
 }
 async function updateVolume(){
