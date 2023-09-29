@@ -25,6 +25,7 @@ const props = defineProps({
 })
 
 var nv = null
+var isLoadingVolume = false
 var zoom = 0.1
 const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
 
@@ -35,12 +36,14 @@ onMounted(() => {
   nv.setClipPlane([-0.1, 270, 0])
 });
 
+//mediocre fix change/update
 async function loadVolume(volumeLink){
-    if(nv){
+    if(nv && !isLoadingVolume){
         const volumeList = [{url: volumeLink,colorMap: "gray",}]
-
+        isLoadingVolume = true
         await nv.loadVolumes(volumeList)
         await nv.updateGLVolume()
+        isLoadingVolume = false
     }
 
 }
@@ -94,6 +97,7 @@ async function loadBundle(bundle){
     console.error('WebGL context is not initialized');
   }
 }
+
 async function updateBundles(newBundles,oldBundles){
     const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
     const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
@@ -141,12 +145,12 @@ function downloadNifti(){
 //must be cleaner way to watch multiple objects?
 watch(() => props.subject, async () => {
     await updateVolume()
-    if(nv){
-        nv.setSliceType(nv.sliceTypeMultiplanar); //not sure why this is needed but if removed slice type changes to 3d
-    }
-    if(props.bundles.length > 0){
-        loadBundles(props.bundles)
-    }
+    // if(nv){
+    //     nv.setSliceType(nv.sliceTypeMultiplanar); //not sure why this is needed but if removed slice type changes to 3d
+    // }
+    // if(props.bundles.length > 0){
+    //     loadBundles(props.bundles)
+    // }
 })
 watch(() => props.scan, () => {
     updateVolume()
