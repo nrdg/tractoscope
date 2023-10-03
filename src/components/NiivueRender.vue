@@ -1,7 +1,7 @@
 <script setup>
 import ToolTip from './ToolTip.vue';
 import {Niivue} from '@niivue/niivue'
-import {onMounted,ref,watch} from 'vue';
+import {onMounted,watch} from 'vue';
 import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
 
 const props = defineProps({
@@ -25,28 +25,34 @@ const props = defineProps({
 })
 
 var nv = null
+var isLoadingVolume = false
 var zoom = 0.1
 const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
 
-function loadVolume(volumeLink){
-    nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}))
-    nv.setSliceType(nv.sliceTypeMultiplanar);
-    nv.attachTo('gl')
-    nv.setClipPlane([-0.1, 270, 0])
-    const volumeList = [
-        {url: volumeLink,
-        colorMap: "gray"
-        }
-    ]
-    nv.loadVolumes(volumeList)
-    nv.updateGLVolume()
+onMounted(() => {
+  nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}));
+  nv.attachTo("gl");
+  nv.setSliceType(nv.sliceTypeMultiplanar);
+  nv.setClipPlane([-0.1, 270, 0])
+});
+
+//mediocre fix change/update
+async function loadVolume(volumeLink){
+    if(nv && !isLoadingVolume){
+        const volumeList = [{url: volumeLink,colorMap: "gray",}]
+        isLoadingVolume = true
+        await nv.loadVolumes(volumeList)
+        await nv.updateGLVolume()
+        isLoadingVolume = false
+    }
 
 }
 async function updateVolume(){
     if(props.subject && props.dataset && props.site && props.scan){
         const volumeLink = getVolumeLink(props.dataset,props.subject,props.site,props.scan)
         if (await checkLink(volumeLink)){
-            loadVolume(volumeLink)
+            await loadVolume(volumeLink)
+            return
         }else{
             throw new Error("link failed check",{value: volumeLink});
         }
@@ -55,25 +61,68 @@ async function updateVolume(){
     }
 
 }
-async function loadBundles(){
-    const bundleUrls = []
-    props.bundles.forEach((element) => {
-        let url = getBundleLink(props.dataset,props.subject,props.site,element)
-        let color = element.rgba255
-        let x = {url:url, rgba255: color}
-        bundleUrls.push(x)
-    })
-    await nv.loadMeshes(bundleUrls)
-    for(let i = 0; i<bundleUrls.length; i++){
-        await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
+
+function deleteBundles(bundles){
+    for(let i = 0; i < bundles.length; i++){
+        let url = getBundleLink(props.dataset,props.subject,props.site,bundles[i])
+        nv.removeMeshByUrl(url)
     }
 }
+async function loadBundles(bundles){
+    const meshes = []
+    for(let i = 0; i < bundles.length; i++){
+        let bundle = bundles[i]
+        let url = getBundleLink(props.dataset,props.subject,props.site,bundle)
+        let color = bundle.rgba255
+        let x = {url:url, rgba255: color}
+        meshes.push(x)
+    }
+    await nv.loadMeshes(meshes)
+    for(let i=0; i<nv.meshes.length;i++){
+                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
+    }
+}
+async function loadBundle(bundle){
+  if (!nv.initialized) {
+    await nv.init();
+  }
+
+  if (nv.gl) {
+    let url = getBundleLink(props.dataset,props.subject,props.site,bundle)
+    let color = bundle.rgba255
+    let meshOptions = {url:url, rgba255: color, gl: nv.gl}
+    await nv.addMeshFromUrl(meshOptions);
+    return
+  } else {
+    console.error('WebGL context is not initialized');
+  }
+}
+
+async function updateBundles(newBundles,oldBundles){
+    const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
+    const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
+
+    if(removedBundles.length > 0){
+        deleteBundles(removedBundles)
+    }
+
+    if(addedBundles.length > 0){
+        for(let i=0;i<addedBundles.length;i++){
+            let bundle = addedBundles[i]
+            await loadBundle(bundle)
+        }
+    }
+    for(let i=0; i<nv.meshes.length;i++){
+                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
+    }
+
+}
+
 function changeZoom(){
       nv.scene.volScaleMultiplier = zoom*10;
       nv.drawScene()
 }
 function downloadNifti(){
-    console.log(props.subject)
     const fileName = props.subject.id+'_'+props.site+'_'+props.scan+'.nii.gz'
     const volumeLink = getVolumeLink(props.dataset,props.subject,props.site,props.scan)
     if (checkLink(volumeLink)){
@@ -94,8 +143,14 @@ function downloadNifti(){
 }
 
 //must be cleaner way to watch multiple objects?
-watch(() => props.subject, () => {
-    updateVolume()
+watch(() => props.subject, async () => {
+    await updateVolume()
+    // if(nv){
+    //     nv.setSliceType(nv.sliceTypeMultiplanar); //not sure why this is needed but if removed slice type changes to 3d
+    // }
+    // if(props.bundles.length > 0){
+    //     loadBundles(props.bundles)
+    // }
 })
 watch(() => props.scan, () => {
     updateVolume()
@@ -106,9 +161,9 @@ watch(() => props.dataset, () => {
 watch(() => props.site, () => {
     updateVolume()
 })
-watch(() => props.bundles, () => {
+watch(() => props.bundles, (newVal,oldVal) => {
     if(nv){
-        loadBundles()
+        updateBundles(newVal,oldVal)
     }
 })
 </script>

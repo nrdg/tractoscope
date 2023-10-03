@@ -12,19 +12,23 @@
     <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
     <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
     <div v-if="!showSiteSelect">site: {{ sites[0] }}</div>
-    <ListSelect v-model:value="scan" :list="scans"/>
-    <BundleSelect v-model:selectedBundles="selectedBundles" :bundles="bundles"/>
+    <div>
+      Scan: <ListSelect v-model:value="scan" :list="scans"/>
+    </div>
+    <div v-if="bundles.length > 0">
+      Select Bundles:
+      <MultiSelect v-model:selected="selectedBundles" :items="bundles"/>
+    </div>
   </div>
 </div>
 </template>
 
 <script setup>
-import ToolTip from './components/ToolTip.vue'
 import DatasetSelect from './components/DatasetSelect.vue';
 import ListSelect from './components/ListSelect.vue';
 import NiivueRender from './components/NiivueRender.vue';
 import SubjectSelect from './components/SubjectSelect.vue';
-import BundleSelect from './components/BundleSelect.vue';
+import MultiSelect from './components/MultiSelect.vue';
 
 import { updateSubjectList,getVolumeLink,getBundleLink,checkLink } from './utilites/DatasetLogic';
 
@@ -159,12 +163,13 @@ watch(subject, async (newVal) => {
     const newBundles = await updateBundles()
     bundles.value = newBundles
     let previouslySelectedBundles = selectedBundles.value
-    selectedBundles.value = []
+    let x = []
     previouslySelectedBundles.forEach((element) => {
       if(bundles.value.includes(element)){
-        selectedBundles.value.push(element)
+        x.push(element)
       }
     })
+    selectedBundles.value = x
   }
 })
 

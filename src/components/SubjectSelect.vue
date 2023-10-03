@@ -6,11 +6,11 @@
 </div>
 </template>
 
-<style scoped src = "@vueform/multiselect/themes/default.css">
+<style>
 </style>
 
 <script setup>
-import {watch,ref, computed, onMounted} from 'vue'
+import {watch,ref, computed} from 'vue'
 import SearchableListSelect from './SearchableListSelect.vue';
 
 const props = defineProps({
