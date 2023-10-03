@@ -19,6 +19,7 @@
       Select Bundles:
       <MultiSelect v-model:selected="selectedBundles" :items="bundles"/>
     </div>
+    {{ bundles }}
   </div>
 </div>
 </template>
@@ -68,6 +69,7 @@ async function initalizeSubjectList(){
   }
   subject.value = subjectList.value[0]
 }
+
 function updateSite(){
   if(typeof subject.value.site === 'string'){
     site.value = subject.value.site
@@ -115,20 +117,33 @@ async function updateScans(){
 }
 
 async function updateBundles(){
-  var bundlesToCheck = null
-  const output = []
-  if(dataset.value.hasOwnProperty('bundles')){
-    let datasetBundles = dataset.value.bundles
-    let defaultBundles = datasetConfig.default.bundles
-    let x = datasetBundles.concat(defaultBundles)
-    bundlesToCheck = [...new Set(x)]
+
+  var trxLink;
+  if('trxFiles' in dataset){
+    let trxFileName = dataset.value.trxFile.fileName
+    trxLink = getBundleLink(dataset.value,subject.value,site.value,trxFileName);
   }else{
-    console.log("dataset",dataset.value.name," does not contain bundles, using defaults")
-    bundlesToCheck = datasetConfig.default.bundles
+    let trxFileName = datasetConfig.default.trxFile.fileName
+    trxLink = getBundleLink(dataset.value,subject.value,site.value,trxFileName);
+  }
+  if(await checkLink(trxLink)){
+    return {"trxLink":trxLink} //update to inlcude bundles
   }
 
-  let x = bundlesToCheck.map(async (item) => {
-    let link = getBundleLink(dataset.value,subject.value,site.value,item)
+  let trksToCheck;
+  let defaultTrks = datasetConfig.default.trkFiles
+  if(dataset.value.hasOwnProperty('bundles')){
+    let datasetTrks = dataset.value.trkFiles
+    let x = datasetTrks.concat(defaultTrks)
+    trksToCheck = [...new Set(x)]
+  }else{
+    console.log("dataset",dataset.value.name," does not contain bundles, using defaults")
+    trksToCheck = defaultTrks
+  }
+
+  console.log(trksToCheck)
+  let x = trksToCheck.map(async (item) => {
+    let link = getBundleLink(dataset.value,subject.value,site.value,item.fileName)
     if(await checkLink(link)){
       return item
     }else{
@@ -137,14 +152,15 @@ async function updateBundles(){
   })
 
   let checkedLinks = await Promise.all(x)
-
+  let output = []
   for(let item of checkedLinks){
     if(item){
       output.push(item)
     }
   }
-  return output
+  return {"trkFiles":output}
 }
+
 watch(dataset, (newVal) => {
   initalizeSubjectList()
 })
@@ -172,7 +188,6 @@ watch(subject, async (newVal) => {
     selectedBundles.value = x
   }
 })
-
 
 </script>
 

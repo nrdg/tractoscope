@@ -50,29 +50,27 @@ export function getVolumeLink(dataset,subjectId,site,scan){
     return link
 }
 
-export function getBundleLink(dataset,subjectId,site,bundle){
-    var fileName = null
-    if(typeof bundle == "string"){
-        fineName = bundle
-    }if(bundle.hasOwnProperty("fileName")){
-        fileName = bundle.fileName
-    }
+export function getBundleLink(dataset,subjectId,site,fileName){
 
-    var id = null
+    var id;
     if(typeof subjectId == "string"){
         id = subjectId
     }if(subjectId.hasOwnProperty("id")){
         id = subjectId.id
+    }else{
+        throw new error("subjectId does not have property id",subjectId);
     }
     const name = dataset.name
     const prefix = dataset.prefix
     if(dataset.name == "HBN"){
         var link = prefix+"/afq/"+id+"/ses-"+name+"site"+site+"/clean_bundles/"+id+"_ses-"+name+"site"+site+fileName
     }else{
-        // var link = prefix+"/afq/"+id+"/"+site+"/bundles/"+id+"_"+fileName
+        var link = prefix+"/afq/"+id+"/"+site+"/"+id+fileName
     }
     return link
 }
+
+
 
 // this is still fairly slow, dispite in theory only fetching the first byte of the file
 // this may be due to a aws request limitation/restriction

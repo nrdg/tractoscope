@@ -13,7 +13,7 @@
              "model-DKI_MK",
              "model-DTI_FA"
           ],
-          "bundles":[
+          "trkFiles":[
              {
                 "name":"Anterior Frontal",
                 "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk",
@@ -259,7 +259,8 @@
        {
          "name":"HCP",
          "prefix":"https://open-neurodata.s3.amazonaws.com/rokem/hcp1200",
-         "participantList":"/afq/participants.tsv"
+         "participantList":"/afq/participants.tsv",
+         "trxFile":{"fileName":"_dwi_space-RASMM_model-CSD_desc-prob-afq-clean_tractography.trx"}
       }
     ],
     "default":{
@@ -273,7 +274,8 @@
           "model-DKI_MK",
           "model-DTI_FA"
          ],
-         "bundles":[
+         "trxFile":{"fileName":"_dwi_space-RASMM_model-CSD_desc-prob-afq-clean_tractography.trx"},
+         "trkFiles":[
             {
                "name":"Anterior Frontal",
                "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk",
