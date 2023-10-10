@@ -1,0 +1,13 @@
+{
+    "hbn":{
+        "bucket":"fcp-indi",
+        "prefix":"data/Projects/HBN/BIDS_curated/derivatives/afq/",
+        "participantsSize":2000
+
+    },
+    "hcp":{
+        "bucket":"open-neurodata",
+        "prefix":"rokem/hcp1200/afq/",
+        "participantsSize":2000
+    }
+}

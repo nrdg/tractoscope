@@ -1,221 +1,57 @@
 <template>
-<div id = "app">
-  <NiivueRender
-  :dataset="dataset"
-  :subject="subject"
-  :site="site"
-  :scan="scan"
-  :bundles="selectedBundles"
-  />
-  <div class = "vertical-menu">
-    <DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
-    <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
-    <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
-    <div v-if="!showSiteSelect">site: {{ sites[0] }}</div>
-    <div>
-      Scan: <ListSelect v-model:value="scan" :list="scans"/>
-    </div>
-    <div v-if="bundles.length > 0">
-      Select Bundles:
-      <MultiSelect v-model:selected="selectedBundles" :items="bundles"/>
-    </div>
-    {{ bundles }}
-  </div>
-</div>
-</template>
+  <header>AWS SDK TEST</header>
+  <select v-model="dataset">
+      <option v-for="(value,key) in datasets" :value="value">{{ key }}</option>
+  </select>
+  <select v-bind="subject">
+      <option v-for="item in subjects" :value="item">{{ item.fileName }}</option>
+  </select>
 
-<script setup>
-import DatasetSelect from './components/DatasetSelect.vue';
-import ListSelect from './components/ListSelect.vue';
-import NiivueRender from './components/NiivueRender.vue';
-import SubjectSelect from './components/SubjectSelect.vue';
-import MultiSelect from './components/MultiSelect.vue';
-
-import { updateSubjectList,getVolumeLink,getBundleLink,checkLink } from './utilites/DatasetLogic';
-
-import datasetConfig from '/public/datasetConfig.json'
-
-import {ref,computed, watch} from 'vue';
+  {{ dataset }}
+  </template>
 
 
-const datasets = datasetConfig.datasets
-const dataset = ref(datasets[0])
-const subjectList = ref([])
-const subject = ref(null)
-const sites = ref([])
-const site = ref(null)
-const scans = ref([])
-const scan = ref(null)
-const bundles = ref([])
-const selectedBundles = ref([])
+  <script setup>
+  import {onMounted, ref, watch, computed} from 'vue'
+  import datasets from "../public/datasets.json"
+  import {listObjects, listCommonPrefixes, getFileName} from "./utilites/awsHelper.js"
 
-//Maybe this should be inside of SiteSelect component for readability? though that would make it always rendered, which is maybe slower?
-const showSiteSelect = computed({
-  get(){
-    if(sites.value.length > 1){
-      return true
-    }else{
-      return false
-    }
-  }
-})
+  import SearchableListSelect from "./components/SearchableListSelect.vue"
 
-initalizeSubjectList()
-async function initalizeSubjectList(){
-  try{
-    subjectList.value = await updateSubjectList(dataset.value)
-  }catch(e){
-    console.log("updateSubjectList error",e.message)
-  }
-  subject.value = subjectList.value[0]
-}
+  const dataset = ref(datasets[Object.keys(datasets)[0]]);
+  const subjects = ref([]);
+  const subject = ref();
 
-function updateSite(){
-  if(typeof subject.value.site === 'string'){
-    site.value = subject.value.site
-    sites.value = [subject.value.site]
-  }else{
-    site.value = subject.value.site[0]
-    sites.value = subject.value.site
-  }
-}
-
-async function updateScans(){
-  var scansToCheck = null
-  const output = []
-  if(dataset.value.hasOwnProperty('scans')){
-    let datasetScans = dataset.value.scans
-    let defaultScans = datasetConfig.default.scans
-    let x = datasetScans.concat(defaultScans)
-    scansToCheck = [...new Set(x)]
-  }else{
-    console.log("dataset", dataset.value.name," does not contain scans, using defaults")
-    scansToCheck = datasetConfig.default.scans
-  }
-
-  //this should probably be made into its own function that can be reused, function checkLink
-  let x = scansToCheck.map(async (item) => {
-    let link = getVolumeLink(dataset.value,subject.value,site.value,item)
-    if(await checkLink(link)){
-      return item
-    }else{
-      return false
-    }
-  })
-
-  let checkedLinks = await Promise.all(x)
-
-  for(let item of checkedLinks){
-    if(item){
-      output.push(item)
-    }
-  }
-  if(output.length < 1){
-    throw new Error("no scans exist for subject",{value:subject.value})
-  }
-  return output
-}
-
-async function updateBundles(){
-
-  var trxLink;
-  if('trxFiles' in dataset){
-    let trxFileName = dataset.value.trxFile.fileName
-    trxLink = getBundleLink(dataset.value,subject.value,site.value,trxFileName);
-  }else{
-    let trxFileName = datasetConfig.default.trxFile.fileName
-    trxLink = getBundleLink(dataset.value,subject.value,site.value,trxFileName);
-  }
-  if(await checkLink(trxLink)){
-    return {"trxLink":trxLink} //update to inlcude bundles
-  }
-
-  let trksToCheck;
-  let defaultTrks = datasetConfig.default.trkFiles
-  if(dataset.value.hasOwnProperty('bundles')){
-    let datasetTrks = dataset.value.trkFiles
-    let x = datasetTrks.concat(defaultTrks)
-    trksToCheck = [...new Set(x)]
-  }else{
-    console.log("dataset",dataset.value.name," does not contain bundles, using defaults")
-    trksToCheck = defaultTrks
-  }
-
-  console.log(trksToCheck)
-  let x = trksToCheck.map(async (item) => {
-    let link = getBundleLink(dataset.value,subject.value,site.value,item.fileName)
-    if(await checkLink(link)){
-      return item
-    }else{
-      return false
-    }
-  })
-
-  let checkedLinks = await Promise.all(x)
-  let output = []
-  for(let item of checkedLinks){
-    if(item){
-      output.push(item)
-    }
-  }
-  return {"trkFiles":output}
-}
-
-watch(dataset, (newVal) => {
-  initalizeSubjectList()
-})
-
-watch(subject, async (newVal) => {
-  if(newVal){
-    updateSite()
-    scans.value = []
-    let newScans = await updateScans()
-    scans.value = newScans
-    if(!scans.value.includes(scan.value)){
-      scan.value = scans.value[0]
-    }
-
-    bundles.value = []
-    const newBundles = await updateBundles()
-    bundles.value = newBundles
-    let previouslySelectedBundles = selectedBundles.value
-    let x = []
-    previouslySelectedBundles.forEach((element) => {
-      if(bundles.value.includes(element)){
-        x.push(element)
+  const params = computed({
+      get(){
+          let output = {
+              Bucket: dataset.value.bucket,
+              Prefix: dataset.value.prefix,
+              Delimiter: '/'
+          }
+          return output
       }
-    })
-    selectedBundles.value = x
+  });
+
+
+  async function updateSubjects(){
+      subjects.value = [];
+      let prefixes = await listCommonPrefixes(params.value,dataset.value.participantsSize);
+      for (let prefix of prefixes){
+          let fileName = getFileName(prefix);
+          subjects.value.push({prefix,fileName});
+      }
   }
-})
+  onMounted(async () => {
+      updateSubjects();
+  });
 
-</script>
+  watch(dataset, async () => {
+      subjects.value = [];
+      subjects.value = await listCommonPrefixes(params.value,3000);
+  });
+  </script>
 
-<style>
-#app{
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-}
-#niivue{
-  height: 80vh;
-  width: 96vw;
-  margin: auto;
-}
-.vertical-menu{
-  display: grid;
-  justify-content: left;
-  align-items: left;
-  align-content: start;
-  width: 100vw;
-  padding: 10px;
-}
-.vertical-menu > * {
-    padding-bottom: 20px;
-}
+  <style>
 
-.vertical-menu > *:last-child {
-    padding-bottom: 0;
-}
-</style>
+  </style>
