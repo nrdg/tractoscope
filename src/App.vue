@@ -4,7 +4,7 @@
         <option v-for="(value, key) in datasets" :value="value">{{ key }}</option>
     </select>
     <select v-model="subject">
-        <option v-for="item in subjects" :value="item">{{ item.fileName }}</option>
+        <option v-for="item in subjects" :value="item">{{ item.folderName }}</option>
     </select>
     <br>
     dataset {{ dataset }} <br>
@@ -93,10 +93,13 @@ async function updateFiles() {
     let filesByExtension = groupByExtension(keys);
 
 
-    if (dataset.value.subfolders.trk) {
-        let path = params.Prefix + dataset.value.subfolders.trk;
-        filesByExtension["trk"] = filterBySubfolder(filesByExtension["trk"], path);
-    }
+    Object.entries(dataset.value.subfolders).forEach(([extension, subfolder]) => {
+        if (subfolder) {
+            const path = params.Prefix + subfolder;
+            filesByExtension[extension] = filterBySubfolder(filesByExtension[extension], path);
+        }
+    });
+
     console.log(filesByExtension);
     if(filesByExtension["trk"]){
         trks.value = filesByExtension["trk"];
@@ -117,8 +120,15 @@ onMounted(async () => {
 });
 
 watch(dataset, async () => {
-    subjects.value = [];
-    subjects.value = await listCommonPrefixes(params.value, 3000);
+    subjects.value = await getSubjects();
+    subject.value = subjects.value[0];
+});
+watch(subject, async () => {
+    sessions.value = await getSessions();
+    session.value = sessions.value[0];
+});
+watch(session, async () => {
+    updateFiles();
 });
 </script>
 
