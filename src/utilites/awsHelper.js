@@ -10,7 +10,8 @@ const s3 = new AWS.S3({
 });
 
 //expects params{Bucket, Prefix, MaxKeys (optional)}
-//returrns
+//returns a promise that resolves to an array of objects
+//will only return up to 1000 objects
 export async function listObjects(params) {
     return new Promise((resolve, reject) => {
         s3.makeUnauthenticatedRequest('listObjectsV2', params, function(err, data) {
@@ -56,13 +57,4 @@ export async function listCommonPrefixes(params,limit) {
         }
         listNextSetOfPrefixes();
     });
-}
-
-export function getFileName(filePath) {
-    const parts = filePath.split('/');
-    let fileName = parts.pop();
-    while (fileName === '') {
-        fileName = parts.pop();
-    }
-    return fileName;
 }

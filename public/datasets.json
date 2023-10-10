@@ -2,8 +2,8 @@
     "hbn":{
         "bucket":"fcp-indi",
         "prefix":"data/Projects/HBN/BIDS_curated/derivatives/afq/",
-        "participantsSize":2000
-
+        "participantsSize":2000,
+        "subfolders":{"trk":"clean_bundles/"}
     },
     "hcp":{
         "bucket":"open-neurodata",
