@@ -7,12 +7,12 @@
         <option v-for="item in subjects" :value="item">{{ item.folderName }}</option>
     </select>
     <br>
-    dataset {{ dataset }} <br>
-    subject {{ subject }} <br>
-    session {{ session }} <br>
-    trxs {{ trxs }} <br>
-    trks {{ trks }} <br>
-    niis {{ niis }} <br>
+    dataset {{ dataset }} <br><br>
+    subject {{ subject }} <br><br>
+    session {{ session }} <br><br>
+    trxs {{ trxs }} <br><br>
+    trks({{ trks.length }}) {{ trks }} <br><br>
+    niis({{niis.length}}) {{ niis }} <br><br>
 </template>
 
 
@@ -20,7 +20,7 @@
 import {onMounted, ref, watch, computed} from 'vue'
 import datasets from "../public/datasets.json"
 import {listObjects, listCommonPrefixes} from "./utilites/awsHelper.js"
-import {getLastPathComponent, groupByExtension, filterBySubfolder} from "./utilites/logic.js"
+import {getLastPathComponent, groupByExtension, filterBySubfolder, filterBySubstring} from "./utilites/logic.js"
 import SearchableListSelect from "./components/SearchableListSelect.vue"
 
 const dataset = ref(datasets[Object.keys(datasets)[0]]);
@@ -77,6 +77,7 @@ async function getSessions() {
     }
     return output
 }
+
 //if more than one trx it will pick first one listed
 //updates trks, trx and nii files
 async function updateFiles() {
@@ -86,21 +87,37 @@ async function updateFiles() {
 
     let params = {
         Bucket: dataset.value.bucket,
-        Prefix: session.value.prefix
+        Prefix: session.value.prefix,
+        // Delimiter: "/"
     }
     let files = await listObjects(params);
     let keys = files.Contents.map((item) => item.Key);
-    let filesByExtension = groupByExtension(keys);
+    var filesByExtension = groupByExtension(keys);
+    console.log(filesByExtension["trk"])
 
-
-    Object.entries(dataset.value.subfolders).forEach(([extension, subfolder]) => {
-        if (subfolder) {
-            const path = params.Prefix + subfolder;
-            filesByExtension[extension] = filterBySubfolder(filesByExtension[extension], path);
+    //if dataset contains subfolder, get files in that subfolder
+    //replace filesByExtension[subfolder.extension] with files in subfolder that have that extension
+    if(dataset.value.subfolders){
+        for(let subfolder of dataset.value.subfolders ){
+            console.log(subfolder)
+            let params = {
+                Bucket: dataset.value.bucket,
+                Prefix: session.value.prefix + subfolder.path,
+                Delimiter: "/"
+            }
+            console.log(params)
+            let subfolderFiles = await listObjects(params);
+            console.log(subfolderFiles)
+            let subfolderKeys = subfolderFiles.Contents.map((item) => item.Key);
+            let subfolderFilesByExtension = groupByExtension(subfolderKeys);
+            filesByExtension[subfolder.extension] = subfolderFilesByExtension[subfolder.extension];
         }
-    });
+    }
+    //filter trks to only include those that contain listed scan in them
+    if(dataset.value.scans){
+        filesByExtension["nii.gz"] = filterBySubstring(filesByExtension["nii.gz"], dataset.value.scans);
+    }
 
-    console.log(filesByExtension);
     if(filesByExtension["trk"]){
         trks.value = filesByExtension["trk"];
     };

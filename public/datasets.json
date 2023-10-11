@@ -1,13 +1,33 @@
 {
-    "hbn":{
-        "bucket":"fcp-indi",
-        "prefix":"data/Projects/HBN/BIDS_curated/derivatives/afq/",
-        "participantsSize":2000,
-        "subfolders":{"trk":"clean_bundles/"}
+    "hbn": {
+        "bucket": "fcp-indi",
+        "prefix": "data/Projects/HBN/BIDS_curated/derivatives/afq/",
+        "participantsSize": 2000,
+        "subfolders": [{
+            "path": "clean_bundles/","extension":"trk"
+        }],
+        "scans": [
+            "model-DKI_FA",
+            "b0",
+            "model-CSD_APM",
+            "model-DKI_AWF",
+            "model-DKI_MD",
+            "model-DKI_MK",
+            "model-DTI_FA"
+        ]
     },
-    "hcp":{
-        "bucket":"open-neurodata",
-        "prefix":"rokem/hcp1200/afq/",
-        "participantsSize":2000
+    "hcp": {
+        "bucket": "open-neurodata",
+        "prefix": "rokem/hcp1200/afq/",
+        "participantsSize": 2000,
+        "scans": [
+            "model-DKI_FA",
+            "b0",
+            "model-CSD_APM",
+            "model-DKI_AWF",
+            "model-DKI_MD",
+            "model-DKI_MK",
+            "model-DTI_FA"
+        ]
     }
 }

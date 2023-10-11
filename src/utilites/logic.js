@@ -26,10 +26,14 @@ export function getLastPathComponent(filePath) {
 }
 
 export function filterBySubfolder(files, folderPath) {
-    console.log(files,folderPath)
     return files.filter((filePath) => {
       const pathParts = filePath.split("/");
       const fileName = pathParts[pathParts.length - 1];
       return filePath.startsWith(folderPath) && !fileName.includes("/");
     });
+}
+
+//returns all strings from list1 that contain a substring from list2
+export function filterBySubstring(list1, list2) {
+  return list1.filter(str1 => list2.some(str2 => str1.includes(str2)));
 }
