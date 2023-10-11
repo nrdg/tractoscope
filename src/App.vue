@@ -6,6 +6,9 @@
     <select v-model="subject">
         <option v-for="item in subjects" :value="item">{{ item.folderName }}</option>
     </select>
+    <select v-model="session" v-if="sessions.length > 1">
+        <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
+    </select>
     <br>
     dataset {{ dataset }} <br><br>
     subject {{ subject }} <br><br>
