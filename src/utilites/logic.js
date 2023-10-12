@@ -37,3 +37,25 @@ export function filterBySubfolder(files, folderPath) {
 export function filterBySubstring(list1, list2) {
   return list1.filter(str1 => list2.some(str2 => str1.includes(str2)));
 }
+
+//trk bundles = list of object, object = {name, fileName,rgba255}
+//trkpaths = list of file paths to trks
+//returns list of objects, where object = {filepath, name, rgba255}
+//and each object is a contains the filepath that includes the filename
+//and then its corresponding rgba255 and name values
+export function getTrkBundles(trkBundles, trkPaths) {
+  return trkPaths.filter(trkPath => {
+    return trkBundles.some(bundle => {
+      return trkPath.includes(bundle.fileName);
+    });
+  }).map(trkPath => {
+    const bundle = trkBundles.find(bundle => {
+      return trkPath.includes(bundle.fileName);
+    });
+    return {
+      filepath: trkPath,
+      name: bundle.name,
+      rgba255: bundle.rgba255
+    };
+  });
+}

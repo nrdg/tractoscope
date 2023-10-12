@@ -9,13 +9,8 @@
     <select v-model="session" v-if="sessions.length > 1">
         <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
     </select>
+    <div v-if="session">session: {{ session.folderName }}</div>
     <br>
-    dataset {{ dataset }} <br><br>
-    subject {{ subject }} <br><br>
-    session {{ session }} <br><br>
-    trxs {{ trxs }} <br><br>
-    trks({{ trks.length }}) {{ trks }} <br><br>
-    niis({{niis.length}}) {{ niis }} <br><br>
 </template>
 
 
@@ -23,7 +18,7 @@
 import {onMounted, ref, watch, computed} from 'vue'
 import datasets from "../public/datasets.json"
 import {listObjects, listCommonPrefixes} from "./utilites/awsHelper.js"
-import {getLastPathComponent, groupByExtension, filterBySubfolder, filterBySubstring} from "./utilites/logic.js"
+import {getLastPathComponent, groupByExtension, filterBySubfolder, filterBySubstring, getTrkBundles} from "./utilites/logic.js"
 import SearchableListSelect from "./components/SearchableListSelect.vue"
 
 const dataset = ref(datasets[Object.keys(datasets)[0]]);
@@ -34,7 +29,8 @@ const session = ref();
 const trks = ref([]);
 const trxs = ref([]);
 const niis = ref([]);
-const nii = ref();
+
+const bundles = ref([]);
 
 async function getSubfolders(prefixes){
     let output = []
@@ -149,6 +145,16 @@ watch(subject, async () => {
 });
 watch(session, async () => {
     updateFiles();
+});
+watch(trks, (newVal) => {
+    if(newVal.length > 0){
+        bundles.value = getTrkBundles(dataset.value.trkFiles,trks.value)
+    }
+});
+watch(trxs, (newVal) => {
+    if(newVal.length){
+        bundles.value =
+    }
 });
 </script>
 
