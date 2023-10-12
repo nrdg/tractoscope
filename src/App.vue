@@ -9,10 +9,13 @@
     <select v-model="session" v-if="sessions.length > 1">
         <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
     </select>
+    <select v-model="scan">
+        <option v-for="item in scans" :value="item">{{ item.name }}</option>
+    </select>
     <div v-if="session">session: {{ session.folderName }}</div>
     <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
     <br>
-    {{ trx }}
+    {{ scans }}
 </template>
 
 
@@ -31,18 +34,7 @@ const sessions = ref([]);
 const session = ref();
 const trks = ref([]);
 
-/**
- *
-**/
 const trxs = ref([]);
-// const trx = computed(() => {
-//     if(trxs.value.length > 0){
-//         return trxs.value[0];
-//     }
-//     return null;
-// });
-const niis = ref([]);
-
 //trx will be the trx that contains dataset.trxFile.fileName somewhere in its filename
 const trx = computed(() => {
     if (trxs.value.length === 0) {
@@ -64,6 +56,25 @@ const trx = computed(() => {
 })
 
 
+const niis = ref([]);
+//value = {name, path} for all nii's that are in dataset.scans
+//if niis.length == 0, then value = []
+const scans = computed(() => {
+    if (niis.value.length > 0) {
+        let output = niis.value.reduce((acc, path, i) => {
+            dataset.value.scans.forEach((name) => {
+                if (path.includes(name)) {
+                    acc.push({ name, path });
+                }
+            });
+            return acc;
+        }, []);
+        return output;
+    } else {
+        return [];
+    }
+});
+const scan = ref();
 /**
  * because bundles can be loaded as indivudual trk files or one trx file
  * bundles are represented as a list of objects:
@@ -149,11 +160,11 @@ async function updateFiles() {
             filesByExtension[subfolder.extension] = subfolderFilesByExtension[subfolder.extension];
         }
     }
-    //filter trks to only include those that contain listed scan in them
-    if(dataset.value.scans){
-        filesByExtension["nii.gz"] = filterBySubstring(filesByExtension["nii.gz"], dataset.value.scans);
-    }
 
+
+    if(filesByExtension["nii.gz"]){
+        niis.value = filesByExtension["nii.gz"];
+    }
     if(filesByExtension["trk"]){
         trks.value = filesByExtension["trk"];
     };
@@ -189,6 +200,16 @@ watch(trks, (newVal) => {
     }
 });
 watch(trxs, (newVal) => {
+});
+watch(scans, (newVal) => {
+    if(newVal){
+        if(newVal.includes(scan.value)){
+        }else{
+            scan.value = newVal[0];
+        }
+    }else{
+        console.log(newVal)
+    }
 });
 </script>
 
