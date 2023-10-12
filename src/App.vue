@@ -10,7 +10,9 @@
         <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
     </select>
     <div v-if="session">session: {{ session.folderName }}</div>
+    <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
     <br>
+    {{ trx }}
 </template>
 
 
@@ -20,6 +22,7 @@ import datasets from "../public/datasets.json"
 import {listObjects, listCommonPrefixes} from "./utilites/awsHelper.js"
 import {getLastPathComponent, groupByExtension, filterBySubfolder, filterBySubstring, getTrkBundles} from "./utilites/logic.js"
 import SearchableListSelect from "./components/SearchableListSelect.vue"
+import MultiSelect from './components/MultiSelect.vue'
 
 const dataset = ref(datasets[Object.keys(datasets)[0]]);
 const subjects = ref([]);
@@ -27,10 +30,48 @@ const subject = ref();
 const sessions = ref([]);
 const session = ref();
 const trks = ref([]);
+
+/**
+ *
+**/
 const trxs = ref([]);
+// const trx = computed(() => {
+//     if(trxs.value.length > 0){
+//         return trxs.value[0];
+//     }
+//     return null;
+// });
 const niis = ref([]);
 
+//trx will be the trx that contains dataset.trxFile.fileName somewhere in its filename
+const trx = computed(() => {
+    if (trxs.value.length === 0) {
+        return null
+    }
+
+    const matchingTrxs = trxs.value.filter((trx) => {
+        let fileName = getLastPathComponent(trx);
+        return fileName.includes(props.dataset.trxFile.fileName);
+    })
+
+    if (matchingTrxs.length === 0) {
+        return null
+    } else if (matchingTrxs.length > 1) {
+        throw new Error('dataset.trxFile is not a configured property')
+    } else {
+        return matchingTrxs[0]
+    }
+})
+
+
+/**
+ * because bundles can be loaded as indivudual trk files or one trx file
+ * bundles are represented as a list of objects:
+ * [ {name, trk(optional), rgba255}]
+ * if trk is not provided, its expected that there is a valid trx file
+**/
 const bundles = ref([]);
+const selectedBundles = ref([]);
 
 async function getSubfolders(prefixes){
     let output = []
@@ -92,21 +133,17 @@ async function updateFiles() {
     let files = await listObjects(params);
     let keys = files.Contents.map((item) => item.Key);
     var filesByExtension = groupByExtension(keys);
-    console.log(filesByExtension["trk"])
 
     //if dataset contains subfolder, get files in that subfolder
     //replace filesByExtension[subfolder.extension] with files in subfolder that have that extension
     if(dataset.value.subfolders){
         for(let subfolder of dataset.value.subfolders ){
-            console.log(subfolder)
             let params = {
                 Bucket: dataset.value.bucket,
                 Prefix: session.value.prefix + subfolder.path,
                 Delimiter: "/"
             }
-            console.log(params)
             let subfolderFiles = await listObjects(params);
-            console.log(subfolderFiles)
             let subfolderKeys = subfolderFiles.Contents.map((item) => item.Key);
             let subfolderFilesByExtension = groupByExtension(subfolderKeys);
             filesByExtension[subfolder.extension] = subfolderFilesByExtension[subfolder.extension];
