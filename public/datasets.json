@@ -270,6 +270,7 @@
             "model-DKI_MD",
             "model-DKI_MK",
             "model-DTI_FA"
-        ]
+        ],
+        "trxFile":{"fileName":"clean_bundles"}
     }
 }
