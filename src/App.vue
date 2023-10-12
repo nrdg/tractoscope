@@ -152,9 +152,6 @@ watch(trks, (newVal) => {
     }
 });
 watch(trxs, (newVal) => {
-    if(newVal.length){
-        bundles.value =
-    }
 });
 </script>
 
