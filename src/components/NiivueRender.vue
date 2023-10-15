@@ -2,26 +2,23 @@
 import ToolTip from './ToolTip.vue';
 import {Niivue} from '@niivue/niivue'
 import {onMounted,watch} from 'vue';
-import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
+import {getSignedUrl} from '../utilites/awsHelper.js'
+
 
 const props = defineProps({
-    subject: {},
     dataset:{
         type:Object,
         required: true,
         validatior: (value) => {
-            return value.hasOwnProperty("name") && value.hasOwnProperty("prefix")
+            return value.hasOwnProperty("bucket") && value.hasOwnProperty("prefix");
         }
     },
+    //bundles needs to be updated to accept tks and trxs
     bundles:{
         type: Array,
         required: false
     },
-    scan: {},
-    site:{
-        type: String,
-        required: false,
-    }
+    scan: {type: Object, required: false,}
 })
 
 var nv = null
@@ -38,6 +35,7 @@ onMounted(() => {
 
 //mediocre fix change/update
 async function loadVolume(volumeLink){
+    console.log(volumeLink)
     if(nv && !isLoadingVolume){
         const volumeList = [{url: volumeLink,colorMap: "gray",}]
         isLoadingVolume = true
@@ -47,20 +45,20 @@ async function loadVolume(volumeLink){
     }
 
 }
+
 async function updateVolume(){
-    if(props.subject && props.dataset && props.site && props.scan){
-        const volumeLink = getVolumeLink(props.dataset,props.subject,props.site,props.scan)
-        if (await checkLink(volumeLink)){
-            await loadVolume(volumeLink)
-            return
-        }else{
-            throw new Error("link failed check",{value: volumeLink});
+    if(props.dataset && props.scan){
+        let params = {
+            Bucket: props.dataset.bucket,
+            Key: props.scan.path
         }
+        const volumeLink = await getSignedUrl(params)
+        await loadVolume(volumeLink)
+        changeZoom()
+        return
     }else{
         return false
     }
-    changeZoom()
-
 }
 
 function deleteBundles(bundles){
@@ -69,6 +67,7 @@ function deleteBundles(bundles){
         nv.removeMeshByUrl(url)
     }
 }
+
 async function loadBundles(bundles){
     const meshes = []
     for(let i = 0; i < bundles.length; i++){
@@ -83,6 +82,7 @@ async function loadBundles(bundles){
                 await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
     }
 }
+
 async function loadBundle(bundle){
   if (!nv.initialized) {
     await nv.init();
@@ -123,46 +123,28 @@ function changeZoom(){
       nv.scene.volScaleMultiplier = zoom*10;
       nv.drawScene()
 }
-function downloadNifti(){
-    const fileName = props.subject.id+'_'+props.site+'_'+props.scan+'.nii.gz'
-    const volumeLink = getVolumeLink(props.dataset,props.subject,props.site,props.scan)
-    if (checkLink(volumeLink)){
+
+async function downloadNifti(){
+    let params = {
+        Bucket: props.dataset.bucket,
+        Key: props.scan.path
+    }
+    const volumeLink = await getSignedUrl(params)
         fetch(volumeLink)
         .then(res => res.blob())
         .then(res => {
             const aElement = document.createElement('a');
-            aElement.setAttribute('download', fileName);
+            aElement.setAttribute('download', 'volume.nii.gz');
             const href = URL.createObjectURL(res);
             aElement.href = href;
             aElement.setAttribute('target', '_blank');
             aElement.click();
             URL.revokeObjectURL(href);
-    });
-    }else{
-        throw new Error("volumeLink failed check, likely does not exist",{value: volumeLink})
-    }
+        })
 }
 
-//must be cleaner way to watch multiple objects?
-watch(() => props.subject, async () => {
-    await updateVolume()
-    // if(nv){
-    //     nv.setSliceType(nv.sliceTypeMultiplanar); //not sure why this is needed but if removed slice type changes to 3d
-    // }
-    // if(props.bundles.length > 0){
-    //     loadBundles(props.bundles)
-    // }
-})
 watch(() => props.scan, () => {
     updateVolume()
-})
-watch(() => props.site, () => {
-    updateVolume()
-})
-watch(() => props.bundles, (newVal,oldVal) => {
-    if(nv){
-        updateBundles(newVal,oldVal)
-    }
 })
 </script>
 
