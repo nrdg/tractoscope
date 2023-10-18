@@ -1,153 +1,3 @@
-<script setup>
-import ToolTip from './ToolTip.vue';
-import {Niivue} from '@niivue/niivue'
-import {onMounted,watch} from 'vue';
-import {getSignedUrl} from '../utilites/awsHelper.js'
-
-
-const props = defineProps({
-    dataset:{
-        type:Object,
-        required: true,
-        validatior: (value) => {
-            return value.hasOwnProperty("bucket") && value.hasOwnProperty("prefix");
-        }
-    },
-    //bundles needs to be updated to accept tks and trxs
-    bundles:{
-        type: Array,
-        required: false
-    },
-    scan: {type: Object, required: false,}
-})
-
-var nv = null
-var isLoadingVolume = false
-var zoom = 0.1
-const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
-
-onMounted(() => {
-  nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}));
-  nv.attachTo("gl");
-  nv.setSliceType(nv.sliceTypeMultiplanar);
-  nv.setClipPlane([-0.1, 270, 0])
-});
-
-//mediocre fix change/update
-async function loadVolume(volumeLink){
-    console.log(volumeLink)
-    if(nv && !isLoadingVolume){
-        const volumeList = [{url: volumeLink,colorMap: "gray",}]
-        isLoadingVolume = true
-        await nv.loadVolumes(volumeList)
-        await nv.updateGLVolume()
-        isLoadingVolume = false
-    }
-
-}
-
-async function updateVolume(){
-    if(props.dataset && props.scan){
-        let params = {
-            Bucket: props.dataset.bucket,
-            Key: props.scan.path
-        }
-        const volumeLink = await getSignedUrl(params)
-        await loadVolume(volumeLink)
-        changeZoom()
-        return
-    }else{
-        return false
-    }
-}
-
-function deleteBundles(bundles){
-    for(let i = 0; i < bundles.length; i++){
-        let url = getBundleLink(props.dataset,props.subject,props.site,bundles[i])
-        nv.removeMeshByUrl(url)
-    }
-}
-
-async function loadBundles(bundles){
-    const meshes = []
-    for(let i = 0; i < bundles.length; i++){
-        let bundle = bundles[i]
-        let url = getBundleLink(props.dataset,props.subject,props.site,bundle)
-        let color = bundle.rgba255
-        let x = {url:url, rgba255: color}
-        meshes.push(x)
-    }
-    await nv.loadMeshes(meshes)
-    for(let i=0; i<nv.meshes.length;i++){
-                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
-    }
-}
-
-async function loadBundle(bundle){
-  if (!nv.initialized) {
-    await nv.init();
-  }
-
-  if (nv.gl) {
-    let url = getBundleLink(props.dataset,props.subject,props.site,bundle)
-    let color = bundle.rgba255
-    let meshOptions = {url:url, rgba255: color, gl: nv.gl}
-    await nv.addMeshFromUrl(meshOptions);
-    return
-  } else {
-    console.error('WebGL context is not initialized');
-  }
-}
-
-async function updateBundles(newBundles,oldBundles){
-    const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
-    const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
-
-    if(removedBundles.length > 0){
-        deleteBundles(removedBundles)
-    }
-
-    if(addedBundles.length > 0){
-        for(let i=0;i<addedBundles.length;i++){
-            let bundle = addedBundles[i]
-            await loadBundle(bundle)
-        }
-    }
-    for(let i=0; i<nv.meshes.length;i++){
-                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
-    }
-
-}
-
-function changeZoom(){
-      nv.scene.volScaleMultiplier = zoom*10;
-      nv.drawScene()
-}
-
-async function downloadNifti(){
-    let params = {
-        Bucket: props.dataset.bucket,
-        Key: props.scan.path
-    }
-    const volumeLink = await getSignedUrl(params)
-        fetch(volumeLink)
-        .then(res => res.blob())
-        .then(res => {
-            const aElement = document.createElement('a');
-            aElement.setAttribute('download', 'volume.nii.gz');
-            const href = URL.createObjectURL(res);
-            aElement.href = href;
-            aElement.setAttribute('target', '_blank');
-            aElement.click();
-            URL.revokeObjectURL(href);
-        })
-}
-
-watch(() => props.scan, () => {
-    updateVolume()
-})
-</script>
-
 <template>
     <div id="app">
         <div id = "canvas-container">
@@ -165,7 +15,7 @@ watch(() => props.scan, () => {
     </div>
 </template>
 
-<style scoped>
+<style>
 #app{
     display: grid;
 }
@@ -183,3 +33,56 @@ watch(() => props.scan, () => {
     justify-content: space-between;
 }
 </style>
+
+<script setup>
+import ToolTip from './ToolTip.vue';
+import {Niivue} from '@niivue/niivue'
+import {onMounted,watch} from 'vue';
+import {getUrl} from '../utilites/awsHelper.js'
+
+const props = defineProps({
+    dataset:{
+        type:Object,
+        required: true,
+        validatior: (value) => {
+            return value.hasOwnProperty("bucket") && value.hasOwnProperty("prefix");
+        }
+    },
+    //bundles needs to be updated to accept tks and trxs
+    bundles:{
+        type: Array,
+        required: false
+    },
+    scan: {}
+})
+
+var nv = null
+var isLoadingVolume = false
+var zoom = 0.1
+const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
+
+onMounted(() => {
+  nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}));
+  nv.attachTo("gl");
+  nv.setSliceType(nv.sliceTypeMultiplanar);
+  nv.setClipPlane([-0.1, 270, 0])
+});
+
+async function updateVolume(){
+    let params = {
+        Bucket: props.dataset.bucket,
+        Key: props.scan.path,
+        Expires: 120 //Url expires in 2 minutes
+    }
+    let volumeList = [{url: await getUrl(params),colorMap: "gray",}]
+    await nv.loadVolumes(volumeList)
+    await nv.updateGLVolume()
+    return
+}
+
+watch(() => props.scan, async (newVal) => {
+    if(props.scan){
+        await updateVolume()
+    }
+})
+</script>
