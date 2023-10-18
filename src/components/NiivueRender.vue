@@ -72,9 +72,8 @@ async function updateVolume(){
     if(!isLoadingVolume){
         isLoadingVolume = true
         let params = {
-        Bucket: props.dataset.bucket,
-        Key: props.scan.path,
-        Expires: 120 //Url expires in 2 minutes
+            Bucket: props.dataset.bucket,
+            Key: props.scan.path,
         }
         let volumeList = [{url: await getUrl(params),colorMap: "gray",}]
         await nv.loadVolumes(volumeList)
@@ -85,9 +84,65 @@ async function updateVolume(){
     }
 }
 
+function deleteTrkBundles(bundles){
+    for(let i = 0; i < bundles.length; i++){
+        let params = {
+            Bucket: props.dataset.bucket,
+            Key: bundles[i].filepath
+        }
+        let url = getUrl(params)
+        nv.removeMeshByUrl(url)
+    }
+}
+
+async function loadTrkBundle(bundle){
+  if (!nv.initialized) {
+    await nv.init();
+  }
+
+  if (nv.gl) {
+    let params = {
+        Bucket: props.dataset.bucket,
+        Key: bundle.filepath
+    }
+    let url = getUrl(params)
+    console.log(params,url)
+    let color = bundle.rgba255
+    let meshOptions = {url:url, rgba255: color, gl: nv.gl}
+    await nv.addMeshFromUrl(meshOptions);
+    return
+  } else {
+    console.error('WebGL context is not initialized');
+  }
+}
+
+async function updateTrkBundles(newBundles,oldBundles){
+    const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
+    const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
+    console.log(addedBundles)
+
+    if(removedBundles.length > 0){
+        deleteTrkBundles(removedBundles)
+    }
+
+    if(addedBundles.length > 0){
+        for(let i=0;i<addedBundles.length;i++){
+            let bundle = addedBundles[i]
+            await loadTrkBundle(bundle)
+        }
+    }
+    for(let i=0; i<nv.meshes.length;i++){
+                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
+    }
+
+}
 watch(() => props.scan, async (newVal) => {
     if(props.scan){
         await updateVolume()
     }
+})
+
+watch(() => props.bundles, async (newVal,oldVal) => {
+    updateTrkBundles(newVal,oldVal)
 })
 </script>
