@@ -3,9 +3,7 @@
     <select v-model="dataset">
         <option v-for="(value, key) in datasets" :value="value">{{ key }}</option>
     </select>
-    <select v-model="subject">
-        <option v-for="item in subjects" :value="item">{{ item.folderName }}</option>
-    </select>
+    <SearchableListSelect v-model:selected="subject" :list="subjects"></SearchableListSelect>
     <select v-model="session" v-if="sessions.length > 1">
         <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
     </select>
@@ -16,9 +14,6 @@
     <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
     <br>
     <NiivueRender :dataset="dataset" :scan="scan" :bundles="selectedBundles"/>
-    scan: {{ scan }}<br>
-    bundles: {{ bundles }}<br>
-    selectedBundles: {{ selectedBundles }}<br>
 </template>
 
 
