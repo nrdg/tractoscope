@@ -84,6 +84,11 @@ async function updateVolume(){
     }
 }
 
+function changeZoom(){
+      nv.scene.volScaleMultiplier = zoom*10;
+      nv.drawScene()
+}
+
 function deleteTrkBundles(bundles){
     for(let i = 0; i < bundles.length; i++){
         let params = {

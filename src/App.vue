@@ -15,7 +15,10 @@
     <div v-if="session">session: {{ session.folderName }}</div>
     <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
     <br>
-    {{ scans }}
+    <NiivueRender :dataset="dataset" :scan="scan" :bundles="selectedBundles"/>
+    scan: {{ scan }}<br>
+    bundles: {{ bundles }}<br>
+    selectedBundles: {{ selectedBundles }}<br>
 </template>
 
 
@@ -26,6 +29,7 @@ import {listObjects, listCommonPrefixes} from "./utilites/awsHelper.js"
 import {getLastPathComponent, groupByExtension, filterBySubfolder, filterBySubstring, getTrkBundles} from "./utilites/logic.js"
 import SearchableListSelect from "./components/SearchableListSelect.vue"
 import MultiSelect from './components/MultiSelect.vue'
+import NiivueRender from './components/NiivueRender.vue'
 
 const dataset = ref(datasets[Object.keys(datasets)[0]]);
 const subjects = ref([]);
@@ -74,13 +78,17 @@ const scans = computed(() => {
         return [];
     }
 });
-const scan = ref();
+const scan = ref({});
+
 /**
- * because bundles can be loaded as indivudual trk files or one trx file
- * bundles are represented as a list of objects:
- * [ {name, trk(optional), rgba255}]
- * if trk is not provided, its expected that there is a valid trx file
-**/
+ * Bundles is an object with the following properties
+ * bundles = {
+ *  type: "trk" or "trx"
+ *  names: ["name","name"]
+ *  trkFiles(opt): [{name: {path, rgba255}]
+ *  trxFile(opt): path  //still need to implement way to select specific bundles
+ * }
+ */
 const bundles = ref([]);
 const selectedBundles = ref([]);
 
@@ -181,6 +189,7 @@ onMounted(async () => {
     sessions.value = await getSessions();
     session.value = sessions.value[0];
     updateFiles();
+
 });
 
 watch(dataset, async () => {
@@ -202,13 +211,11 @@ watch(trks, (newVal) => {
 watch(trxs, (newVal) => {
 });
 watch(scans, (newVal) => {
-    if(newVal){
+    if(!newVal.includes(scan.value)){
         if(newVal.includes(scan.value)){
         }else{
             scan.value = newVal[0];
         }
-    }else{
-        console.log(newVal)
     }
 });
 </script>
