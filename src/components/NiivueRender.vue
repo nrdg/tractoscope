@@ -69,15 +69,20 @@ onMounted(() => {
 });
 
 async function updateVolume(){
-    let params = {
+    if(!isLoadingVolume){
+        isLoadingVolume = true
+        let params = {
         Bucket: props.dataset.bucket,
         Key: props.scan.path,
         Expires: 120 //Url expires in 2 minutes
+        }
+        let volumeList = [{url: await getUrl(params),colorMap: "gray",}]
+        await nv.loadVolumes(volumeList)
+        await nv.updateGLVolume()
+        isLoadingVolume = false
+        return
+
     }
-    let volumeList = [{url: await getUrl(params),colorMap: "gray",}]
-    await nv.loadVolumes(volumeList)
-    await nv.updateGLVolume()
-    return
 }
 
 watch(() => props.scan, async (newVal) => {
