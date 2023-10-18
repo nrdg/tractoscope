@@ -9,6 +9,25 @@ const s3 = new AWS.S3({
     signatureVersion: null,
 });
 
+//returns https link to object at key
+export function getUrl(params){
+    return `https://${params.Bucket}.s3.amazonaws.com/${params.Key}`;
+
+}
+//expects params{Bucket, Key}
+//returns https link to object at key
+export async function getSignedUrl(params) {
+    return new Promise((resolve, reject) => {
+        s3.getSignedUrl('getObject', params, function(err, url) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(url);
+            }
+        });
+    });
+}
+
 //expects params{Bucket, Prefix, MaxKeys (optional)}
 //returns a promise that resolves to an array of objects
 //will only return up to 1000 objects
