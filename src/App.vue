@@ -1,21 +1,23 @@
 <template>
-    <header>AWS SDK TEST</header>
-    <select v-model="dataset">
-        <option v-for="(value, key) in datasets" :value="value">{{ key }}</option>
-    </select>
-    <SearchableListSelect v-model:selected="subject" :list="subjects"></SearchableListSelect>
-    <select v-model="session" v-if="sessions.length > 1">
-        <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
-    </select>
-    <select v-model="scan">
-        <option v-for="item in scans" :value="item">{{ item.name }}</option>
-    </select>
-    <div v-if="session">session: {{ session.folderName }}</div>
-    <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
-    <br>
-    <NiivueRender :dataset="dataset" :scan="scan" :bundles="selectedBundles"/>
+    <div id="app">
+        <NiivueRender :dataset="dataset" :scan="scan" :bundles="selectedBundles"/>
+        <div class="vertical-menu">
+            <select v-model="dataset">
+                <option v-for="(value, key) in datasets" :value="value">{{ key }}</option>
+            </select>
+            <SearchableListSelect v-model:selected="subject" :list="subjects"></SearchableListSelect>
+            <select v-model="session" v-if="sessions.length > 1">
+                <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
+            </select>
+            <select v-model="scan">
+                <option v-for="item in scans" :value="item">{{ item.name }}</option>
+            </select>
+            <div v-if="session">session: {{ session.folderName }}</div>
+            <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
+            <br>
+        </div>
+    </div>
 </template>
-
 
 <script setup>
 import {onMounted, ref, watch, computed} from 'vue'
@@ -215,4 +217,31 @@ watch(scans, (newVal) => {
 });
 </script>
 
-<style></style>
+<style>
+#app{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+}
+#niivue{
+  height: 80vh;
+  width: 96vw;
+  margin: auto;
+}
+.vertical-menu{
+  display: grid;
+  justify-content: left;
+  align-items: left;
+  align-content: start;
+  width: 100vw;
+  padding: 10px;
+}
+.vertical-menu > * {
+    padding-bottom: 20px;
+}
+
+.vertical-menu > *:last-child {
+    padding-bottom: 0;
+}
+</style>

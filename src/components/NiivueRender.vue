@@ -15,6 +15,7 @@
     </div>
 </template>
 
+
 <style>
 #app{
     display: grid;
@@ -151,3 +152,22 @@ watch(() => props.bundles, async (newVal,oldVal) => {
     updateTrkBundles(newVal,oldVal)
 })
 </script>
+
+<style scoped>
+#app{
+    display: grid;
+}
+#canvas-container{
+    width: 110vh;
+    height: 93vh;
+}
+#gl{
+    align-self: left;
+    border: black 1px solid;
+}
+.bottom-bar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+</style>
