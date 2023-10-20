@@ -244,4 +244,8 @@ watch(scans, (newVal) => {
 .vertical-menu > *:last-child {
     padding-bottom: 0;
 }
+.vertical-menu select {
+  vertical-align: middle;
+  width: 150px;
+}
 </style>
