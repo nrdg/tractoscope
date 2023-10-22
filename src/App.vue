@@ -5,7 +5,7 @@
             <select v-model="dataset">
                 <option v-for="(value, key) in datasets" :value="value">{{ key }}</option>
             </select>
-            <SearchableListSelect v-model:selected="subject" :list="subjects"></SearchableListSelect>
+            <SubjectSelect v-model:subject="subject" :subjects="subjects"></SubjectSelect>
             <select v-model="session" v-if="sessions.length > 1">
                 <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
             </select>
@@ -25,6 +25,7 @@ import datasets from "../public/datasets.json"
 import {listObjects, listCommonPrefixes} from "./utilites/awsHelper.js"
 import {getLastPathComponent, groupByExtension, getTrkBundles} from "./utilites/logic.js"
 import SearchableListSelect from "./components/SearchableListSelect.vue"
+import SubjectSelect from './components/SubjectSelect.vue'
 import MultiSelect from './components/MultiSelect.vue'
 import NiivueRender from './components/NiivueRender.vue'
 
