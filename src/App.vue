@@ -23,7 +23,7 @@
 import {onMounted, ref, watch, computed} from 'vue'
 import datasets from "../public/datasets.json"
 import {listObjects, listCommonPrefixes} from "./utilites/awsHelper.js"
-import {getLastPathComponent, groupByExtension, filterBySubfolder, filterBySubstring, getTrkBundles} from "./utilites/logic.js"
+import {getLastPathComponent, groupByExtension, getTrkBundles} from "./utilites/logic.js"
 import SearchableListSelect from "./components/SearchableListSelect.vue"
 import MultiSelect from './components/MultiSelect.vue'
 import NiivueRender from './components/NiivueRender.vue'

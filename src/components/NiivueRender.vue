@@ -145,11 +145,14 @@ async function updateTrkBundles(newBundles,oldBundles){
 watch(() => props.scan, async (newVal) => {
     if(props.scan){
         await updateVolume()
+        updateTrkBundles(props.bundles,[])
     }
 })
 
 watch(() => props.bundles, async (newVal,oldVal) => {
-    updateTrkBundles(newVal,oldVal)
+    if(!isLoadingVolume){
+        updateTrkBundles(newVal,oldVal)
+    }
 })
 </script>
 
