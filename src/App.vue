@@ -2,17 +2,20 @@
     <div id="app">
         <NiivueRender :dataset="dataset" :scan="scan" :bundles="selectedBundles"/>
         <div class="vertical-menu">
+            Dataset:
             <select v-model="dataset">
                 <option v-for="(value, key) in datasets" :value="value">{{ key }}</option>
             </select>
+            Subject:
             <SubjectSelect v-model:subject="subject" :subjects="subjects"></SubjectSelect>
-            <select v-model="session" v-if="sessions.length > 1">
-                <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
-            </select>
-            <select v-model="scan">
+            Scan: <select v-model="scan">
                 <option v-for="item in scans" :value="item">{{ item.name }}</option>
             </select>
             <div v-if="session">session: {{ session.folderName }}</div>
+            <select v-model="session" v-if="sessions.length > 1">
+                <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
+            </select>
+            Bundles:
             <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
             <br>
         </div>
@@ -24,10 +27,10 @@ import {onMounted, ref, watch, computed} from 'vue'
 import datasets from "../public/datasets.json"
 import {listObjects, listCommonPrefixes} from "./utilites/awsHelper.js"
 import {getLastPathComponent, groupByExtension, getTrkBundles} from "./utilites/logic.js"
-import SearchableListSelect from "./components/SearchableListSelect.vue"
 import SubjectSelect from './components/SubjectSelect.vue'
 import MultiSelect from './components/MultiSelect.vue'
 import NiivueRender from './components/NiivueRender.vue'
+import ListSelect from './components/ListSelect.vue'
 
 const dataset = ref(datasets[Object.keys(datasets)[0]]);
 const subjects = ref([]);
@@ -145,7 +148,6 @@ async function updateFiles() {
     let params = {
         Bucket: dataset.value.bucket,
         Prefix: session.value.prefix,
-        // Delimiter: "/"
     }
     let files = await listObjects(params);
     let keys = files.Contents.map((item) => item.Key);
