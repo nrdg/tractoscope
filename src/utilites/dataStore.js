@@ -20,6 +20,7 @@ export const useDataStore = defineStore({
 
         files: [],
 
+        scans: [],
         scan: null,
         bundles: [],
     }),
@@ -51,21 +52,7 @@ export const useDataStore = defineStore({
 
          //scans
         getScans(){
-            //check if niis exist
-            if (this.files["nii.gz"].length > 0) {
-                //match all names to files and return {name,path}
-                let output = niis.value.reduce((acc, path, i) => {
-                    this.dataset.scans.forEach((name) => {
-                        if (path.includes(name)) {
-                            acc.push({ name, path });
-                        }
-                    });
-                    return acc;
-                }, []);
-                return output;
-            } else {
-                return [];
-            }
+            return this.scans;
         },
         getScanLink() {
             //check if scan is selected
@@ -117,7 +104,7 @@ export const useDataStore = defineStore({
             let output = [];
             let params = {
                 Bucket: this.getDataset.bucket,
-                Prefix: this.subject.value.prefix,
+                Prefix: this.getSubject.prefix,
                 Delimiter: "/"
             }
             let prefixes = await listCommonPrefixes(params, 100);
@@ -135,8 +122,8 @@ export const useDataStore = defineStore({
         //files
         async updateFiles() {
             let params = {
-                Bucket: this.getDataset().bucket,
-                Prefix: this.sessions.prefix,
+                Bucket: this.getDataset.bucket,
+                Prefix: this.getSession.prefix,
             }
             let files = await listObjects(params);
             let keys = files.Contents.map((item) => item.Key);
@@ -144,11 +131,11 @@ export const useDataStore = defineStore({
 
             //if dataset contains subfolder, get files in that subfolder
             //replace filesByExtension[subfolder.extension] with files in subfolder that have that extension
-            if(this.getDataset().subfolders){
-                for(let subfolder of this.getDataset().subfolders ){
+            if(this.getDataset.subfolders){
+                for(let subfolder of this.getDataset.subfolders ){
                     let params = {
-                        Bucket: dataset.value.bucket,
-                        Prefix: session.value.prefix + subfolder.path,
+                        Bucket: this.getDataset.bucket,
+                        Prefix: this.getSession.prefix + subfolder.path,
                         Delimiter: "/"
                     }
                     let subfolderFiles = await listObjects(params);
@@ -158,12 +145,30 @@ export const useDataStore = defineStore({
                 }
             }
 
-
             this.files = filesByExtension;
+            console.log(this.files)
+            this.updateScans(this.files["nii.gz"])
             return;
         },
 
-
+        updateScans(niis){
+            console.log("updating scans")
+            if (niis.length > 0) {
+                //match all names to files and return {name,path}
+                let output = niis.reduce((acc, path, i) => {
+                    this.getDataset.scans.forEach((name) => {
+                        if (path.includes(name)) {
+                            acc.push({ name, path });
+                        }
+                    });
+                    return acc;
+                }, []);
+                this.scans = output;
+            } else {
+                console.log("no scans found")
+                this.scans = [];
+            }
+        },
         setScan(scan){
             this.scan = scan;
         },
