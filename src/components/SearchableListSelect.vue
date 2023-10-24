@@ -3,7 +3,7 @@
       <input v-model="searchQuery" placeholder="Search Subjects..." @input="filterList" />
       <select v-model="selected">
         <option v-for="item in filteredList" :value="item">
-          {{ item.id }}
+          {{ item.folderName }}
         </option>
       </select>
     </div>
@@ -33,7 +33,7 @@ const selected = computed({
 })
 const filteredList = computed({
     get(){
-        return props.list.filter(item => item.id.toLowerCase().includes(searchQuery.value.toLowerCase()))
+        return props.list.filter(item => item.folderName.toLowerCase().includes(searchQuery.value.toLowerCase()))
     }
 })
 </script>

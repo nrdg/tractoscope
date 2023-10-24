@@ -41,6 +41,7 @@ function toggleAll(){
 <template>
     <div id="multiselect">
         <select v-model="selected">
+            <option disabled>Bundles:</option>
             <option v-for="item in filteredItems" :value="item">{{ item.name }}</option>
         </select>
         <button @click="toggleAll()">toggle all</button>

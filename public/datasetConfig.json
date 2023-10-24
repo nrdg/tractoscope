@@ -2,8 +2,8 @@
     "datasets":[
       {
           "name":"HBN",
-          "prefix":"https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated",
-          "participantList":"/derivatives/afq/participants.tsv",
+          "prefix":"https://fcp-indi.s3.amazonaws.com/data/Projects/HBN/BIDS_curated/derivatives",
+          "participantList":"/afq/participants.tsv",
           "scans":[
              "model-DKI_FA",
              "b0",
@@ -14,6 +14,32 @@
              "model-DTI_FA"
           ],
           "bundles":[
+            "Anterior Frontal",
+            "Arcuate Fasciculus-Left",
+            "Arcuate Fasciculus-Right",
+            "Anterior Thalamic Radiation-Left",
+            "Anterior Thalamic Radiation-Right",
+            "Cingulate Cingulum-Left",
+            "Cingulate Cingulum-Right",
+            "Corticospinal Tract-Left",
+            "Corticospinal Tract-Right",
+            "Inferior Fronto-Occipital Fasciculus-Left",
+            "Inferior Fronto-Occipital Fasciculus-Right",
+            "Inferior Longitudinal Fasciculus-Left",
+            "Inferior Longitudinal Fasciculus-Right",
+            "Motor",
+            "Occipital",
+            "Orbital",
+            "Posterior Parietal",
+            "Superior Longitudinal Fasciculus-Left",
+            "Superior Longitudinal Fasciculus-Right",
+            "Superior Frontal",
+            "Superior Parietal",
+            "Temporal",
+            "Uncinate Fasciculus-Left",
+            "Uncinate Fasciculus-Right"
+           ],
+          "trkFiles":[
              {
                 "name":"Anterior Frontal",
                 "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk",
@@ -259,7 +285,34 @@
        {
          "name":"HCP",
          "prefix":"https://open-neurodata.s3.amazonaws.com/rokem/hcp1200",
-         "participantList":"/afq/participants.tsv"
+         "participantList":"/afq/participants.tsv",
+         "trxFile":{"fileName":"_dwi_space-RASMM_model-CSD_desc-prob-afq-clean_tractography.trx"},
+         "bundles":[
+            "Anterior Frontal",
+            "Arcuate Fasciculus-Left",
+            "Arcuate Fasciculus-Right",
+            "Anterior Thalamic Radiation-Left",
+            "Anterior Thalamic Radiation-Right",
+            "Cingulate Cingulum-Left",
+            "Cingulate Cingulum-Right",
+            "Corticospinal Tract-Left",
+            "Corticospinal Tract-Right",
+            "Inferior Fronto-Occipital Fasciculus-Left",
+            "Inferior Fronto-Occipital Fasciculus-Right",
+            "Inferior Longitudinal Fasciculus-Left",
+            "Inferior Longitudinal Fasciculus-Right",
+            "Motor",
+            "Occipital",
+            "Orbital",
+            "Posterior Parietal",
+            "Superior Longitudinal Fasciculus-Left",
+            "Superior Longitudinal Fasciculus-Right",
+            "Superior Frontal",
+            "Superior Parietal",
+            "Temporal",
+            "Uncinate Fasciculus-Left",
+            "Uncinate Fasciculus-Right"
+         ]
       }
     ],
     "default":{
@@ -274,6 +327,33 @@
           "model-DTI_FA"
          ],
          "bundles":[
+            "Anterior Frontal",
+            "Arcuate Fasciculus-Left",
+            "Arcuate Fasciculus-Right",
+            "Anterior Thalamic Radiation-Left",
+            "Anterior Thalamic Radiation-Right",
+            "Cingulate Cingulum-Left",
+            "Cingulate Cingulum-Right",
+            "Corticospinal Tract-Left",
+            "Corticospinal Tract-Right",
+            "Inferior Fronto-Occipital Fasciculus-Left",
+            "Inferior Fronto-Occipital Fasciculus-Right",
+            "Inferior Longitudinal Fasciculus-Left",
+            "Inferior Longitudinal Fasciculus-Right",
+            "Motor",
+            "Occipital",
+            "Orbital",
+            "Posterior Parietal",
+            "Superior Longitudinal Fasciculus-Left",
+            "Superior Longitudinal Fasciculus-Right",
+            "Superior Frontal",
+            "Superior Parietal",
+            "Temporal",
+            "Uncinate Fasciculus-Left",
+            "Uncinate Fasciculus-Right"
+         ],
+         "trxFile":{"fileName":"_dwi_space-RASMM_model-CSD_desc-prob-afq-clean_tractography.trx"},
+         "trkFiles":[
             {
                "name":"Anterior Frontal",
                "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk",

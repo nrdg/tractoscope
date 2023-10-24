@@ -1,173 +1,3 @@
-<script setup>
-import ToolTip from './ToolTip.vue';
-import {Niivue} from '@niivue/niivue'
-import {onMounted,watch} from 'vue';
-import { checkLink, getVolumeLink, getBundleLink } from '../utilites/DatasetLogic';
-
-const props = defineProps({
-    subject: {},
-    dataset:{
-        type:Object,
-        required: true,
-        validatior: (value) => {
-            return value.hasOwnProperty("name") && value.hasOwnProperty("prefix")
-        }
-    },
-    bundles:{
-        type: Array,
-        required: false
-    },
-    scan: {},
-    site:{
-        type: String,
-        required: false,
-    }
-})
-
-var nv = null
-var isLoadingVolume = false
-var zoom = 0.1
-const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
-
-onMounted(() => {
-  nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}));
-  nv.attachTo("gl");
-  nv.setSliceType(nv.sliceTypeMultiplanar);
-  nv.setClipPlane([-0.1, 270, 0])
-});
-
-//mediocre fix change/update
-async function loadVolume(volumeLink){
-    if(nv && !isLoadingVolume){
-        const volumeList = [{url: volumeLink,colorMap: "gray",}]
-        isLoadingVolume = true
-        await nv.loadVolumes(volumeList)
-        await nv.updateGLVolume()
-        isLoadingVolume = false
-    }
-
-}
-async function updateVolume(){
-    if(props.subject && props.dataset && props.site && props.scan){
-        const volumeLink = getVolumeLink(props.dataset,props.subject,props.site,props.scan)
-        if (await checkLink(volumeLink)){
-            await loadVolume(volumeLink)
-            return
-        }else{
-            throw new Error("link failed check",{value: volumeLink});
-        }
-    }else{
-        return false
-    }
-
-}
-
-function deleteBundles(bundles){
-    for(let i = 0; i < bundles.length; i++){
-        let url = getBundleLink(props.dataset,props.subject,props.site,bundles[i])
-        nv.removeMeshByUrl(url)
-    }
-}
-async function loadBundles(bundles){
-    const meshes = []
-    for(let i = 0; i < bundles.length; i++){
-        let bundle = bundles[i]
-        let url = getBundleLink(props.dataset,props.subject,props.site,bundle)
-        let color = bundle.rgba255
-        let x = {url:url, rgba255: color}
-        meshes.push(x)
-    }
-    await nv.loadMeshes(meshes)
-    for(let i=0; i<nv.meshes.length;i++){
-                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
-    }
-}
-async function loadBundle(bundle){
-  if (!nv.initialized) {
-    await nv.init();
-  }
-
-  if (nv.gl) {
-    let url = getBundleLink(props.dataset,props.subject,props.site,bundle)
-    let color = bundle.rgba255
-    let meshOptions = {url:url, rgba255: color, gl: nv.gl}
-    await nv.addMeshFromUrl(meshOptions);
-    return
-  } else {
-    console.error('WebGL context is not initialized');
-  }
-}
-
-async function updateBundles(newBundles,oldBundles){
-    const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
-    const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
-
-    if(removedBundles.length > 0){
-        deleteBundles(removedBundles)
-    }
-
-    if(addedBundles.length > 0){
-        for(let i=0;i<addedBundles.length;i++){
-            let bundle = addedBundles[i]
-            await loadBundle(bundle)
-        }
-    }
-    for(let i=0; i<nv.meshes.length;i++){
-                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
-    }
-
-}
-
-function changeZoom(){
-      nv.scene.volScaleMultiplier = zoom*10;
-      nv.drawScene()
-}
-function downloadNifti(){
-    const fileName = props.subject.id+'_'+props.site+'_'+props.scan+'.nii.gz'
-    const volumeLink = getVolumeLink(props.dataset,props.subject,props.site,props.scan)
-    if (checkLink(volumeLink)){
-        fetch(volumeLink)
-        .then(res => res.blob())
-        .then(res => {
-            const aElement = document.createElement('a');
-            aElement.setAttribute('download', fileName);
-            const href = URL.createObjectURL(res);
-            aElement.href = href;
-            aElement.setAttribute('target', '_blank');
-            aElement.click();
-            URL.revokeObjectURL(href);
-    });
-    }else{
-        throw new Error("volumeLink failed check, likely does not exist",{value: volumeLink})
-    }
-}
-
-//must be cleaner way to watch multiple objects?
-watch(() => props.subject, async () => {
-    await updateVolume()
-    // if(nv){
-    //     nv.setSliceType(nv.sliceTypeMultiplanar); //not sure why this is needed but if removed slice type changes to 3d
-    // }
-    // if(props.bundles.length > 0){
-    //     loadBundles(props.bundles)
-    // }
-})
-watch(() => props.scan, () => {
-    updateVolume()
-})
-watch(() => props.dataset, () => {
-    updateVolume()
-})
-watch(() => props.site, () => {
-    updateVolume()
-})
-watch(() => props.bundles, (newVal,oldVal) => {
-    if(nv){
-        updateBundles(newVal,oldVal)
-    }
-})
-</script>
-
 <template>
     <div id="app">
         <div id = "canvas-container">
@@ -184,6 +14,148 @@ watch(() => props.bundles, (newVal,oldVal) => {
         </div>
     </div>
 </template>
+
+
+<style>
+#app{
+    display: grid;
+}
+#canvas-container{
+    width: 110vh;
+    height: 93vh;
+}
+#gl{
+    align-self: left;
+    border: black 1px solid;
+}
+.bottom-bar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+</style>
+
+<script setup>
+import ToolTip from './ToolTip.vue';
+import {Niivue} from '@niivue/niivue'
+import {onMounted,watch} from 'vue';
+import {getUrl} from '../utilites/awsHelper.js'
+
+const props = defineProps({
+    dataset:{
+        type:Object,
+        required: true,
+        validatior: (value) => {
+            return value.hasOwnProperty("bucket") && value.hasOwnProperty("prefix");
+        }
+    },
+    //bundles needs to be updated to accept tks and trxs
+    bundles:{
+        type: Array,
+        required: false
+    },
+    scan: {}
+})
+
+var nv = null
+var isLoadingVolume = false
+var zoom = 0.1
+const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
+
+onMounted(() => {
+  nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}));
+  nv.attachTo("gl");
+  nv.setSliceType(nv.sliceTypeMultiplanar);
+  nv.setClipPlane([-0.1, 270, 0])
+  nv.setClipPlaneColor([0.5, 0.5, 0.5, 0.5])
+});
+
+async function updateVolume(){
+    if(!isLoadingVolume){
+        isLoadingVolume = true
+        let params = {
+            Bucket: props.dataset.bucket,
+            Key: props.scan.path,
+        }
+        let volumeList = [{url: await getUrl(params),colorMap: "gray",}]
+        await nv.loadVolumes(volumeList)
+        await nv.updateGLVolume()
+        isLoadingVolume = false
+        return
+
+    }
+}
+
+function changeZoom(){
+      nv.scene.volScaleMultiplier = zoom*10;
+      nv.drawScene()
+}
+
+function deleteTrkBundles(bundles){
+    for(let i = 0; i < bundles.length; i++){
+        let params = {
+            Bucket: props.dataset.bucket,
+            Key: bundles[i].filepath
+        }
+        let url = getUrl(params)
+        nv.removeMeshByUrl(url)
+    }
+}
+
+async function loadTrkBundle(bundle){
+  if (!nv.initialized) {
+    await nv.init();
+  }
+
+  if (nv.gl) {
+    let params = {
+        Bucket: props.dataset.bucket,
+        Key: bundle.filepath
+    }
+    let url = getUrl(params)
+    console.log(params,url)
+    let color = bundle.rgba255
+    let meshOptions = {url:url, rgba255: color, gl: nv.gl}
+    await nv.addMeshFromUrl(meshOptions);
+    return
+  } else {
+    console.error('WebGL context is not initialized');
+  }
+}
+
+async function updateTrkBundles(newBundles,oldBundles){
+    const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
+    const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
+    console.log(addedBundles)
+
+    if(removedBundles.length > 0){
+        deleteTrkBundles(removedBundles)
+    }
+
+    if(addedBundles.length > 0){
+        for(let i=0;i<addedBundles.length;i++){
+            let bundle = addedBundles[i]
+            await loadTrkBundle(bundle)
+        }
+    }
+    for(let i=0; i<nv.meshes.length;i++){
+                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
+    }
+
+}
+watch(() => props.scan, async (newVal) => {
+    if(props.scan){
+        await updateVolume()
+        updateTrkBundles(props.bundles,[])
+    }
+})
+
+watch(() => props.bundles, async (newVal,oldVal) => {
+    if(!isLoadingVolume){
+        updateTrkBundles(newVal,oldVal)
+    }
+})
+</script>
 
 <style scoped>
 #app{

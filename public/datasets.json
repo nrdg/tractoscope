@@ -1,0 +1,276 @@
+{
+    "hbn": {
+        "bucket": "fcp-indi",
+        "prefix": "data/Projects/HBN/BIDS_curated/derivatives/afq/",
+        "participantsSize": 2000,
+        "subfolders": [{
+            "path": "clean_bundles/","extension":"trk"
+        }],
+        "scans": [
+            "model-DKI_FA",
+            "b0",
+            "model-CSD_APM",
+            "model-DKI_AWF",
+            "model-DKI_MD",
+            "model-DKI_MK",
+            "model-DTI_FA"
+        ],
+        "trkFiles":[
+            {
+               "name":"Anterior Frontal",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk",
+               "rgba255":[
+                  31,
+                  119,
+                  180,
+                  255
+               ]
+            },
+            {
+               "name":"Arcuate Fasciculus-Left",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_L_tractography.trk",
+               "rgba255":[
+                  23,
+                  190,
+                  207,
+                  255
+               ]
+            },
+            {
+               "name":"Arcuate Fasciculus-Right",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ARC_R_tractography.trk",
+               "rgba255":[
+                  158,
+                  218,
+                  229,
+                  255
+               ]
+            },
+            {
+               "name":"Anterior Thalamic Radiation-Left",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_L_tractography.trk",
+               "rgba255":[
+                  31,
+                  119,
+                  180,
+                  255
+               ]
+            },
+            {
+               "name":"Anterior Thalamic Radiation-Right",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ATR_R_tractography.trk",
+               "rgba255":[
+                  174,
+                  199,
+                  232,
+                  255
+               ]
+            },
+            {
+               "name":"Cingulate Cingulum-Left",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_L_tractography.trk",
+               "rgba255":[
+                  44,
+                  160,
+                  44,
+                  255
+               ]
+            },
+            {
+               "name":"Cingulate Cingulum-Right",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CGC_R_tractography.trk",
+               "rgba255":[
+                  152,
+                  223,
+                  138,
+                  255
+               ]
+            },
+            {
+               "name":"Corticospinal Tract-Left",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_L_tractography.trk",
+               "rgba255":[
+                  255,
+                  127,
+                  14,
+                  255
+               ]
+            },
+            {
+               "name":"Corticospinal Tract-Right",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-CST_R_tractography.trk",
+               "rgba255":[
+                  255,
+                  187,
+                  120,
+                  255
+               ]
+            },
+            {
+               "name":"Inferior Fronto-Occipital Fasciculus-Left",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_L_tractography.trk",
+               "rgba255":[
+                  140,
+                  86,
+                  75,
+                  255
+               ]
+            },
+            {
+               "name":"Inferior Fronto-Occipital Fasciculus-Right",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-IFO_R_tractography.trk",
+               "rgba255":[
+                  196,
+                  156,
+                  148,
+                  255
+               ]
+            },
+            {
+               "name":"Inferior Longitudinal Fasciculus-Left",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_L_tractography.trk",
+               "rgba255":[
+                  227,
+                  119,
+                  194,
+                  255
+               ]
+            },
+            {
+               "name":"Inferior Longitudinal Fasciculus-Right",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-ILF_R_tractography.trk",
+               "rgba255":[
+                  247,
+                  182,
+                  210,
+                  255
+               ]
+            },
+            {
+               "name":"Motor",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Motor_tractography.trk",
+               "rgba255":[
+                  255,
+                  127,
+                  14,
+                  255
+               ]
+            },
+            {
+               "name":"Occipital",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Occipital_tractography.trk",
+               "rgba255":[
+                  44,
+                  160,
+                  44,
+                  255
+               ]
+            },
+            {
+               "name":"Orbital",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Orbital_tractography.trk",
+               "rgba255":[
+                  214,
+                  39,
+                  40,
+                  255
+               ]
+            },
+            {
+               "name":"Posterior Parietal",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-PostParietal_tractography.trk",
+               "rgba255":[
+                  148,
+                  103,
+                  189,
+                  255
+               ]
+            },
+            {
+               "name":"Superior Longitudinal Fasciculus-Left",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_L_tractography.trk",
+               "rgba255":[
+                  127,
+                  127,
+                  127,
+                  255
+               ]
+            },
+            {
+               "name":"Superior Longitudinal Fasciculus-Right",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SLF_R_tractography.trk",
+               "rgba255":[
+                  199,
+                  199,
+                  199,
+                  255
+               ]
+            },
+            {
+               "name":"Superior Frontal",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupFrontal_tractography.trk",
+               "rgba255":[
+                  140,
+                  86,
+                  75,
+                  255
+               ]
+            },
+            {
+               "name":"Superior Parietal",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupParietal_tractography.trk",
+               "rgba255":[
+                  227,
+                  119,
+                  194,
+                  255
+               ]
+            },
+            {
+               "name":"Temporal",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Temporal_tractography.trk",
+               "rgba255":[
+                  127,
+                  127,
+                  127,
+                  255
+               ]
+            },
+            {
+               "name":"Uncinate Fasciculus-Left",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_L_tractography.trk",
+               "rgba255":[
+                  188,
+                  189,
+                  34,
+                  255
+               ]
+            },
+            {
+               "name":"Uncinate Fasciculus-Right",
+               "fileName":"_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-UNC_R_tractography.trk",
+               "rgba255":[
+                  219,
+                  219,
+                  141,
+                  255
+               ]
+            }
+         ]
+    },
+    "hcp": {
+        "bucket": "open-neurodata",
+        "prefix": "rokem/hcp1200/afq/",
+        "participantsSize": 2000,
+        "scans": [
+            "model-DKI_FA",
+            "b0",
+            "model-CSD_APM",
+            "model-DKI_AWF",
+            "model-DKI_MD",
+            "model-DKI_MK",
+            "model-DTI_FA"
+        ],
+        "trxFile":{"fileName":"clean_bundles"}
+    }
+}

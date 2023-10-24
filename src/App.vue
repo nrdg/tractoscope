@@ -1,179 +1,223 @@
 <template>
-<div id = "app">
-  <NiivueRender
-  :dataset="dataset"
-  :subject="subject"
-  :site="site"
-  :scan="scan"
-  :bundles="selectedBundles"
-  />
-  <div class = "vertical-menu">
-    <DatasetSelect :datasets="datasets" v-model:dataset="dataset" />
-    <SubjectSelect :subjectList="subjectList" v-model:subject="subject"/>
-    <ListSelect v-if="showSiteSelect" v-model:value="site" :list="sites"/>
-    <div v-if="!showSiteSelect">site: {{ sites[0] }}</div>
-    <div>
-      Scan: <ListSelect v-model:value="scan" :list="scans"/>
+    <div id="app">
+        <NiivueRender :dataset="dataset" :scan="scan" :bundles="selectedBundles"/>
+        <div class="vertical-menu">
+            Dataset:
+            <select v-model="dataset">
+                <option v-for="(value, key) in datasets" :value="value">{{ key }}</option>
+            </select>
+            Subject:
+            <SubjectSelect v-model:subject="subject" :subjects="subjects"></SubjectSelect>
+            Scan: <select v-model="scan">
+                <option v-for="item in scans" :value="item">{{ item.name }}</option>
+            </select>
+            <div v-if="session">session: {{ session.folderName }}</div>
+            <select v-model="session" v-if="sessions.length > 1">
+                <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
+            </select>
+            Bundles:
+            <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
+            <br>
+        </div>
     </div>
-    <div v-if="bundles.length > 0">
-      Select Bundles:
-      <MultiSelect v-model:selected="selectedBundles" :items="bundles"/>
-    </div>
-  </div>
-</div>
 </template>
 
 <script setup>
-import DatasetSelect from './components/DatasetSelect.vue';
-import ListSelect from './components/ListSelect.vue';
-import NiivueRender from './components/NiivueRender.vue';
-import SubjectSelect from './components/SubjectSelect.vue';
-import MultiSelect from './components/MultiSelect.vue';
+import {onMounted, ref, watch, computed} from 'vue'
+import datasets from "../public/datasets.json"
+import {listObjects, listCommonPrefixes} from "./utilites/awsHelper.js"
+import {getLastPathComponent, groupByExtension, getTrkBundles} from "./utilites/logic.js"
+import SubjectSelect from './components/SubjectSelect.vue'
+import MultiSelect from './components/MultiSelect.vue'
+import NiivueRender from './components/NiivueRender.vue'
+import ListSelect from './components/ListSelect.vue'
 
-import { updateSubjectList,getVolumeLink,getBundleLink,checkLink } from './utilites/DatasetLogic';
+const dataset = ref(datasets[Object.keys(datasets)[0]]);
+const subjects = ref([]);
+const subject = ref();
+const sessions = ref([]);
+const session = ref();
+const trks = ref([]);
 
-import datasetConfig from '/public/datasetConfig.json'
-
-import {ref,computed, watch} from 'vue';
-
-
-const datasets = datasetConfig.datasets
-const dataset = ref(datasets[0])
-const subjectList = ref([])
-const subject = ref(null)
-const sites = ref([])
-const site = ref(null)
-const scans = ref([])
-const scan = ref(null)
-const bundles = ref([])
-const selectedBundles = ref([])
-
-//Maybe this should be inside of SiteSelect component for readability? though that would make it always rendered, which is maybe slower?
-const showSiteSelect = computed({
-  get(){
-    if(sites.value.length > 1){
-      return true
-    }else{
-      return false
-    }
-  }
-})
-
-initalizeSubjectList()
-async function initalizeSubjectList(){
-  try{
-    subjectList.value = await updateSubjectList(dataset.value)
-  }catch(e){
-    console.log("updateSubjectList error",e.message)
-  }
-  subject.value = subjectList.value[0]
-}
-function updateSite(){
-  if(typeof subject.value.site === 'string'){
-    site.value = subject.value.site
-    sites.value = [subject.value.site]
-  }else{
-    site.value = subject.value.site[0]
-    sites.value = subject.value.site
-  }
-}
-
-async function updateScans(){
-  var scansToCheck = null
-  const output = []
-  if(dataset.value.hasOwnProperty('scans')){
-    let datasetScans = dataset.value.scans
-    let defaultScans = datasetConfig.default.scans
-    let x = datasetScans.concat(defaultScans)
-    scansToCheck = [...new Set(x)]
-  }else{
-    console.log("dataset", dataset.value.name," does not contain scans, using defaults")
-    scansToCheck = datasetConfig.default.scans
-  }
-
-  //this should probably be made into its own function that can be reused, function checkLink
-  let x = scansToCheck.map(async (item) => {
-    let link = getVolumeLink(dataset.value,subject.value,site.value,item)
-    if(await checkLink(link)){
-      return item
-    }else{
-      return false
-    }
-  })
-
-  let checkedLinks = await Promise.all(x)
-
-  for(let item of checkedLinks){
-    if(item){
-      output.push(item)
-    }
-  }
-  if(output.length < 1){
-    throw new Error("no scans exist for subject",{value:subject.value})
-  }
-  return output
-}
-
-async function updateBundles(){
-  var bundlesToCheck = null
-  const output = []
-  if(dataset.value.hasOwnProperty('bundles')){
-    let datasetBundles = dataset.value.bundles
-    let defaultBundles = datasetConfig.default.bundles
-    let x = datasetBundles.concat(defaultBundles)
-    bundlesToCheck = [...new Set(x)]
-  }else{
-    console.log("dataset",dataset.value.name," does not contain bundles, using defaults")
-    bundlesToCheck = datasetConfig.defualt.bundles
-  }
-
-  let x = bundlesToCheck.map(async (item) => {
-    let link = getBundleLink(dataset.value,subject.value,site.value,item)
-    if(await checkLink(link)){
-      return item
-    }else{
-      return false
-    }
-  })
-
-  let checkedLinks = await Promise.all(x)
-
-  for(let item of checkedLinks){
-    if(item){
-      output.push(item)
-    }
-  }
-  return output
-}
-watch(dataset, (newVal) => {
-  initalizeSubjectList()
-})
-
-watch(subject, async (newVal) => {
-  if(newVal){
-    updateSite()
-    scans.value = []
-    let newScans = await updateScans()
-    scans.value = newScans
-    if(!scans.value.includes(scan.value)){
-      scan.value = scans.value[0]
+const trxs = ref([]);
+//trx will be the trx that contains dataset.trxFile.fileName somewhere in its filename
+const trx = computed(() => {
+    if (trxs.value.length === 0) {
+        return null
     }
 
-    bundles.value = []
-    const newBundles = await updateBundles()
-    bundles.value = newBundles
-    let previouslySelectedBundles = selectedBundles.value
-    let x = []
-    previouslySelectedBundles.forEach((element) => {
-      if(bundles.value.includes(element)){
-        x.push(element)
-      }
+    const matchingTrxs = trxs.value.filter((trx) => {
+        let fileName = getLastPathComponent(trx);
+        return fileName.includes(props.dataset.trxFile.fileName);
     })
-    selectedBundles.value = x
-  }
+
+    if (matchingTrxs.length === 0) {
+        return null
+    } else if (matchingTrxs.length > 1) {
+        throw new Error('dataset.trxFile is not a configured property')
+    } else {
+        return matchingTrxs[0]
+    }
 })
 
 
+const niis = ref([]);
+//value = {name, path} for all nii's that are in dataset.scans
+//if niis.length == 0, then value = []
+const scans = computed(() => {
+    if (niis.value.length > 0) {
+        let output = niis.value.reduce((acc, path, i) => {
+            dataset.value.scans.forEach((name) => {
+                if (path.includes(name)) {
+                    acc.push({ name, path });
+                }
+            });
+            return acc;
+        }, []);
+        return output;
+    } else {
+        return [];
+    }
+});
+const scan = ref({});
+
+/**
+ * Bundles is an object with the following properties
+ * bundles = {
+ *  type: "trk" or "trx"
+ *  names: ["name","name"]
+ *  trkFiles(opt): [{name: {path, rgba255}]
+ *  trxFile(opt): path  //still need to implement way to select specific bundles
+ * }
+ */
+const bundles = ref([]);
+const selectedBundles = ref([]);
+
+async function getSubfolders(prefixes){
+    let output = []
+    for (let prefix of prefixes) {
+        let folderName = getLastPathComponent(prefix);
+        output.push({prefix, folderName});
+    }
+    return output
+}
+
+//updates subjects with [{prefix,folderName}...]
+//sets subject to first subject in subjects
+async function getSubjects() {
+    let output = [];
+    let params = {
+        Bucket: dataset.value.bucket,
+        Prefix: dataset.value.prefix,
+        Delimiter: "/"
+    }
+    let prefixes = await listCommonPrefixes(params, dataset.value.participantsSize);
+    output = getSubfolders(prefixes);
+    return output
+}
+
+//this will fail if there are subfolders, but no folder for sessions
+//for example
+//          subject-|
+//                  |-bundles-|
+//                  |-clean_bundles-|
+//for this it would set sessions = [bundles,clean_bundles]
+//if there is no folder for sessions it will return [{prefix: subject.value.prefix, folderName: "root"}]
+async function getSessions() {
+    let output = [];
+    let params = {
+        Bucket: dataset.value.bucket,
+        Prefix: subject.value.prefix,
+        Delimiter: "/"
+    }
+    let prefixes = await listCommonPrefixes(params, 100);
+    output = getSubfolders(prefixes);
+    if(output.length == 0){
+        return [{prefix: subject.value.prefix, folderName: "root"}];
+    }
+    return output
+}
+
+//if more than one trx it will pick first one listed
+//updates trks, trx and nii files
+async function updateFiles() {
+    trxs.value = [];
+    trks.value = [];
+    niis.value = [];
+
+    let params = {
+        Bucket: dataset.value.bucket,
+        Prefix: session.value.prefix,
+    }
+    let files = await listObjects(params);
+    let keys = files.Contents.map((item) => item.Key);
+    var filesByExtension = groupByExtension(keys);
+
+    //if dataset contains subfolder, get files in that subfolder
+    //replace filesByExtension[subfolder.extension] with files in subfolder that have that extension
+    if(dataset.value.subfolders){
+        for(let subfolder of dataset.value.subfolders ){
+            let params = {
+                Bucket: dataset.value.bucket,
+                Prefix: session.value.prefix + subfolder.path,
+                Delimiter: "/"
+            }
+            let subfolderFiles = await listObjects(params);
+            let subfolderKeys = subfolderFiles.Contents.map((item) => item.Key);
+            let subfolderFilesByExtension = groupByExtension(subfolderKeys);
+            filesByExtension[subfolder.extension] = subfolderFilesByExtension[subfolder.extension];
+        }
+    }
+
+
+    if(filesByExtension["nii.gz"]){
+        niis.value = filesByExtension["nii.gz"];
+    }
+    if(filesByExtension["trk"]){
+        trks.value = filesByExtension["trk"];
+    };
+    if(filesByExtension["trx"]){
+        trxs.value = filesByExtension["trx"];
+    };
+    if(filesByExtension["nii.gz"]){
+        niis.value = filesByExtension["nii.gz"];
+    };
+}
+onMounted(async () => {
+    subjects.value = await getSubjects();
+    subject.value = subjects.value[0];
+    sessions.value = await getSessions();
+    session.value = sessions.value[0];
+    updateFiles();
+
+});
+
+watch(dataset, async () => {
+    subjects.value = await getSubjects();
+    subject.value = subjects.value[0];
+});
+watch(subject, async () => {
+    sessions.value = await getSessions();
+    session.value = sessions.value[0];
+});
+watch(session, async () => {
+    updateFiles();
+});
+watch(trks, (newVal) => {
+    if(newVal.length > 0){
+        bundles.value = getTrkBundles(dataset.value.trkFiles,trks.value)
+    }
+});
+watch(trxs, (newVal) => {
+});
+watch(scans, (newVal) => {
+    if(!newVal.includes(scan.value)){
+        if(newVal.includes(scan.value)){
+        }else{
+            scan.value = newVal[0];
+        }
+    }
+});
 </script>
 
 <style>
@@ -202,5 +246,9 @@ watch(subject, async (newVal) => {
 
 .vertical-menu > *:last-child {
     padding-bottom: 0;
+}
+.vertical-menu select {
+  vertical-align: middle;
+  width: 150px;
 }
 </style>
