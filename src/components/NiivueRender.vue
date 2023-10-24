@@ -67,6 +67,7 @@ onMounted(() => {
   nv.attachTo("gl");
   nv.setSliceType(nv.sliceTypeMultiplanar);
   nv.setClipPlane([-0.1, 270, 0])
+  nv.setClipPlaneColor([0.5, 0.5, 0.5, 0.5])
 });
 
 async function updateVolume(){
