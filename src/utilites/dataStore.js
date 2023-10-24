@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import datasets from "../../public/datasets.json"
 import {listObjects, listCommonPrefixes,getUrl} from "./awsHelper.js"
-import {groupByExtension} from "./logic.js"
+import {groupByExtension, getSubfolders} from "./logic.js"
 
 //here were creating a pinia store for all the logic surrounding the data we are getting from our aws bucket
 //we want to handle all the aws requests and data manipulation in one place.
@@ -23,7 +23,7 @@ export const useDataStore = defineStore({
         scan: null,
         bundles: [],
     }),
-    actions: {
+    getters: {
         //Dataset functions
         getDataset(){
             return this.datasets[this.dataset];
@@ -31,6 +31,57 @@ export const useDataStore = defineStore({
         getDatasets(){
             return this.datasets;
         },
+        getDatasetKey(){
+            return this.dataset;
+        },
+
+        getSubjects(){
+            return this.subjects;
+        },
+        getSubject(){
+            return this.subject;
+        },
+
+        getSessions(){
+            return this.sessions;
+        },
+        getSession(){
+            return this.session;
+        },
+
+         //scans
+        getScans(){
+            //check if niis exist
+            if (this.files["nii.gz"].length > 0) {
+                //match all names to files and return {name,path}
+                let output = niis.value.reduce((acc, path, i) => {
+                    this.dataset.scans.forEach((name) => {
+                        if (path.includes(name)) {
+                            acc.push({ name, path });
+                        }
+                    });
+                    return acc;
+                }, []);
+                return output;
+            } else {
+                return [];
+            }
+        },
+        getScanLink() {
+            //check if scan is selected
+            if(this.scan === null) return null
+            //return link to scan
+            let params = {
+                Bucket: this.getDataset.bucket,
+                Key: this.scan.path
+            }
+            return getUrl(params)
+        },
+        getScan(){
+            return this.scan;
+        },
+    },
+    actions: {
         setDataset(key){
             if(key in this.datasets){
                 this.dataset = key;
@@ -42,19 +93,16 @@ export const useDataStore = defineStore({
         //subjects
         async updateSubjects() {
             let params = {
-                Bucket: this.getDataset().bucket,
-                Prefix: this.getDataset().prefix,
+                Bucket: this.getDataset.bucket,
+                Prefix: this.getDataset.prefix,
                 Delimiter: "/"
             }
-            let prefixes = await listCommonPrefixes(params, this.getDataset().participantsSize);
+            let prefixes = await listCommonPrefixes(params, this.getDataset.participantsSize);
             this.subjects = getSubfolders(prefixes);
             this.subject = this.subjects[0];
         },
         setSubject(subject){
             this.subject = subject;
-        },
-        getSubject(){
-            return this.subject;
         },
 
         //sessions
@@ -68,7 +116,7 @@ export const useDataStore = defineStore({
         async updateSessions(){
             let output = [];
             let params = {
-                Bucket: this.getDataset().bucket,
+                Bucket: this.getDataset.bucket,
                 Prefix: this.subject.value.prefix,
                 Delimiter: "/"
             }
@@ -82,9 +130,6 @@ export const useDataStore = defineStore({
         },
         setSession(session){
             this.session = session;
-        },
-        getSessions(){
-            return this.sessions;
         },
 
         //files
@@ -118,61 +163,19 @@ export const useDataStore = defineStore({
             return;
         },
 
-        //scans
-        getScans(){
-            //check if niis exist
-            if (this.files["nii.gz"].length > 0) {
-                //match all names to files and return {name,path}
-                let output = niis.value.reduce((acc, path, i) => {
-                    this.dataset.scans.forEach((name) => {
-                        if (path.includes(name)) {
-                            acc.push({ name, path });
-                        }
-                    });
-                    return acc;
-                }, []);
-                return output;
-            } else {
-                return [];
-            }
-        },
-        getScanLink() {
-            //check if scan is selected
-            if(this.scan === null) return null
-            //return link to scan
-            let params = {
-                Bucket: this.getDataset.bucket,
-                Key: this.scan.path
-            }
-            return getUrl(params)
-        },
-        getScan(){
-            return this.scan;
-        },
+
         setScan(scan){
             this.scan = scan;
         },
 
-        //implement later
-        getBundleLinks(){
-            //check if bundles are selected
-            if(this.selectedBundles.length == 0) return null
-        },
-        setSelectedBundles(bundles){
-            this.selectedBundles = bundles;
-        },
+        // //implement later
+        // getBundleLinks(){
+        //     //check if bundles are selected
+        //     if(this.selectedBundles.length == 0) return null
+        // },
+        // setSelectedBundles(bundles){
+        //     this.selectedBundles = bundles;
+        // },
 
-    },
-    //watchers
-    watch: {
-        dataset(newVal,oldVal) {
-            this.getSubjects();
-        },
-        subject(newVal,oldVal) {
-            this.getSessions();
-        },
-        session(newVal,oldVal){
-            this.getFiles();
-        }
     }
 })
