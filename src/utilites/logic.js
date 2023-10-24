@@ -25,6 +25,15 @@ export function getLastPathComponent(filePath) {
     return fileName;
 }
 
+export function getSubfolders(prefixes){
+  let output = []
+  for (let prefix of prefixes) {
+      let folderName = getLastPathComponent(prefix);
+      output.push({prefix, folderName});
+  }
+  return output
+}
+
 export function filterBySubfolder(files, folderPath) {
     return files.filter((filePath) => {
       const pathParts = filePath.split("/");
