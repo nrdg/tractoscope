@@ -146,13 +146,11 @@ export const useDataStore = defineStore({
             }
 
             this.files = filesByExtension;
-            console.log(this.files)
             this.updateScans(this.files["nii.gz"])
             return;
         },
 
         updateScans(niis){
-            console.log("updating scans")
             if (niis.length > 0) {
                 //match all names to files and return {name,path}
                 let output = niis.reduce((acc, path, i) => {
@@ -164,9 +162,21 @@ export const useDataStore = defineStore({
                     return acc;
                 }, []);
                 this.scans = output;
+                //check for scan with same name as previous scan and use that, otherwise pick first
+                if(this.getScan){
+                    let scanWithName = this.scans.find(scan => scan.name === this.getScan.name);
+                    if(scanWithName){
+                        this.scan = scanWithName;
+                    }else{
+                        this.scan = this.scans[0];
+                    }
+                }else{
+                    this.scan = this.scans[0];
+                }
             } else {
-                console.log("no scans found")
+                console.log("no scans found for subject")
                 this.scans = [];
+                this.scan = null;
             }
         },
         setScan(scan){
