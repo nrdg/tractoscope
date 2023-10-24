@@ -1,33 +1,45 @@
 import { defineStore } from 'pinia'
-import datasets from "../public/datasets.js"
-import {listObjects, listCommonPrefixes,getUrl} from "./utilites/awsHelper.js"
-import {getLastPathComponent, groupByExtension, filterBySubfolder, filterBySubstring, getTrkBundles} from "./utilites/logic.js"
+import datasets from "../../public/datasets.json"
+import {listObjects, listCommonPrefixes,getUrl} from "./awsHelper.js"
+import {groupByExtension} from "./logic.js"
 
 //here were creating a pinia store for all the logic surrounding the data we are getting from our aws bucket
 //we want to handle all the aws requests and data manipulation in one place.
 //we then provide the processed data and some setter functions to the components that need it
-const dataStore = defineStore({
-    id: 'store',
+export const useDataStore = defineStore({
+    id: 'dataStore',
     state: () => ({
-        //lists
         datasets: datasets,
-        // {name, path}
-        subjects: [],
-        sessions: [],
-        //raw data
-        files: [],
-        //processed data
-        scans: [],
-        bundles: [],
-        //selections
         dataset: Object.keys(datasets)[0],
+
+        subjects: [],
         subject: null,
+
+        sessions: [],
         session: null,
+
+        files: [],
+
         scan: null,
-        selectedBundles: [],
+        bundles: [],
     }),
     actions: {
-        //aws requests + response parsing
+        //Dataset functions
+        getDataset(){
+            return this.datasets[this.dataset];
+        },
+        getDatasets(){
+            return this.datasets;
+        },
+        setDataset(key){
+            if(key in this.datasets){
+                this.dataset = key;
+            } else {
+                throw new Error(`Dataset with key ${key} not found.`);
+            }
+        },
+
+        //subjects
         async updateSubjects() {
             let params = {
                 Bucket: this.getDataset().bucket,
@@ -38,7 +50,21 @@ const dataStore = defineStore({
             this.subjects = getSubfolders(prefixes);
             this.subject = this.subjects[0];
         },
+        setSubject(subject){
+            this.subject = subject;
+        },
+        getSubject(){
+            return this.subject;
+        },
 
+        //sessions
+        //this will fail if there are subfolders, but no folder for sessions
+        //for example
+        //          subject-|
+        //                  |-bundles-|
+        //                  |-clean_bundles-|
+        //for this it would set sessions = [bundles,clean_bundles]
+        //if there is no folder for sessions it will return [{prefix: subject.value.prefix, folderName: "root"}]
         async updateSessions(){
             let output = [];
             let params = {
@@ -54,10 +80,15 @@ const dataStore = defineStore({
             this.sessions = output;
             this.session = this.sessions[0]
         },
-        async updateFiles() {
-            //clear files
-            this.files = [];
+        setSession(session){
+            this.session = session;
+        },
+        getSessions(){
+            return this.sessions;
+        },
 
+        //files
+        async updateFiles() {
             let params = {
                 Bucket: this.getDataset().bucket,
                 Prefix: this.sessions.prefix,
@@ -84,35 +115,16 @@ const dataStore = defineStore({
 
 
             this.files = filesByExtension;
+            return;
         },
-        //getters
-        getScanLink() {
-            //check if scan is selected
-            if(this.scan === null) return null
-            //return link to scan
-            let params = {
-                Bucket: this.getDataset.bucket,
-                Key: this.scan.path
-            }
-            return getUrl(params)
-        },
-        //implement later
-        getBundleLinks(){
-            //check if bundles are selected
-            if(this.selectedBundles.length == 0) return null
-        },
-        getDataset(){
-            return this.datasets[this.dataset];
-        },
-        getDatasets(){
-            return this.datasets;
-        },
+
+        //scans
         getScans(){
             //check if niis exist
             if (this.files["nii.gz"].length > 0) {
                 //match all names to files and return {name,path}
                 let output = niis.value.reduce((acc, path, i) => {
-                    dataset.value.scans.forEach((name) => {
+                    this.dataset.scans.forEach((name) => {
                         if (path.includes(name)) {
                             acc.push({ name, path });
                         }
@@ -124,21 +136,27 @@ const dataStore = defineStore({
                 return [];
             }
         },
-        setDataset(key){
-            if(key in this.datasets){
-                this.dataset = key;
-            } else {
-                throw new Error(`Dataset with key ${key} not found.`);
+        getScanLink() {
+            //check if scan is selected
+            if(this.scan === null) return null
+            //return link to scan
+            let params = {
+                Bucket: this.getDataset.bucket,
+                Key: this.scan.path
             }
+            return getUrl(params)
         },
-        setSubject(subject){
-            this.subject = subject;
+        getScan(){
+            return this.scan;
         },
         setScan(scan){
             this.scan = scan;
         },
-        setSession(session){
-            this.session = session;
+
+        //implement later
+        getBundleLinks(){
+            //check if bundles are selected
+            if(this.selectedBundles.length == 0) return null
         },
         setSelectedBundles(bundles){
             this.selectedBundles = bundles;
@@ -155,11 +173,6 @@ const dataStore = defineStore({
         },
         session(newVal,oldVal){
             this.getFiles();
-        },
-        files(newVal,oldVal){
-            this.getScans();
-            this.getBundles();
-            this.
-        },
+        }
     }
 })
