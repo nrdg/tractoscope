@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import datasets from "../../public/datasets.json"
 import {listObjects, listCommonPrefixes,getUrl} from "./awsHelper.js"
-import {groupByExtension, getSubfolders} from "./logic.js"
+import {groupByExtension, getSubfolders, getTrkBundles} from "./logic.js"
 
 //here were creating a pinia store for all the logic surrounding the data we are getting from our aws bucket
 //we want to handle all the aws requests and data manipulation in one place.
@@ -19,10 +19,12 @@ export const useDataStore = defineStore({
         session: null,
 
         files: [],
+        trks: [],
+        trxs: [],
 
         scans: [],
         scan: null,
-        bundles: [],
+        selectedBundles: [],
     }),
     getters: {
         //Dataset functions
@@ -67,6 +69,49 @@ export const useDataStore = defineStore({
         getScan(){
             return this.scan;
         },
+        getBundleType(){
+            if(this.files["trx"]){
+                return "trx";
+            }
+            if(this.files["trk"]){
+                return "trk";
+            }
+            return null;
+        },
+        //returns a list of all bundle names
+        getBundleNames(){
+            if(this.getBundleType() === "trx"){
+                return
+            }
+            if(this.getBundleType() === "trk"){
+                return this.trks.map(trk => trk.name);
+            }
+            return [];
+        },
+        //this returns a list of bundle names
+        getSelectedBundles(){
+
+        },
+        getSelectedTrx(){
+            throw new notImplementedError();
+        },
+        //this returns a list of links for bundles
+        getSelectedTrks(){
+            getTrkBundles(this.getDataset.trkFiles, this.trks)
+        },
+        getTrxBundle() {
+            let trx = this.trxs.filter(trx => trx.path.includes(this.getDataset.trxFile.fileName));
+            if (trx.length === 0) {
+                throw new Error(`No version of ${this.getDataset.trxFile.fileName} found.`);
+            } else if (trx.length > 1) {
+                throw new Error(`Multiple versions of ${this.getDataset.trxFile.fileName} found.`);
+            } else {
+                return trx[0];
+            }
+        },
+        getBundleType(){
+
+        }
     },
     actions: {
         setDataset(key){
@@ -76,7 +121,12 @@ export const useDataStore = defineStore({
                 throw new Error(`Dataset with key ${key} not found.`);
             }
         },
+        selectBundle(name){
 
+        },
+        deselectBundle(name){
+
+        },
         //subjects
         async updateSubjects() {
             let params = {
@@ -110,7 +160,7 @@ export const useDataStore = defineStore({
             let prefixes = await listCommonPrefixes(params, 100);
             output = getSubfolders(prefixes);
             if(output.length == 0){
-                return [{prefix: subject.value.prefix, folderName: "root"}];
+                return [{prefix: this.getSubject.prefix, folderName: "root"}];
             }
             this.sessions = output;
             this.session = this.sessions[0]
@@ -146,10 +196,21 @@ export const useDataStore = defineStore({
             }
 
             this.files = filesByExtension;
-            this.updateScans(this.files["nii.gz"])
+            if(this.files["nii.gz"]){
+                this.updateScans(this.files["nii.gz"])
+            }
+            if(this.files["trk"]){
+                this.trks = this.files["trk"];
+            }else{
+                this.trks = [];
+            }
+            if(this.files["trx"]){
+                this.trxs = this.files["trx"];
+            }else{
+                this.trxs = [];
+            }
             return;
         },
-
         updateScans(niis){
             if (niis.length > 0) {
                 //match all names to files and return {name,path}
@@ -182,15 +243,6 @@ export const useDataStore = defineStore({
         setScan(scan){
             this.scan = scan;
         },
-
-        // //implement later
-        // getBundleLinks(){
-        //     //check if bundles are selected
-        //     if(this.selectedBundles.length == 0) return null
-        // },
-        // setSelectedBundles(bundles){
-        //     this.selectedBundles = bundles;
-        // },
 
     }
 })
