@@ -51,7 +51,7 @@ const props = defineProps({
     },
     //bundles needs to be updated to accept tks and trxs
     bundles:{
-        type: Array,
+        type:Object,
         required: false
     },
     scan: {}
@@ -151,7 +151,7 @@ watch(() => props.scan, async (newVal) => {
 })
 
 watch(() => props.bundles, async (newVal,oldVal) => {
-    if(!isLoadingVolume){
+    if(!isLoadingVolume && props.bundles){
         updateTrkBundles(newVal,oldVal)
     }
 })

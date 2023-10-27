@@ -12,15 +12,14 @@
                 <option v-for="item in dataStore.getScans" :value="item">{{ item.name }}</option>
             </select>
             <div v-if="dataStore.getSession">session: {{ dataStore.getSession.folderName }}</div>
-            {{ dataStore.getBundles }}
+            {{ dataStore.getSelectedBundleNames}}
             {{ dataStore.getBundleNames }}
-            {{ session }}
             <select v-model="session" v-if="dataStore.getSessions.length > 1">
                 <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
             </select>
-            <!-- Bundles:
-            <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
-            <br> -->
+            Bundles:
+            <MultiSelect :items="dataStore.getBundleNames" v-model:selected="selectedBundles"/>
+            <br>
         </div>
     </div>
 </template>
@@ -70,6 +69,14 @@ const session = computed({
     }
 })
 
+const selectedBundles = computed({
+    get(){
+        return dataStore.getSelectedBundleNames;
+    },
+    set(value){
+        return dataStore.selectedBundles = value;
+    }
+})
 onMounted(() => {
     dataStore.updateSubjects();
 })

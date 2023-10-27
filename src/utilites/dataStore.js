@@ -93,7 +93,7 @@ export const useDataStore = defineStore({
             return [];
         },
         //this returns a list of bundle names
-        getSelectedBundles(){
+        getSelectedBundleNames(){
             return this.selectedBundles;
         },
         getSelectedTrx(){

@@ -271,6 +271,33 @@
             "model-DKI_MK",
             "model-DTI_FA"
         ],
-        "trxFile":{"fileName":"clean_bundles"}
+        "bundles": [
+         "Anterior Frontal",
+         "Arcuate Fasciculus-Left",
+         "Arcuate Fasciculus-Right",
+         "Anterior Thalamic Radiation-Left",
+         "Anterior Thalamic Radiation-Right",
+         "Cingulate Cingulum-Left",
+         "Cingulate Cingulum-Right",
+         "Corticospinal Tract-Left",
+         "Corticospinal Tract-Right",
+         "Inferior Fronto-Occipital Fasciculus-Left",
+         "Inferior Fronto-Occipital Fasciculus-Right",
+         "Inferior Longitudinal Fasciculus-Left",
+         "Inferior Longitudinal Fasciculus-Right",
+         "Motor",
+         "Occipital",
+         "Orbital",
+         "Posterior Parietal",
+         "Superior Longitudinal Fasciculus-Left",
+         "Superior Longitudinal Fasciculus-Right",
+         "Superior Frontal",
+         "Superior Parietal",
+         "Temporal",
+         "Uncinate Fasciculus-Left",
+         "Uncinate Fasciculus-Right"
+         ],
+         "trxFile":{"fileName":"clean_bundles"}
+
     }
 }
