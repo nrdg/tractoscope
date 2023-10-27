@@ -80,24 +80,28 @@ export const useDataStore = defineStore({
         },
         //returns a list of all bundle names
         getBundleNames(){
-            if(this.getBundleType() === "trx"){
-                return
+            if(this.getBundleType === "trx"){
+                if(this.getDataset.bundles){
+                    return this.getDataset.bundles;
+                }
+                return [];
             }
-            if(this.getBundleType() === "trk"){
-                return this.trks.map(trk => trk.name);
+            if(this.getBundleType === "trk"){
+                let x = getTrkBundles(this.getDataset.trkFiles, this.trks)
+                return x.map(trk => trk.name);
             }
             return [];
         },
         //this returns a list of bundle names
         getSelectedBundles(){
-
+            return this.selectedBundles;
         },
         getSelectedTrx(){
             throw new notImplementedError();
         },
         //this returns a list of links for bundles
         getSelectedTrks(){
-            getTrkBundles(this.getDataset.trkFiles, this.trks)
+            return getTrkBundles(this.getDataset.trkFiles, this.trks).filter(trk => this.selectedBundles.includes(trk.name)).map(trk => getUrl({Bucket: this.getDataset.bucket, Key: trk.filepath}));
         },
         getTrxBundle() {
             let trx = this.trxs.filter(trx => trx.path.includes(this.getDataset.trxFile.fileName));
@@ -109,9 +113,7 @@ export const useDataStore = defineStore({
                 return trx[0];
             }
         },
-        getBundleType(){
 
-        }
     },
     actions: {
         setDataset(key){
@@ -122,10 +124,14 @@ export const useDataStore = defineStore({
             }
         },
         selectBundle(name){
-
+            if(!this.selectedBundles.includes(name) && this.getBundleNames.includes(name)){
+                this.selectedBundles.push(name);
+            }
         },
         deselectBundle(name){
-
+            if(this.selectedBundles.includes(name)){
+                this.selectedBundles = this.selectedBundles.filter(bundle => bundle !== name);
+            }
         },
         //subjects
         async updateSubjects() {
