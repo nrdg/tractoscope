@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <NiivueRender :dataset="dataStore.getDataset" :scan="dataStore.getScan"/>
+        <NiivueRender :dataset="dataStore.getDataset" :scan="dataStore.getScan" :bundles="dataStore.getBundles"/>
         <div class="vertical-menu">
             Dataset:
             <select v-model="dataset">
@@ -12,9 +12,12 @@
                 <option v-for="item in dataStore.getScans" :value="item">{{ item.name }}</option>
             </select>
             <div v-if="dataStore.getSession">session: {{ dataStore.getSession.folderName }}</div>
-            <!-- <select v-model="session" v-if="sessions.length > 1">
+            {{ dataStore.getBundles }}
+            {{ dataStore.getBundleNames }}
+            {{ session }}
+            <select v-model="session" v-if="dataStore.getSessions.length > 1">
                 <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
-            </select> -->
+            </select>
             <!-- Bundles:
             <MultiSelect :items="bundles" v-model:selected="selectedBundles"/>
             <br> -->
@@ -55,6 +58,15 @@ const scan = computed({
     },
     set(value) {
         return dataStore.setScan(value);
+    }
+})
+
+const session = computed({
+    get() {
+        return dataStore.getSession;
+    },
+    set(value) {
+        return dataStore.setSession(value);
     }
 })
 
