@@ -100,7 +100,7 @@ export const useDataStore = defineStore({
             throw new notImplementedError();
         },
         //this returns a list of links for bundles
-        getSelectedTrks(){
+        getTrks(){
             return getTrkBundles(this.getDataset.trkFiles, this.trks).filter(trk => this.selectedBundles.includes(trk.name)).map(trk => getUrl({Bucket: this.getDataset.bucket, Key: trk.filepath}));
         },
         getTrxBundle() {

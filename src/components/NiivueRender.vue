@@ -41,21 +41,9 @@ import {Niivue} from '@niivue/niivue'
 import {onMounted,watch} from 'vue';
 import {getUrl} from '../utilites/awsHelper.js'
 
-const props = defineProps({
-    dataset:{
-        type:Object,
-        required: true,
-        validatior: (value) => {
-            return value.hasOwnProperty("bucket") && value.hasOwnProperty("prefix");
-        }
-    },
-    //bundles needs to be updated to accept tks and trxs
-    bundles:{
-        type:Object,
-        required: false
-    },
-    scan: {}
-})
+import { useDataStore } from '../utilites/dataStore.js'
+
+const dataStore = useDataStore()
 
 var nv = null
 var isLoadingVolume = false
@@ -73,11 +61,7 @@ onMounted(() => {
 async function updateVolume(){
     if(!isLoadingVolume){
         isLoadingVolume = true
-        let params = {
-            Bucket: props.dataset.bucket,
-            Key: props.scan.path,
-        }
-        let volumeList = [{url: await getUrl(params),colorMap: "gray",}]
+        let volumeList = [{url: dataStore.getScanLink,colorMap: "gray",}]
         await nv.loadVolumes(volumeList)
         await nv.updateGLVolume()
         isLoadingVolume = false
@@ -93,12 +77,7 @@ function changeZoom(){
 
 function deleteTrkBundles(bundles){
     for(let i = 0; i < bundles.length; i++){
-        let params = {
-            Bucket: props.dataset.bucket,
-            Key: bundles[i].filepath
-        }
-        let url = getUrl(params)
-        nv.removeMeshByUrl(url)
+        nv.removeMeshByUrl(bundles[i])
     }
 }
 
@@ -108,14 +87,8 @@ async function loadTrkBundle(bundle){
   }
 
   if (nv.gl) {
-    let params = {
-        Bucket: props.dataset.bucket,
-        Key: bundle.filepath
-    }
-    let url = getUrl(params)
-    console.log(params,url)
     let color = bundle.rgba255
-    let meshOptions = {url:url, rgba255: color, gl: nv.gl}
+    let meshOptions = {url:bundle, rgba255: color, gl: nv.gl}
     await nv.addMeshFromUrl(meshOptions);
     return
   } else {
@@ -143,16 +116,26 @@ async function updateTrkBundles(newBundles,oldBundles){
     }
 
 }
-watch(() => props.scan, async (newVal) => {
-    if(props.scan){
-        await updateVolume()
-        updateTrkBundles(props.bundles,[])
+watch(() => dataStore.getBundleType, (newVal, oldVal) => {
+    if(newVal != oldVal){
+        if(dataStore.getBundleType == "trx"){
+            throw new NotImplementedError()
+        }else if(dataStore.getBundleType == "trk"){
+        }else{
+            throw new Error("Bundle type " + dataStore.getBundleType() + " not recognized");
+        }
     }
-})
+});
 
-watch(() => props.bundles, async (newVal,oldVal) => {
-    if(!isLoadingVolume && props.bundles){
-        updateTrkBundles(newVal,oldVal)
+watch(() => dataStore.getTrks, (newBundles,oldBundles) => {
+    if(dataStore.getBundleType ==  "trk"){
+        updateTrkBundles(newBundles,oldBundles)
+    }
+});
+
+watch(() => dataStore.getScanLink, () => {
+    if(!isLoadingVolume){
+        updateVolume()
     }
 })
 </script>
