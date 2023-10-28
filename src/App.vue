@@ -12,10 +12,6 @@
                 <option v-for="item in dataStore.getScans" :value="item">{{ item.name }}</option>
             </select>
             <div v-if="dataStore.getSession">session: {{ dataStore.getSession.folderName }}</div>
-            Selected Bundles: {{ dataStore.getSelectedBundleNames}} <br>
-            Bundles: {{ dataStore.getBundleNames }} <br>
-            Type: {{ dataStore.getBundleType }} <br>
-            Trks: {{ dataStore.getTrks }}
             <select v-model="session" v-if="dataStore.getSessions.length > 1">
                 <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
             </select>
