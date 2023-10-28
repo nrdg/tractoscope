@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <NiivueRender :dataset="dataStore.getDataset" :scan="dataStore.getScan" :bundles="dataStore.getBundles"/>
+        <NiivueRender/>
         <div class="vertical-menu">
             Dataset:
             <select v-model="dataset">
