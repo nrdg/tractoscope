@@ -41,13 +41,12 @@ function toggleAll(){
 <template>
     <div id="multiselect">
         <select v-model="selected">
-            <option disabled>Bundles:</option>
             <option v-for="item in filteredItems" :value="item">{{ item }}</option>
         </select>
         <button @click="toggleAll()">toggle all</button>
         <div id="scrollBox">
             <ul id="remove">
-                <li v-for="item in selected"><button @click="removeItem(item)">x</button>{{ item.name }}</li>
+                <li v-for="item in selected"><button @click="removeItem(item)">x</button>{{ item }}</li>
             </ul>
         </div>
     </div>
