@@ -37,7 +37,6 @@ export const useDataStore = defineStore({
         getDatasetKey(){
             return this.dataset;
         },
-
         getSubjects(){
             return this.subjects;
         },
@@ -101,7 +100,20 @@ export const useDataStore = defineStore({
         },
         //this returns a list of links for bundles
         getTrks(){
-            return getTrkBundles(this.getDataset.trkFiles, this.trks).filter(trk => this.selectedBundles.includes(trk.name)).map(trk => getUrl({Bucket: this.getDataset.bucket, Key: trk.filepath}));
+            //
+            // let x = getTrkBundles(this.getDataset.trkFiles, this.trks).filter(trk =>
+            //     this.selectedBundles.includes(trk.name)).map(trk =>
+            //         {name:trk.name, getUrl({Bucket: this.getDataset.bucket, Key: trk.filepath, rgba255: trk.rgba255})});
+            let x = getTrkBundles(this.getDataset.trkFiles,this.trks)
+            let out = [];
+            for(let trk of x){
+                if(this.selectedBundles.includes(trk.name)){
+                    let url = getUrl({Bucket: this.getDataset.bucket, Key: trk.filepath, rgba255: trk.rgba255})
+                    let rgba255 = trk.rgba255;
+                    out.push({url, rgba255});
+                }
+            }
+            return out;
         },
         getTrxBundle() {
             let trx = this.trxs.filter(trx => trx.path.includes(this.getDataset.trxFile.fileName));

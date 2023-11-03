@@ -75,20 +75,19 @@ function changeZoom(){
       nv.drawScene()
 }
 
-function deleteTrkBundles(bundles){
-    for(let i = 0; i < bundles.length; i++){
-        nv.removeMeshByUrl(bundles[i])
+function deleteTrkBundles(urls){
+    for(let i = 0; i < urls.length; i++){
+        nv.removeMeshByUrl(urls[i])
     }
 }
 
-async function loadTrkBundle(bundle){
+async function loadTrkBundle(url,rgba255){
   if (!nv.initialized) {
     await nv.init();
   }
 
   if (nv.gl) {
-    let color = bundle.rgba255
-    let meshOptions = {url:bundle, rgba255: color, gl: nv.gl}
+    let meshOptions = {url, rgba255, gl: nv.gl}
     await nv.addMeshFromUrl(meshOptions);
     return
   } else {
@@ -102,13 +101,13 @@ async function updateTrkBundles(newBundles,oldBundles){
     console.log(addedBundles)
 
     if(removedBundles.length > 0){
-        deleteTrkBundles(removedBundles)
+        deleteTrkBundles(removedBundles.map(bundle => bundle.url));
     }
 
     if(addedBundles.length > 0){
         for(let i=0;i<addedBundles.length;i++){
             let bundle = addedBundles[i]
-            await loadTrkBundle(bundle)
+            await loadTrkBundle(bundle.url,bundle.rgba255)
         }
     }
     for(let i=0; i<nv.meshes.length;i++){
@@ -129,6 +128,7 @@ watch(() => dataStore.getBundleType, (newVal, oldVal) => {
 
 watch(() => dataStore.getTrks, (newBundles,oldBundles) => {
     if(dataStore.getBundleType ==  "trk"){
+        console.log(dataStore.getTrks);
         updateTrkBundles(newBundles,oldBundles)
     }
 });
