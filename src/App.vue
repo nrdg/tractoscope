@@ -18,6 +18,7 @@
             Bundles:
             <MultiSelect :items="dataStore.getBundleNames" v-model:selected="selectedBundles"/>
             <br>
+            <PngViewer v-if="dataStore.getPngs"/>
         </div>
     </div>
 </template>
@@ -28,7 +29,7 @@ import {onMounted, ref, watch, computed} from 'vue'
 import SubjectSelect from './components/SubjectSelect.vue'
 import MultiSelect from './components/MultiSelect.vue'
 import NiivueRender from './components/NiivueRender.vue'
-
+import PngViewer from './components/PngViewer.vue'
 import datasets from "../public/datasets.json"
 import { useDataStore } from './utilites/dataStore.js'
 

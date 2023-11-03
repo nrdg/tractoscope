@@ -125,7 +125,9 @@ export const useDataStore = defineStore({
                 return trx[0];
             }
         },
-
+        getPngs(){
+            return this.files["png"];
+        }
     },
     actions: {
         setDataset(key){
@@ -214,6 +216,7 @@ export const useDataStore = defineStore({
             }
 
             this.files = filesByExtension;
+            console.log(this.files["png"])
             if(this.files["nii.gz"]){
                 this.updateScans(this.files["nii.gz"])
             }
