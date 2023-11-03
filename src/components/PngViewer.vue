@@ -12,16 +12,11 @@ const image = computed({
             Bucket: dataStore.getDataset.bucket,
             Key: selectedPng.value,
         }
-        console.log(params);
-        let x = getUrl(params);
-        console.log(x)
-        return x;
+        return getUrl(params);
     },
 })
 watch(() => dataStore.getPngs, (newValue, oldValue) => {
-});
-watch(selectedPng, (newValue, oldValue) => {
-    console.log(newValue)
+    selectedPng.value = null;
 });
 </script>
 
@@ -41,8 +36,8 @@ watch(selectedPng, (newValue, oldValue) => {
     align-items: center;
 }
 .responsive-image {
-    width: 100%;
-    height: 40vh; /* viewport height */
+    width: 30vw;
+    height: 30vh; /* viewport height */
     object-fit: contain; /* resize the image to fit its container while maintaining its aspect ratio */
 }
 </style>

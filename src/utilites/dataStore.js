@@ -216,7 +216,6 @@ export const useDataStore = defineStore({
             }
 
             this.files = filesByExtension;
-            console.log(this.files["png"])
             if(this.files["nii.gz"]){
                 this.updateScans(this.files["nii.gz"])
             }
@@ -256,7 +255,6 @@ export const useDataStore = defineStore({
                     this.scan = this.scans[0];
                 }
             } else {
-                console.log("no scans found for subject")
                 this.scans = [];
                 this.scan = null;
             }
