@@ -2,7 +2,6 @@
 import { useDataStore } from '../utilites/dataStore.js'
 import { watch, computed,ref } from 'vue';
 import { getUrl } from '../utilites/awsHelper.js';
-import { getLastPathComponent } from '../utilites/logic';
 
 const dataStore = useDataStore();
 const selectedPng = ref();
@@ -18,12 +17,18 @@ const image = computed({
 watch(() => dataStore.getPngs, (newValue, oldValue) => {
     selectedPng.value = null;
 });
+
+//returns the last part of a string after the last _ but before the file extension
+function filterLastWord(path){
+    let lastWord = path.split("-").pop().split(".").shift()
+    return lastWord
+}
 </script>
 
 <template>
     <div class="select-container">
         <select v-model="selectedPng">
-            <option v-for="png in dataStore.getPngs" :value="png">{{getLastPathComponent(png)}}</option>
+            <option v-for="png in dataStore.getPngs" :value="png">{{filterLastWord(png)}}</option>
         </select>
         <button @click="selectedPng = null">Clear</button>
     </div>
