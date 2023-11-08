@@ -113,6 +113,13 @@ async function updateTrkBundles(newBundles,oldBundles){
     }
 
 }
+
+async function removeAllBundles(){
+    for(let i=0; i<nv.meshes.length;i++){
+        await nv.removeMesh(nv.meshes[i].id)
+    }
+
+}
 watch(() => dataStore.getBundleType, (newVal, oldVal) => {
     if(newVal != oldVal){
         if(dataStore.getBundleType == "trx"){
@@ -125,15 +132,43 @@ watch(() => dataStore.getBundleType, (newVal, oldVal) => {
     }
 });
 
+var newBundlesToLoad = null;
+var oldBundlesToLoad = null;
 watch(() => dataStore.getTrks, (newBundles,oldBundles) => {
     if(dataStore.getBundleType ==  "trk"){
-        updateTrkBundles(newBundles,oldBundles)
+        if(!isLoadingVolume){
+            updateTrkBundles(newBundles,oldBundles)
+        }else{
+            newBundlesToLoad = newBundles;
+            oldBundlesToLoad = oldBundles;
+        }
     }
 });
 
-watch(() => dataStore.getScanLink, () => {
+//checks if there are bundles queued to be loaded and if the volume is loaded
+//loads them and removes from queue
+watch(() => isLoadingVolume, async (newVal) => {
+    if(!newVal){
+        if(volumeToLoad){
+            await updateVolume();
+            volumeToLoad = null;
+        }
+        if(newBundlesToLoad && oldBundlesToLoad){
+            updateTrkBundles(newBundlesToLoad,oldBundlesToLoad);
+            newBundlesToLoad = null;
+            oldBundlesToLoad = null;
+        }
+    }
+})
+
+var volumeToLoad = null;
+watch(() => dataStore.getScanLink, async (newVal) => {
+    await removeAllBundles();
     if(!isLoadingVolume){
-        updateVolume()
+        await updateVolume();
+    }else{
+        console.log("volume was loading, adding to queue")
+        volumeToLoad = newVal;
     }
 })
 </script>
