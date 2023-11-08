@@ -4,16 +4,16 @@
         <div class="vertical-menu">
             Dataset:
             <select v-model="dataset">
-                <option v-for="(value,key) in dataStore.getDatasets" :value="key">{{ key }}</option>
+                <option v-for="(value,key) in dataStore.getDatasets" :value="key" :key="key">{{ key }}</option>
             </select>
             Subject:
             <SubjectSelect v-model:subject="subject" :subjects="dataStore.getSubjects"></SubjectSelect>
             <select v-model="scan">
-                <option v-for="item in dataStore.getScans" :value="item">{{ item.name }}</option>
+                <option v-for="(item,index) in dataStore.getScans" :value="item" :key="index">{{ item.name }}</option>
             </select>
             <div v-if="dataStore.getSession">session: {{ dataStore.getSession.folderName }}</div>
             <select v-model="session" v-if="dataStore.getSessions.length > 1">
-                <option v-for="item in sessions" :value="item">{{ item.folderName }}</option>
+                <option v-for="(item,index) in sessions" :value="item" :key="index">{{ item.folderName }}</option>
             </select>
             Bundles:
             <MultiSelect :items="dataStore.getBundleNames" v-model:selected="selectedBundles"/>
@@ -24,13 +24,12 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch, computed} from 'vue'
+import {onMounted, watch, computed} from 'vue'
 
 import SubjectSelect from './components/SubjectSelect.vue'
 import MultiSelect from './components/MultiSelect.vue'
 import NiivueRender from './components/NiivueRender.vue'
 import PngViewer from './components/PngViewer.vue'
-import datasets from "../public/datasets.json"
 import { useDataStore } from './utilites/dataStore.js'
 
 const dataStore = useDataStore();
@@ -81,13 +80,13 @@ onMounted(() => {
 })
 
 //unfortunately watchers inside of pinia stores don't seem to work, hope to fix that later.
-watch(() => dataStore.getDataset, (newVal, oldVal) => {
+watch(() => dataStore.getDataset, () => {
     dataStore.updateSubjects();
 })
-watch(() => dataStore.getSubject, (newVal, oldVal) => {
+watch(() => dataStore.getSubject, () => {
     dataStore.updateSessions();
 })
-watch(() => dataStore.getSession, (newVal, oldVal) => {
+watch(() => dataStore.getSession, () => {
     dataStore.updateFiles();
 })
 

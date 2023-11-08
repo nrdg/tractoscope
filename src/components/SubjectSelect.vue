@@ -8,7 +8,7 @@
 
 <script setup>
 import SearchableListSelect from './SearchableListSelect.vue';
-import {computed,ref} from 'vue'
+import {computed} from 'vue'
 
 const props = defineProps({
     subject: {}, //this prop has no requirments as it is only set by this component, not read

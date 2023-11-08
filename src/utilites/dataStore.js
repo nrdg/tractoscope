@@ -96,7 +96,7 @@ export const useDataStore = defineStore({
             return this.selectedBundles;
         },
         getSelectedTrx(){
-            throw new notImplementedError();
+            throw new Error("Not implemented");
         },
         //this returns a list of links for bundles
         getTrks(){
@@ -234,7 +234,7 @@ export const useDataStore = defineStore({
         updateScans(niis){
             if (niis.length > 0) {
                 //match all names to files and return {name,path}
-                let output = niis.reduce((acc, path, i) => {
+                let output = niis.reduce((acc, path) => {
                     this.getDataset.scans.forEach((name) => {
                         if (path.includes(name)) {
                             acc.push({ name, path });

@@ -36,7 +36,7 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "no-console": "warn",
+      "no-console": "off",
       "no-debugger": "warn"
     }
   }

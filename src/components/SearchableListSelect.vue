@@ -2,7 +2,7 @@
     <div class = "search-select">
       <input v-model="searchQuery" placeholder="Search Subjects..." @input="filterList" />
       <select v-model="selected">
-        <option v-for="item in filteredList" :value="item">
+        <option v-for="(item,index) in filteredList" :value="item" :key="index">
           {{ item.folderName }}
         </option>
       </select>

@@ -39,7 +39,6 @@
 import ToolTip from './ToolTip.vue';
 import {Niivue} from '@niivue/niivue'
 import {onMounted,watch} from 'vue';
-import {getUrl} from '../utilites/awsHelper.js'
 
 import { useDataStore } from '../utilites/dataStore.js'
 
@@ -98,7 +97,6 @@ async function loadTrkBundle(url,rgba255){
 async function updateTrkBundles(newBundles,oldBundles){
     const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
     const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
-    console.log(addedBundles)
 
     if(removedBundles.length > 0){
         deleteTrkBundles(removedBundles.map(bundle => bundle.url));
@@ -118,8 +116,9 @@ async function updateTrkBundles(newBundles,oldBundles){
 watch(() => dataStore.getBundleType, (newVal, oldVal) => {
     if(newVal != oldVal){
         if(dataStore.getBundleType == "trx"){
-            throw new NotImplementedError()
+            throw new Error("not implemented")
         }else if(dataStore.getBundleType == "trk"){
+            updateTrkBundles(dataStore.getTrks,[]);
         }else{
             throw new Error("Bundle type " + dataStore.getBundleType() + " not recognized");
         }
@@ -128,7 +127,6 @@ watch(() => dataStore.getBundleType, (newVal, oldVal) => {
 
 watch(() => dataStore.getTrks, (newBundles,oldBundles) => {
     if(dataStore.getBundleType ==  "trk"){
-        console.log(dataStore.getTrks);
         updateTrkBundles(newBundles,oldBundles)
     }
 });

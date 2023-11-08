@@ -14,7 +14,7 @@ const image = computed({
         return getUrl(params);
     },
 })
-watch(() => dataStore.getPngs, (newValue, oldValue) => {
+watch(() => dataStore.getPngs, () => {
     selectedPng.value = null;
 });
 
@@ -28,7 +28,7 @@ function filterLastWord(path){
 <template>
     <div class="select-container">
         <select v-model="selectedPng">
-            <option v-for="png in dataStore.getPngs" :value="png">{{filterLastWord(png)}}</option>
+            <option v-for="(png, index) in dataStore.getPngs" :value="png" :key="index">{{filterLastWord(png)}}</option>
         </select>
         <button @click="selectedPng = null">Clear</button>
     </div>
