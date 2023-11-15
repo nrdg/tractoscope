@@ -1,0 +1,24 @@
+# Tractoscope Local Server
+
+This python script will create a local server that serves GET request
+and a special request type "listFiles" which returns a json containing
+the files in a given folder.
+
+## Usage
+
+To run the project, use the following command, optionally specifing the port:
+
+```bash
+python host.py --port 8000
+```
+
+## You can also use the docker image to run the server
+
+To give the image access to you dataset run the following command
+
+replace 'externalPort' with whatever port you would
+like to bind the server to
+
+```bash
+docker run -v /path/to/dataset:/datasets -p 'externalPort':8000 tractoscope-local-server
+```
