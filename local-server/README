@@ -20,5 +20,5 @@ replace 'externalPort' with whatever port you would
 like to bind the server to
 
 ```bash
-docker run -v /path/to/dataset:/datasets -p 'externalPort':8000 tractoscope-local-server
+docker run -v /path/to/dataset:/app/datasets -p 'externalPort':8000 tractoscope-local-server
 ```
