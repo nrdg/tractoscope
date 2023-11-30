@@ -14,11 +14,13 @@ python host.py --port 8000
 
 ## You can also use the docker image to run the server
 
-To give the image access to you dataset run the following command
+To give the image access to you dataset run the docker container
+with the -v argument, linking a folder named datasets, containing your
+datasets on your local machine to one inside the container.
 
 replace 'externalPort' with whatever port you would
 like to bind the server to
 
 ```bash
-docker run -v /path/to/dataset:/app/datasets -p 'externalPort':8000 tractoscope-local-server
+docker run -v /path/to/datasets:/app/datasets -p 'externalPort':8000 tractoscope-local-server
 ```
