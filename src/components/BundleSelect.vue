@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import {computed,ref} from 'vue'
+import {computed} from 'vue'
 import Multiselect from '@vueform/multiselect/src/Multiselect';
 const emit = defineEmits(['update:selectedBundles'])
 const props = defineProps({
@@ -21,8 +21,6 @@ const props = defineProps({
         required:true
     }
 })
-
-const multiSelectOptions = ref([{label:'select all',options:[]}])
 
 const selectedBundles = computed({
     get(){

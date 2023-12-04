@@ -15,7 +15,7 @@ const props = defineProps({
         type: Array,
         required: true,
         validator: (value) => {
-            return value.every(element => element.hasOwnProperty('name') && element.hasOwnProperty('prefix'));
+            return value.every(element => Object.prototype.hasOwnProperty.call(element, 'name') && Object.prototype.hasOwnProperty.call(element, 'prefix'));
         }
     },
     dataset:{required: true,}
