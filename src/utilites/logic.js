@@ -16,7 +16,7 @@ export function groupByExtension(filePaths) {
     return filesByExtension;
 }
 
-export function getLastPathComponent(filePath) {
+function getLastPathComponent(filePath) {
     const parts = filePath.split('/');
     let fileName = parts.pop();
     while (fileName === '') {
@@ -34,25 +34,21 @@ export function getSubfolders(prefixes){
   return output
 }
 
-export function filterBySubfolder(files, folderPath) {
-    return files.filter((filePath) => {
-      const pathParts = filePath.split("/");
-      const fileName = pathParts[pathParts.length - 1];
-      return filePath.startsWith(folderPath) && !fileName.includes("/");
-    });
-}
-
-//returns all strings from list1 that contain a substring from list2
-export function filterBySubstring(list1, list2) {
-  return list1.filter(str1 => list2.some(str2 => str1.includes(str2)));
-}
-
 //trk bundles = list of object, object = {name, fileName,rgba255}
 //trkpaths = list of file paths to trks
 //returns list of objects, where object = {filepath, name, rgba255}
 //and each object is a contains the filepath that includes the filename
 //and then its corresponding rgba255 and name values
 export function getTrkBundles(trkBundles, trkPaths) {
+  //pre conditions check
+  if(trkBundles == null){
+    throw new Error ("trkBundles is null");
+  }
+
+  if(trkPaths == null){
+    throw new Error ("trkPaths is null");
+  }
+
   return trkPaths.filter(trkPath => {
     return trkBundles.some(bundle => {
       return trkPath.includes(bundle.fileName);

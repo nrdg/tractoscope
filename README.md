@@ -57,6 +57,12 @@ Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
 Access-Control-Allow-Headers: Content-Type, Authorization
 ```
 
+## Local Datasets
+
+Tractoscope has support for local datasets via a locally hosted server
+The code for this server is found in the "local-server" folder. For
+more information view the README in that folder.
+
 ## Project setup
 ```
 npm install

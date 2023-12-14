@@ -1,0 +1,47 @@
+# Tractoscope Local Server
+
+This python script will create a local server that serves GET request
+and a special request type "listFiles" which returns a json containing
+the files in a given folder.
+
+## Usage
+
+To run the project, use the following command, optionally specifing the port:
+
+```bash
+python host.py --port 8000
+```
+
+## You can also use the docker image to run the server
+
+To give the image access to you dataset run the docker container
+with the -v argument, linking a folder named datasets, containing your
+datasets on your local machine to one inside the container.
+
+replace 'externalPort' with whatever port you would
+like to bind the server to
+
+```bash
+docker run -v /path/to/datasets:/app/datasets -p 'externalPort':8000 tractoscope-local-server
+```
+
+## To configure with tractoscope
+
+Once you have setup the server you need to add the datasets in tractoscopes datasets.json file, which can be found in the public folder. Set the bucket to "localhost:{port}", replacing {port} with whatever port the server is bound to. Asuming all of your datasets are stored correctly inside of the datasets folder, your prefix should be set to "/datasets/yourDataset".
+
+heres what an example config might look like.
+
+> Note: you do not need the "participantsSize" parameter due to the fact that the local server has no limit on the length of its listFiles response.
+
+
+```json
+{
+    "yourDataset": {
+        "bucket": "localhost:8000",
+        "prefix": "/datasets/yourDataset",
+        "scans": [ "someScan" ],
+        "trkFiles": [ "someTrk" ],
+    }
+}
+```
+
