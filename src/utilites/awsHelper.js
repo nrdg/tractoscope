@@ -49,30 +49,27 @@ export async function listCommonPrefixes(params,limit) {
     return new Promise((resolve, reject) => {
         let allPrefixes = [];
 
-        function listNextSetOfPrefixes(token) {
+        function listNextSetOfPrefixes(token = null) {
             if (token) {
                 params.ContinuationToken = token;
             }
-
-            s3.makeUnauthenticatedRequest('listObjectsV2', params, function(err, data) {
-                if (err) {
+            fetchObjectsV2(params)
+                .then(data => {
+                    if (data.CommonPrefixes) {
+                        allPrefixes = allPrefixes.concat(data.CommonPrefixes);
+                    }
+                    if(allPrefixes > limit ){
+                        resolve(allPrefixes)
+                    }
+                    if (data.IsTruncated == true) {
+                        listNextSetOfPrefixes(data.NextContinuationToken);
+                    } else {
+                        resolve(allPrefixes);
+                    }
+                })
+                .catch(err => {
                     reject(err);
-                    return;
-                }
-
-                if (data.CommonPrefixes) {
-                    allPrefixes = allPrefixes.concat(data.CommonPrefixes.map(prefix => prefix.Prefix));
-                }
-
-                if (data.IsTruncated) {
-                    listNextSetOfPrefixes(data.NextContinuationToken);
-                } else {
-                    resolve(allPrefixes);
-                }
-            });
-        }
-        if(allPrefixes > limit){
-            resolve(allPrefixes)
+                });
         }
         listNextSetOfPrefixes();
     });
@@ -92,19 +89,22 @@ async function fetchObjectsV2(params){
     if(params.Delimiter){
         query.delimiter = params.Delimiter
     }
+    if(params.ContinuationToken){
+        query['continuation-token'] = params.ContinuationToken
+    }
     // if(params.ContinuationToken){
     //     query['continuation-token'] = params.ContinuationToken
     // }else{
     //     query['continuation-token'] = '1SMGuYwSAoGBZM53Q40LLNhy8kTr1mxgzF%2Bnuxb1y9w2gKaRlKi1pKvP2dq9FtBVIw4HYAPL2VLhwFnIkqMjMo0vIEnJa3owG69NVwi8wON63U2n2Ln06cA%3D%3D'
     // }
 
-    const url = `https://${params.Bucket}.s3.amazonaws.com/`;
+    const url = `https://${params.Bucket}.s3.amazonaws.com/?list-type=2&`;
 
     const queryString = Object.entries(query)
         .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
         .join('&');
 
-    const toFetch = (url + '?' + queryString);
+    const toFetch = (url + queryString);
 
     let response = await fetch(toFetch);
     if(!response.ok){
@@ -121,7 +121,9 @@ async function fetchObjectsV2(params){
     output.CommonPrefixes = Array.from(xmlDoc.getElementsByTagName('CommonPrefixes')).map(el => el.textContent);
     output.IsTruncated = xmlDoc.getElementsByTagName('IsTruncated')[0].textContent;
     output.Prefix = xmlDoc.getElementsByTagName('Prefix')[0].textContent;
-    console.log(data)
-    console.log(output);
+    if(output.IsTruncated == 'true'){
+        output.IsTruncated == true;
+        output.NextContinuationToken = xmlDoc.getElementsByTagName('NextContinuationToken')[0].textContent;
+    }
     return output
 }
