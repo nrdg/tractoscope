@@ -31,15 +31,15 @@ export async function getSignedUrl(params) {
 //expects params{Bucket, Prefix, MaxKeys (optional)}
 //returns a promise that resolves to an array of objects
 //will only return up to 1000 objects
-export async function listObjects(params) {
+export function listObjects(params) {
     return new Promise((resolve, reject) => {
-        s3.makeUnauthenticatedRequest('listObjectsV2', params, function(err, data) {
-            if (err) {
-                reject(err);
-            } else {
+        fetchObjectsV2(params)
+            .then(data => {
                 resolve(data);
-            }
-        });
+            })
+            .catch(err => {
+                reject(err);
+            });
     });
 }
 
@@ -76,4 +76,52 @@ export async function listCommonPrefixes(params,limit) {
         }
         listNextSetOfPrefixes();
     });
+}
+/**
+ * Fetches objects from an S3 bucket using version 2 of the list objects
+ * @async
+ * @param {Object} params - An object containing the parameters for the request.
+ * @returns {Document} The XML document containing the list of objects.
+ * @throws {Error} Throws an error if the HTTP request fails.
+ */
+async function fetchObjectsV2(params){
+    let query = {}
+    if(params.Prefix){
+        query.prefix = params.Prefix
+    }
+    if(params.Delimiter){
+        query.delimiter = params.Delimiter
+    }
+    // if(params.ContinuationToken){
+    //     query['continuation-token'] = params.ContinuationToken
+    // }else{
+    //     query['continuation-token'] = '1SMGuYwSAoGBZM53Q40LLNhy8kTr1mxgzF%2Bnuxb1y9w2gKaRlKi1pKvP2dq9FtBVIw4HYAPL2VLhwFnIkqMjMo0vIEnJa3owG69NVwi8wON63U2n2Ln06cA%3D%3D'
+    // }
+
+    const url = `https://${params.Bucket}.s3.amazonaws.com/`;
+
+    const queryString = Object.entries(query)
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .join('&');
+
+    const toFetch = (url + '?' + queryString);
+
+    let response = await fetch(toFetch);
+    if(!response.ok){
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    let data = await response.text();
+
+
+    let parser = new DOMParser();
+    let xmlDoc = parser.parseFromString(data,"text/xml");
+    let output = { Contents:[]}
+
+    output.Contents = Array.from(xmlDoc.getElementsByTagName('Contents')).map(el => ({Key: el.getElementsByTagName('Key')[0].textContent}));
+    output.CommonPrefixes = Array.from(xmlDoc.getElementsByTagName('CommonPrefixes')).map(el => el.textContent);
+    output.IsTruncated = xmlDoc.getElementsByTagName('IsTruncated')[0].textContent;
+    output.Prefix = xmlDoc.getElementsByTagName('Prefix')[0].textContent;
+    console.log(data)
+    console.log(output);
+    return output
 }
