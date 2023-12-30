@@ -59,7 +59,6 @@ export const useDataStore = defineStore({
             //check if scan is selected
             if(this.scan === null) return null
             //return link to scan
-            console.log(this.scan);
             let params = {
                 Bucket: this.getDataset.bucket,
                 Key: this.scan.path
@@ -87,7 +86,6 @@ export const useDataStore = defineStore({
                 return [];
             }
             if(this.getBundleType === "trk"){
-                console.log("thing happened on line 90")
                 let x = getTrkBundles(this.getDataset.trkFiles, this.trks)
                 return x.map(trk => trk.name);
             }
@@ -104,7 +102,6 @@ export const useDataStore = defineStore({
             //     this.selectedBundles.includes(trk.name)).map(trk =>
             //         {name:trk.name, getUrl({Bucket: this.getDataset.bucket, Key: trk.filepath, rgba255: trk.rgba255})});
             if(this.getBundleType === "trk"){
-                console.log("calling getTrkBundles, bundle type is:"+ this.getBundleType)
                 let x = getTrkBundles(this.getDataset.trkFiles,this.trks)
                 let out = [];
                 for(let trk of x){
@@ -119,7 +116,6 @@ export const useDataStore = defineStore({
             return null;
         },
         getTrxUrl() {
-            console.log(this.trxs)
             let trx = this.trxs.filter(trx => trx.includes(this.getDataset.trxFile.fileName));
             if (trx.length === 0) {
                 return null;
@@ -176,8 +172,18 @@ export const useDataStore = defineStore({
             this.subject = this.subjects[0];
             return
         },
-        setSubject(subject){
+        async setSubject(subject){
+            this.files = [];
+            this.trks = [];
+            this.trxs = [];
+            this.scans = [];
+            this.scan = null;
+            this.sessions = [];
+            this.session = null;
             this.subject = subject;
+
+            await this.updateSessions();
+            await this.updateFiles();
         },
 
         //sessions
@@ -191,7 +197,6 @@ export const useDataStore = defineStore({
         async updateSessions(){
             if(this.getSubject){
                 let output = [];
-                console.log(this.getSubject)
                 let params = {
                     Bucket: this.getDataset.bucket,
                     Prefix: this.getSubject.prefix,
@@ -211,7 +216,13 @@ export const useDataStore = defineStore({
             }
         },
         setSession(session){
+            this.files = [];
+            this.trks = [];
+            this.trxs = [];
+            this.scans = [];
+            this.scan = null;
             this.session = session;
+            this.updateFiles();
         },
 
         //files
@@ -220,6 +231,7 @@ export const useDataStore = defineStore({
                 Bucket: this.getDataset.bucket,
                 Prefix: this.getSession.prefix,
             }
+            console.log(params)
             let files = await listObjects(params);
             let keys = files.Contents.map((item) => item.Key);
             var filesByExtension = groupByExtension(keys);
@@ -239,7 +251,6 @@ export const useDataStore = defineStore({
                     filesByExtension[subfolder.extension] = subfolderFilesByExtension[subfolder.extension];
                 }
             }
-            console.log(filesByExtension)
             this.files = filesByExtension;
             if(this.files["nii.gz"]){
                 this.updateScans(this.files["nii.gz"])

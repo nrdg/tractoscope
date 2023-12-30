@@ -25,7 +25,6 @@
 
 <script setup>
 import {onMounted, watch, computed} from 'vue'
-
 import SubjectSelect from './components/SubjectSelect.vue'
 import MultiSelect from './components/MultiSelect.vue'
 import NiivueRenderNew from './components/NiivueRenderNew.vue'
