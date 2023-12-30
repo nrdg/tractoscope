@@ -58,7 +58,6 @@ async function loadVolume(volumeLink){
     isLoadingVolume = false;
     if(dataStore.getBundleType == "trk"){
             if(newBundlesToLoad && oldBundlesToLoad){
-
                 updateTrkBundles(newBundlesToLoad,oldBundlesToLoad);
                 newBundlesToLoad = null;
                 oldBundlesToLoad = null;
@@ -90,23 +89,25 @@ function updateTrxBundles(){
 }
 
 async function updateTrkBundles(newBundles,oldBundles){
-    const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
-    const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
+    if(newBundles != null && oldBundles != null){
+        console.log("updating trk bundles" + newBundles + oldBundles)
+        const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
+        const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
 
-    if(removedBundles.length > 0){
-        deleteTrkBundles(removedBundles.map(bundle => bundle.url));
-    }
+        if(removedBundles.length > 0){
+            deleteTrkBundles(removedBundles.map(bundle => bundle.url));
+        }
 
-    if(addedBundles.length > 0){
-        for(let i=0;i<addedBundles.length;i++){
-            let bundle = addedBundles[i]
-            await loadTrkBundle(bundle.url,bundle.rgba255)
+        if(addedBundles.length > 0){
+            for(let i=0;i<addedBundles.length;i++){
+                let bundle = addedBundles[i]
+                await loadTrkBundle(bundle.url,bundle.rgba255)
+            }
+        }
+        for(let i=0; i<nv.meshes.length;i++){
+                    await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
         }
     }
-    for(let i=0; i<nv.meshes.length;i++){
-                await nv.setMeshProperty(nv.meshes[i].id, "fiberColor","Fixed")
-    }
-
 }
 
 function deleteTrkBundles(urls){
