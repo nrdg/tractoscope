@@ -16,25 +16,6 @@
 </template>
 
 
-<style>
-#app{
-    display: grid;
-}
-#canvas-container{
-    width: 110vh;
-    height: 93vh;
-}
-#gl{
-    align-self: left;
-    border: black 1px solid;
-}
-.bottom-bar{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-</style>
-
 <script setup>
 import ToolTip from './ToolTip.vue';
 import {Niivue} from '@niivue/niivue'
@@ -46,27 +27,44 @@ const dataStore = useDataStore()
 
 var nv = null
 var isLoadingVolume = false
+var volumeToLoad = null
+var bundleToLoad = null
 var zoom = 0.1
 const tip = "C = Cycle Clip Plane | V = Cycle Slice Type | H,L,J,K = rotation | Scroll = move clip plane | Right Click = rotate clip plain | Left Click = rotate camera"
 
+
+function init(){
+    nv = null;
+    nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}));
+    nv.attachTo("gl");
+    nv.setSliceType(nv.sliceTypeMultiplanar);
+    nv.setClipPlane([-0.1, 270, 0])
+    nv.setClipPlaneColor([0.5, 0.5, 0.5, 0.5])
+}
+
 onMounted(() => {
-  nv = new Niivue(({show3Dcrosshair: true, backColor: [1, 1, 1, 1]}));
-  nv.attachTo("gl");
-  nv.setSliceType(nv.sliceTypeMultiplanar);
-  nv.setClipPlane([-0.1, 270, 0])
-  nv.setClipPlaneColor([0.5, 0.5, 0.5, 0.5])
+    init();
 });
 
-async function updateVolume(){
-    if(!isLoadingVolume){
-        isLoadingVolume = true
-        let volumeList = [{url: dataStore.getScanLink,colorMap: "gray",}]
-        await nv.loadVolumes(volumeList)
-        await nv.updateGLVolume()
-        isLoadingVolume = false
-        return
-
+async function loadVolume(volumeLink){
+    isLoadingVolume = true;
+    await nv.loadVolumes([{ url: volumeLink, colorMap: "gray"}])
+    await nv.updateGLVolume();
+    if(bundleToLoad){
+        let temp = bundleToLoad
+        bundleToLoad = null
+        loadVolume(temp)
     }
+    isLoadingVolume = false;
+    if(dataStore.getBundleType == "trk"){
+            if(newBundlesToLoad && oldBundlesToLoad){
+
+                updateTrkBundles(newBundlesToLoad,oldBundlesToLoad);
+                newBundlesToLoad = null;
+                oldBundlesToLoad = null;
+            }
+    }
+    return
 }
 
 function changeZoom(){
@@ -74,24 +72,21 @@ function changeZoom(){
       nv.drawScene()
 }
 
-function deleteTrkBundles(urls){
-    for(let i = 0; i < urls.length; i++){
-        nv.removeMeshByUrl(urls[i])
+async function loadTrxFile(url){
+    console.log("loading trx")
+    if(!nv.initialized) {
+        await nv.init();
     }
+    if(nv.gl){
+        let meshList = [{url, rgba255: [255, 142, 0, 155]}]
+        await nv.loadMeshes(meshList)
+        return
+    }
+    return
 }
 
-async function loadTrkBundle(url,rgba255){
-  if (!nv.initialized) {
-    await nv.init();
-  }
-
-  if (nv.gl) {
-    let meshOptions = {url, rgba255, gl: nv.gl}
-    await nv.addMeshFromUrl(meshOptions);
-    return
-  } else {
-    console.error('WebGL context is not initialized');
-  }
+function updateTrxBundles(){
+    throw new Error("Not implemented")
 }
 
 async function updateTrkBundles(newBundles,oldBundles){
@@ -114,28 +109,51 @@ async function updateTrkBundles(newBundles,oldBundles){
 
 }
 
+function deleteTrkBundles(urls){
+    for(let i = 0; i < urls.length; i++){
+        nv.removeMeshByUrl(urls[i])
+    }
+}
+
+async function loadTrkBundle(url,rgba255){
+  if (!nv.initialized) {
+    await nv.init();
+  }
+
+  if (nv.gl) {
+    let meshOptions = {url, rgba255, gl: nv.gl}
+    await nv.addMeshFromUrl(meshOptions);
+    return
+  } else {
+    console.error('WebGL context is not initialized');
+  }
+}
+
 async function removeAllBundles(){
     for(let i=0; i<nv.meshes.length;i++){
         await nv.removeMesh(nv.meshes[i].id)
     }
-
 }
-watch(() => dataStore.getBundleType, (newVal, oldVal) => {
-    if(newVal != oldVal){
+var trxLoaded = false;
+watch(() => dataStore.getSelectedBundleNames, async (newValue, oldValue) => {
+    if(newValue != oldValue && newValue.length > 0){
         if(dataStore.getBundleType == "trx"){
-            throw new Error("not implemented")
-        }else if(dataStore.getBundleType == "trk"){
-            updateTrkBundles(dataStore.getTrks,[]);
-        }else{
-            throw new Error("Bundle type " + dataStore.getBundleType() + " not recognized");
+            if(dataStore.getTrxUrl){
+                if(trxLoaded == false){
+                    await loadTrxFile(dataStore.getTrxUrl)
+                    trxLoaded = true;
+                }
+                await updateTrxBundles(newValue);
+            }
         }
     }
 });
 
 var newBundlesToLoad = null;
 var oldBundlesToLoad = null;
+
 watch(() => dataStore.getTrks, (newBundles,oldBundles) => {
-    if(dataStore.getBundleType ==  "trk"){
+    if(newBundles && dataStore.getBundleType == "trk"){
         if(!isLoadingVolume){
             updateTrkBundles(newBundles,oldBundles)
         }else{
@@ -145,32 +163,18 @@ watch(() => dataStore.getTrks, (newBundles,oldBundles) => {
     }
 });
 
-//checks if there are bundles queued to be loaded and if the volume is loaded
-//loads them and removes from queue
-watch(() => isLoadingVolume, async (newVal) => {
-    if(!newVal){
-        if(volumeToLoad){
-            await updateVolume();
-            volumeToLoad = null;
-        }
-        if(newBundlesToLoad && oldBundlesToLoad){
-            updateTrkBundles(newBundlesToLoad,oldBundlesToLoad);
-            newBundlesToLoad = null;
-            oldBundlesToLoad = null;
+
+watch(() => dataStore.getScanLink, async (newVal) => {
+    if(newVal){
+        removeAllBundles();
+        if(!isLoadingVolume){
+            await loadVolume(newVal)
+        }else{
+            volumeToLoad = newVal;
         }
     }
 })
 
-var volumeToLoad = null;
-watch(() => dataStore.getScanLink, async (newVal) => {
-    await removeAllBundles();
-    if(!isLoadingVolume){
-        await updateVolume();
-    }else{
-        console.log("volume was loading, adding to queue")
-        volumeToLoad = newVal;
-    }
-})
 </script>
 
 <style scoped>

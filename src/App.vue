@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <NiivueRenderNew/>
+        <NiivueRender/>
         <div class="vertical-menu">
             Dataset:
             <select v-model="dataset">
@@ -27,7 +27,7 @@
 import {onMounted, watch, computed} from 'vue'
 import SubjectSelect from './components/SubjectSelect.vue'
 import MultiSelect from './components/MultiSelect.vue'
-import NiivueRenderNew from './components/NiivueRenderNew.vue'
+import NiivueRender from './components/NiivueRender.vue'
 import PngViewer from './components/PngViewer.vue'
 import { useDataStore } from './utilites/dataStore.js'
 
