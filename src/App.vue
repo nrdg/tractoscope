@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <NiivueRender/>
+        <NiivueRenderNew/>
         <div class="vertical-menu">
             Dataset:
             <select v-model="dataset">
@@ -28,7 +28,7 @@ import {onMounted, watch, computed} from 'vue'
 
 import SubjectSelect from './components/SubjectSelect.vue'
 import MultiSelect from './components/MultiSelect.vue'
-import NiivueRender from './components/NiivueRender.vue'
+import NiivueRenderNew from './components/NiivueRenderNew.vue'
 import PngViewer from './components/PngViewer.vue'
 import { useDataStore } from './utilites/dataStore.js'
 
@@ -76,19 +76,19 @@ const selectedBundles = computed({
     }
 })
 onMounted(() => {
-    dataStore.updateSubjects();
+    dataStore.setDataset(dataStore.getDatasetKey);
 })
 
-//unfortunately watchers inside of pinia stores don't seem to work, hope to fix that later.
-watch(() => dataStore.getDataset, () => {
-    dataStore.updateSubjects();
-})
-watch(() => dataStore.getSubject, () => {
-    dataStore.updateSessions();
-})
-watch(() => dataStore.getSession, () => {
-    dataStore.updateFiles();
-})
+// //unfortunately watchers inside of pinia stores don't seem to work, hope to fix that later.
+// watch(() => dataStore.getDataset, () => {
+//     dataStore.updateSubjects();
+// })
+// watch(() => dataStore.getSubject, () => {
+//     dataStore.updateSessions();
+// })
+// watch(() => dataStore.getSession, () => {
+//     dataStore.updateFiles();
+// })
 
 </script>
 
