@@ -10,7 +10,7 @@ export const useDataStore = defineStore({
     id: 'dataStore',
     state: () => ({
         datasets: datasets,
-        dataset: Object.keys(datasets)[1],
+        dataset: Object.keys(datasets)[0],
 
         subjects: [],
         subject: null,
@@ -69,10 +69,10 @@ export const useDataStore = defineStore({
             return this.scan;
         },
         getBundleType(){
-            if(this.files["trx"]){
+            if(this.files["trx"] && this.datasets[this.dataset].trxFile){
                 return "trx";
             }
-            if(this.files["trk"]){
+            if(this.files["trk"] && this.datasets[this.dataset].trkFiles){
                 return "trk";
             }
             return "none";
