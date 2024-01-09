@@ -15,9 +15,17 @@
             <select v-model="session" v-if="dataStore.getSessions.length > 1">
                 <option v-for="(item,index) in sessions" :value="item" :key="index">{{ item.folderName }}</option>
             </select>
+            <div v-if="dataStore.getBundleType == 'trk'">
             Bundles:
             <MultiSelect :items="dataStore.getBundleNames" v-model:selected="selectedBundles"/>
+            </div>
+            <div v-if="dataStore.getBundleType == 'trx'">
+            <button @click="toggleTrx()">Toggle tractogram</button>
+            <br/>
+            Note: Tract group selection is currently not supported for trx files.
+            </div>
             <br>
+            Tract Profiles:
             <PngViewer v-if="dataStore.getPngs"/>
         </div>
     </div>
@@ -31,6 +39,14 @@ import NiivueRender from './components/NiivueRender.vue'
 import PngViewer from './components/PngViewer.vue'
 import { useDataStore } from './utilites/dataStore.js'
 
+function toggleTrx(){
+    if(dataStore.getLoadTrx == false){
+        dataStore.setLoadTrx(true);
+    }
+    else{
+        dataStore.setLoadTrx(false);
+    }
+}
 const dataStore = useDataStore();
 const dataset = computed({
     get() {

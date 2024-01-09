@@ -25,8 +25,12 @@ export const useDataStore = defineStore({
         scans: [],
         scan: null,
         selectedBundles: [],
+        loadTrx: false,
     }),
     getters: {
+        getLoadTrx(){
+            return this.loadTrx;
+        },
         //Dataset functions
         getDataset(){
             return this.datasets[this.dataset];
@@ -130,6 +134,9 @@ export const useDataStore = defineStore({
         }
     },
     actions: {
+        setLoadTrx(val){
+            this.loadTrx = val;
+        },
         async setDataset(key){
             if(key in this.datasets){
                 this.files = [];
