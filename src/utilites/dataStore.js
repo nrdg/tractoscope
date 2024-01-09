@@ -25,8 +25,12 @@ export const useDataStore = defineStore({
         scans: [],
         scan: null,
         selectedBundles: [],
+        loadTrx: false,
     }),
     getters: {
+        getLoadTrx(){
+            return this.loadTrx;
+        },
         //Dataset functions
         getDataset(){
             return this.datasets[this.dataset];
@@ -69,13 +73,13 @@ export const useDataStore = defineStore({
             return this.scan;
         },
         getBundleType(){
-            if(this.files["trx"]){
+            if(this.files["trx"] && this.datasets[this.dataset].trxFile){
                 return "trx";
             }
-            if(this.files["trk"]){
+            if(this.files["trk"] && this.datasets[this.dataset].trkFiles){
                 return "trk";
             }
-            return null;
+            return "none";
         },
         //returns a list of all bundle names
         getBundleNames(){
@@ -95,34 +99,34 @@ export const useDataStore = defineStore({
         getSelectedBundleNames(){
             return this.selectedBundles;
         },
-        getSelectedTrx(){
-            throw new Error("Not implemented");
-        },
         //this returns a list of links for bundles
         getTrks(){
             //
             // let x = getTrkBundles(this.getDataset.trkFiles, this.trks).filter(trk =>
             //     this.selectedBundles.includes(trk.name)).map(trk =>
             //         {name:trk.name, getUrl({Bucket: this.getDataset.bucket, Key: trk.filepath, rgba255: trk.rgba255})});
-            let x = getTrkBundles(this.getDataset.trkFiles,this.trks)
-            let out = [];
-            for(let trk of x){
-                if(this.selectedBundles.includes(trk.name)){
-                    let url = getUrl({Bucket: this.getDataset.bucket, Key: trk.filepath, rgba255: trk.rgba255})
-                    let rgba255 = trk.rgba255;
-                    out.push({url, rgba255});
+            if(this.getBundleType === "trk"){
+                let x = getTrkBundles(this.getDataset.trkFiles,this.trks)
+                let out = [];
+                for(let trk of x){
+                    if(this.selectedBundles.includes(trk.name)){
+                        let url = getUrl({Bucket: this.getDataset.bucket, Key: trk.filepath, rgba255: trk.rgba255})
+                        let rgba255 = trk.rgba255;
+                        out.push({url, rgba255});
+                    }
                 }
+                return out;
             }
-            return out;
+            return null;
         },
-        getTrxBundle() {
-            let trx = this.trxs.filter(trx => trx.path.includes(this.getDataset.trxFile.fileName));
+        getTrxUrl() {
+            let trx = this.trxs.filter(trx => trx.includes(this.getDataset.trxFile.fileName));
             if (trx.length === 0) {
-                throw new Error(`No version of ${this.getDataset.trxFile.fileName} found.`);
+                return null;
             } else if (trx.length > 1) {
                 throw new Error(`Multiple versions of ${this.getDataset.trxFile.fileName} found.`);
             } else {
-                return trx[0];
+                return getUrl({Bucket: this.getDataset.bucket, Key: trx[0]});
             }
         },
         getPngs(){
@@ -130,9 +134,25 @@ export const useDataStore = defineStore({
         }
     },
     actions: {
-        setDataset(key){
+        setLoadTrx(val){
+            this.loadTrx = val;
+        },
+        async setDataset(key){
             if(key in this.datasets){
+                this.files = [];
+                this.trks = [];
+                this.trxs = [];
+                this.scans = [];
+                this.scan = null;
+                this.subjects = [];
+                this.subject = null;
+                this.sessions = [];
+                this.session = null;
+                this.selectedBundles = [];
                 this.dataset = key;
+                await this.updateSubjects();
+                await this.updateSessions();
+                await this.updateFiles();
             } else {
                 throw new Error(`Dataset with key ${key} not found.`);
             }
@@ -157,9 +177,20 @@ export const useDataStore = defineStore({
             let prefixes = await listCommonPrefixes(params, this.getDataset.participantsSize);
             this.subjects = getSubfolders(prefixes);
             this.subject = this.subjects[0];
+            return
         },
-        setSubject(subject){
+        async setSubject(subject){
+            this.files = [];
+            this.trks = [];
+            this.trxs = [];
+            this.scans = [];
+            this.scan = null;
+            this.sessions = [];
+            this.session = null;
             this.subject = subject;
+
+            await this.updateSessions();
+            await this.updateFiles();
         },
 
         //sessions
@@ -171,22 +202,34 @@ export const useDataStore = defineStore({
         //for this it would set sessions = [bundles,clean_bundles]
         //if there is no folder for sessions it will return [{prefix: subject.value.prefix, folderName: "root"}]
         async updateSessions(){
-            let output = [];
-            let params = {
-                Bucket: this.getDataset.bucket,
-                Prefix: this.getSubject.prefix,
-                Delimiter: "/"
+            if(this.getSubject){
+                let output = [];
+                let params = {
+                    Bucket: this.getDataset.bucket,
+                    Prefix: this.getSubject.prefix,
+                    Delimiter: "/"
+                }
+                let prefixes = await listCommonPrefixes(params, 100);
+                output = getSubfolders(prefixes);
+                if(output.length == 0){
+                    this.sessions =  [{prefix: this.getSubject.prefix, folderName: "root"}];
+                    this.session = this.sessions[0];
+                    return
+                }else{
+                    this.sessions = output;
+                    this.session = this.sessions[0];
+                    return
+                }
             }
-            let prefixes = await listCommonPrefixes(params, 100);
-            output = getSubfolders(prefixes);
-            if(output.length == 0){
-                return [{prefix: this.getSubject.prefix, folderName: "root"}];
-            }
-            this.sessions = output;
-            this.session = this.sessions[0]
         },
         setSession(session){
+            this.files = [];
+            this.trks = [];
+            this.trxs = [];
+            this.scans = [];
+            this.scan = null;
             this.session = session;
+            this.updateFiles();
         },
 
         //files
@@ -195,6 +238,7 @@ export const useDataStore = defineStore({
                 Bucket: this.getDataset.bucket,
                 Prefix: this.getSession.prefix,
             }
+            console.log(params)
             let files = await listObjects(params);
             let keys = files.Contents.map((item) => item.Key);
             var filesByExtension = groupByExtension(keys);
@@ -214,7 +258,6 @@ export const useDataStore = defineStore({
                     filesByExtension[subfolder.extension] = subfolderFilesByExtension[subfolder.extension];
                 }
             }
-
             this.files = filesByExtension;
             if(this.files["nii.gz"]){
                 this.updateScans(this.files["nii.gz"])
