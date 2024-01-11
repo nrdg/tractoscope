@@ -14,6 +14,7 @@
                 Loading Trx...
             </div>
             <button id="download" @click = "downloadNifti" >Download NIFTI file</button>
+            <button id="download" @click = "downloadTrx" v-if="dataStore.getBundleType == 'trx'">Download TRX file</button>
         </div>
     </div>
 </template>
@@ -42,6 +43,16 @@ function init(){
     nv.setSliceType(nv.sliceTypeMultiplanar);
     nv.setClipPlane([-0.1, 270, 0])
     nv.setClipPlaneColor([0.5, 0.5, 0.5, 0.5])
+}
+
+function downloadTrx(){
+    if(dataStore.getTrxUrl){
+        window.open(dataStore.getTrxUrl)
+    }
+}
+
+function downloadNifti(){
+    window.open(dataStore.getScanLink)
 }
 
 onMounted(() => {
@@ -189,7 +200,6 @@ watch(() => dataStore.getTrks, (newBundles,oldBundles) => {
         }
     }
 });
-
 
 watch(() => dataStore.getScanLink, async (newVal) => {
     if(newVal){
