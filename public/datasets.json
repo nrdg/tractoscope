@@ -13,30 +13,246 @@
       "model-DTI_FA"
     ],
     "bundles": [
-      "Anterior Frontal",
-      "Arcuate Fasciculus-Left",
-      "Arcuate Fasciculus-Right",
-      "Anterior Thalamic Radiation-Left",
-      "Anterior Thalamic Radiation-Right",
-      "Cingulate Cingulum-Left",
-      "Cingulate Cingulum-Right",
-      "Corticospinal Tract-Left",
-      "Corticospinal Tract-Right",
-      "Inferior Fronto-Occipital Fasciculus-Left",
-      "Inferior Fronto-Occipital Fasciculus-Right",
-      "Inferior Longitudinal Fasciculus-Left",
-      "Inferior Longitudinal Fasciculus-Right",
-      "Motor",
-      "Occipital",
-      "Orbital",
-      "Posterior Parietal",
-      "Superior Longitudinal Fasciculus-Left",
-      "Superior Longitudinal Fasciculus-Right",
-      "Superior Frontal",
-      "Superior Parietal",
-      "Temporal",
-      "Uncinate Fasciculus-Left",
-      "Uncinate Fasciculus-Right"
+      {
+      "name": "Anterior Frontal",
+      "index": 16,
+      "rgba255": [
+        31,
+        119,
+        180,
+        255
+      ]
+    },
+    {
+      "name": "Arcuate Fasciculus-Left",
+      "index": 13,
+      "rgba255": [
+        23,
+        190,
+        207,
+        255
+      ]
+    },
+    {
+      "name": "Arcuate Fasciculus-Right",
+      "index": 12,
+      "rgba255": [
+        158,
+        218,
+        229,
+        255
+      ]
+    },
+    {
+      "name": "Anterior Thalamic Radiation-Left",
+      "index": 1,
+      "rgba255": [
+        31,
+        119,
+        180,
+        255
+      ]
+    },
+    {
+      "name": "Anterior Thalamic Radiation-Right",
+      "index": 0,
+      "rgba255": [
+        174,
+        199,
+        232,
+        255
+      ]
+    },
+    {
+      "name": "Cingulate Cingulum-Left",
+      "index": 3,
+      "rgba255": [
+        44,
+        160,
+        44,
+        255
+      ]
+    },
+    {
+      "name": "Cingulate Cingulum-Right",
+      "index": 2,
+      "rgba255": [
+        152,
+        223,
+        138,
+        255
+      ]
+    },
+    {
+      "name": "Corticospinal Tract-Left",
+      "index": 5,
+      "rgba255": [
+        255,
+        127,
+        14,
+        255
+      ]
+    },
+    {
+      "name": "Corticospinal Tract-Right",
+      "index": 4,
+      "rgba255": [
+        255,
+        187,
+        120,
+        255
+      ]
+    },
+    {
+      "name": "Inferior Fronto-Occipital Fasciculus-Left",
+      "index": 7,
+      "rgba255": [
+        140,
+        86,
+        75,
+        255
+      ]
+    },
+    {
+      "name": "Inferior Fronto-Occipital Fasciculus-Right",
+      "index": 6,
+      "rgba255": [
+        196,
+        156,
+        148,
+        255
+      ]
+    },
+    {
+      "name": "Inferior Longitudinal Fasciculus-Left",
+      "index": 9,
+      "rgba255": [
+        227,
+        119,
+        194,
+        255
+      ]
+    },
+    {
+      "name": "Inferior Longitudinal Fasciculus-Right",
+      "index": 8,
+      "rgba255": [
+        247,
+        182,
+        210,
+        255
+      ]
+    },
+    {
+      "name": "Motor",
+      "index": 17,
+      "rgba255": [
+        255,
+        127,
+        14,
+        255
+      ]
+    },
+    {
+      "name": "Occipital",
+      "index": 18,
+      "rgba255": [
+        44,
+        160,
+        44,
+        255
+      ]
+    },
+    {
+      "name": "Orbital",
+      "index": 19,
+      "rgba255": [
+        214,
+        39,
+        40,
+        255
+      ]
+    },
+    {
+      "name": "Posterior Parietal",
+      "index": 20,
+      "rgba255": [
+        148,
+        103,
+        189,
+        255
+      ]
+    },
+    {
+      "name": "Superior Longitudinal Fasciculus-Left",
+      "index": 11,
+      "rgba255": [
+        127,
+        127,
+        127,
+        255
+      ]
+    },
+    {
+      "name": "Superior Longitudinal Fasciculus-Right",
+      "index": 10,
+      "rgba255": [
+        199,
+        199,
+        199,
+        255
+      ]
+    },
+    {
+      "name": "Superior Frontal",
+      "index": 21,
+      "rgba255": [
+        140,
+        86,
+        75,
+        255
+      ]
+    },
+    {
+      "name": "Superior Parietal",
+      "index": 22,
+      "rgba255": [
+        227,
+        119,
+        194,
+        255
+      ]
+    },
+    {
+      "name": "Temporal",
+      "index": 23,
+      "rgba255": [
+        127,
+        127,
+        127,
+        255
+      ]
+    },
+    {
+      "name": "Uncinate Fasciculus-Left",
+      "index": 15,
+      "rgba255": [
+        188,
+        189,
+        34,
+        255
+      ]
+    },
+    {
+      "name": "Uncinate Fasciculus-Right",
+      "index": 14,
+      "rgba255": [
+        219,
+        219,
+        141,
+        255
+      ]
+    }
     ],
     "trxFile": {
       "fileName": "clean"
