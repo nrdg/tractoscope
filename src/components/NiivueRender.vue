@@ -103,7 +103,7 @@ function updateTrxBundles(){
             cmap.R.push(bundles[i].rgba255[0])
             cmap.G.push(bundles[i].rgba255[1])
             cmap.B.push(bundles[i].rgba255[2])
-            cmap.I.push(i)
+            cmap.I.push(bundles[i].index)
         }
     }
     nv.setMeshProperty(nv.meshes[0].id, "fiberGroupColormap", cmap);
