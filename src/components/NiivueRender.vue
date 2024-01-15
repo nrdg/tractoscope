@@ -14,6 +14,7 @@
                 Loading Trx...
             </div>
             <button id="download" @click = "downloadNifti" >Download NIFTI file</button>
+            <button id="download" @click = "downloadTrx" v-if="dataStore.getBundleType == 'trx'">Download TRX file</button>
         </div>
     </div>
 </template>
@@ -42,6 +43,16 @@ function init(){
     nv.setSliceType(nv.sliceTypeMultiplanar);
     nv.setClipPlane([-0.1, 270, 0])
     nv.setClipPlaneColor([0.5, 0.5, 0.5, 0.5])
+}
+
+function downloadTrx(){
+    if(dataStore.getTrxUrl){
+        window.open(dataStore.getTrxUrl)
+    }
+}
+
+function downloadNifti(){
+    window.open(dataStore.getScanLink)
 }
 
 onMounted(() => {
@@ -90,58 +101,22 @@ async function loadTrxFile(url){
     return
 }
 
-// this is currently unused
 function updateTrxBundles(){
-
-    console.log("color test")
-    console.log(nv.meshes)
-    console.log(dataStore.getSelectedBundleNames.length)
-    //this is ugly
     let cmap = {
-            R: [31,23,158,31,174,44,152,255,140,196,227,247,255,44,214,148,127,199,140,227,127,188,219,255],
-            G: [119,190,218,119,199,160,223,187,86,156,119,182,127,160,39,103,127,199,86,119,127,189,219,255],
-            B: [180,207,229,180,232,44,138,120,75,148,194,210,14,44,40,189,127,199,75,194,127,34,141,255],
+            R: [],
+            G: [],
+            B: [],
             I: []
     };
-    console.log(cmap.R.length)
-    console.log(cmap.G.length)
-    console.log(cmap.B.length)
-    let selectedBundles = dataStore.getSelectedBundleNames
-    let bundles = [
-            "Anterior Frontal",
-            "Arcuate Fasciculus-Left",
-            "Arcuate Fasciculus-Right",
-            "Anterior Thalamic Radiation-Left",
-            "Anterior Thalamic Radiation-Right",
-            "Cingulate Cingulum-Left",
-            "Cingulate Cingulum-Right",
-            "Corticospinal Tract-Left",
-            "Corticospinal Tract-Right",
-            "Inferior Fronto-Occipital Fasciculus-Left",
-            "Inferior Fronto-Occipital Fasciculus-Right",
-            "Inferior Longitudinal Fasciculus-Left",
-            "Inferior Longitudinal Fasciculus-Right",
-            "Motor",
-            "Occipital",
-            "Orbital",
-            "Posterior Parietal",
-            "Superior Longitudinal Fasciculus-Left",
-            "Superior Longitudinal Fasciculus-Right",
-            "Superior Frontal",
-            "Superior Parietal",
-            "Temporal",
-            "Uncinate Fasciculus-Left",
-            "Uncinate Fasciculus-Right"
-    ]
+    let bundles = dataStore.getTrxBundles;
     for(let i=0;i<bundles.length;i++){
-        if(selectedBundles.includes(bundles[i])){
-            cmap.I.push(1)
-        }else{
-            cmap.I.push(0)
+        if(dataStore.getSelectedBundleNames.includes(bundles[i].name)){
+            cmap.R.push(bundles[i].rgba255[0])
+            cmap.G.push(bundles[i].rgba255[1])
+            cmap.B.push(bundles[i].rgba255[2])
+            cmap.I.push(bundles[i].index)
         }
     }
-    console.log("setting cmap: ")
-    console.log(cmap)
     nv.setMeshProperty(nv.meshes[0].id, "fiberGroupColormap", cmap);
 
 }
@@ -149,7 +124,6 @@ function updateTrxBundles(){
 
 async function updateTrkBundles(newBundles,oldBundles){
     if(newBundles != null && oldBundles != null){
-        console.log("updating trk bundles" + newBundles + oldBundles)
         const removedBundles = oldBundles.filter(item => !newBundles.includes(item))
         const addedBundles = newBundles.filter(item => !oldBundles.includes(item))
 
@@ -195,22 +169,16 @@ async function removeAllBundles(){
     }
 }
 var trxLoaded = false;
-watch(() => dataStore.getLoadTrx, async (newValue, oldValue) => {
+watch(() => dataStore.getSelectedBundleNames, async (newValue, oldValue) => {
     if(newValue != oldValue){
-        if(dataStore.getLoadTrx == true){
-            if(dataStore.getBundleType == "trx"){
-                if(dataStore.getTrxUrl){
-                    if(trxLoaded == false){
-                        await loadTrxFile(dataStore.getTrxUrl)
-                        trxLoaded = true;
-                    }
-                    // currently disabled
-                    // await updateTrxBundles(newValue);
+        if(dataStore.getBundleType == "trx"){
+            if(dataStore.getTrxUrl){
+                if(trxLoaded == false){
+                    await loadTrxFile(dataStore.getTrxUrl)
+                    trxLoaded = true;
                 }
+                await updateTrxBundles();
             }
-        }else{
-            removeAllBundles();
-            trxLoaded = false;
         }
     }
 });
@@ -233,12 +201,21 @@ watch(() => dataStore.getTrks, (newBundles,oldBundles) => {
     }
 });
 
-
 watch(() => dataStore.getScanLink, async (newVal) => {
     if(newVal){
         removeAllBundles();
+        trxLoaded = false;
         if(!isLoadingVolume){
             await loadVolume(newVal)
+            if(dataStore.getBundleType == "trx"){
+                if(dataStore.getTrxUrl){
+                    if(trxLoaded == false){
+                        await loadTrxFile(dataStore.getTrxUrl)
+                        trxLoaded = true;
+                    }
+                    await updateTrxBundles();
+                }
+            }
         }else{
             volumeToLoad = newVal;
         }

@@ -81,11 +81,16 @@ export const useDataStore = defineStore({
             }
             return "none";
         },
+        getTrxBundles(){
+            if(this.getBundleType === "trx"){
+                return this.getDataset.bundles;
+            }
+        },
         //returns a list of all bundle names
         getBundleNames(){
             if(this.getBundleType === "trx"){
                 if(this.getDataset.bundles){
-                    return this.getDataset.bundles;
+                    return this.getDataset.bundles.map(bundle => bundle.name);
                 }
                 return [];
             }
