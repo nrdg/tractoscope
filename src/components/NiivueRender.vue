@@ -102,6 +102,9 @@ async function loadTrxFile(url){
 }
 
 function updateTrxBundles(){
+    if(trxLoaded == false){
+        return
+    }
     let cmap = {
             R: [],
             G: [],
@@ -169,15 +172,12 @@ async function removeAllBundles(){
     }
 }
 var trxLoaded = false;
+var trxLoading = false;
 watch(() => dataStore.getSelectedBundleNames, async (newValue, oldValue) => {
     if(newValue != oldValue){
         if(dataStore.getBundleType == "trx"){
-            if(dataStore.getTrxUrl){
-                if(trxLoaded == false){
-                    await loadTrxFile(dataStore.getTrxUrl)
-                    trxLoaded = true;
-                }
-                await updateTrxBundles();
+            if(trxLoaded == true){
+                updateTrxBundles();
             }
         }
     }
@@ -203,22 +203,29 @@ watch(() => dataStore.getTrks, (newBundles,oldBundles) => {
 
 watch(() => dataStore.getScanLink, async (newVal) => {
     if(newVal){
-        removeAllBundles();
-        trxLoaded = false;
         if(!isLoadingVolume){
             await loadVolume(newVal)
-            if(dataStore.getBundleType == "trx"){
-                if(dataStore.getTrxUrl){
-                    if(trxLoaded == false){
-                        await loadTrxFile(dataStore.getTrxUrl)
-                        trxLoaded = true;
-                    }
-                    await updateTrxBundles();
-                }
+            if(dataStore.getBundleType == "trx" && dataStore.getTrxUrl && !trxLoaded && !trxLoading){
+                trxLoading = true;
+                await loadTrxFile(dataStore.getTrxUrl)
+                trxLoading = false;
+                trxLoaded = true;
+
             }
         }else{
             volumeToLoad = newVal;
         }
+    }
+})
+
+watch(() => dataStore.getSubject, async () => {
+    await removeAllBundles()
+    trxLoaded = false;
+})
+
+watch(() => trxLoaded, async (newVal) => {
+    if(newVal){
+        updateTrxBundles();
     }
 })
 
