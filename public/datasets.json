@@ -17,9 +17,9 @@
       "name": "Anterior Frontal",
       "index": 16,
       "rgba255": [
-        31,
+        17,
         119,
-        180,
+        51,
         255
       ]
     },
@@ -147,9 +147,9 @@
       "name": "Motor",
       "index": 17,
       "rgba255": [
-        255,
-        127,
-        14,
+        135,
+        204,
+        237,
         255
       ]
     },
@@ -157,9 +157,9 @@
       "name": "Occipital",
       "index": 18,
       "rgba255": [
-        44,
-        160,
-        44,
+        170,
+        68,
+        153,
         255
       ]
     },
@@ -167,9 +167,9 @@
       "name": "Orbital",
       "index": 19,
       "rgba255": [
-        214,
-        39,
-        40,
+        51,
+        33,
+        135,
         255
       ]
     },
@@ -177,9 +177,9 @@
       "name": "Posterior Parietal",
       "index": 20,
       "rgba255": [
-        148,
-        103,
-        189,
+        204,
+        102,
+        119,
         255
       ]
     },
@@ -207,9 +207,9 @@
       "name": "Superior Frontal",
       "index": 21,
       "rgba255": [
-        140,
-        86,
-        75,
+        68,
+        170,
+        153,
         255
       ]
     },
@@ -217,9 +217,9 @@
       "name": "Superior Parietal",
       "index": 22,
       "rgba255": [
-        227,
+        221,
+        204,
         119,
-        194,
         255
       ]
     },
@@ -227,9 +227,9 @@
       "name": "Temporal",
       "index": 23,
       "rgba255": [
-        127,
-        127,
-        127,
+        135,
+        33,
+        84,
         255
       ]
     },
@@ -282,9 +282,9 @@
         "name": "Anterior Frontal",
         "fileName": "_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-AntFrontal_tractography.trk",
         "rgba255": [
-          31,
+          17,
           119,
-          180,
+          51,
           255
         ]
       },
@@ -412,9 +412,9 @@
         "name": "Motor",
         "fileName": "_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Motor_tractography.trk",
         "rgba255": [
-          255,
-          127,
-          14,
+          135,
+          204,
+          237,
           255
         ]
       },
@@ -422,9 +422,9 @@
         "name": "Occipital",
         "fileName": "_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Occipital_tractography.trk",
         "rgba255": [
-          44,
-          160,
-          44,
+          170,
+          68,
+          153,
           255
         ]
       },
@@ -432,9 +432,9 @@
         "name": "Orbital",
         "fileName": "_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Orbital_tractography.trk",
         "rgba255": [
-          214,
-          39,
-          40,
+          51,
+          33,
+          135,
           255
         ]
       },
@@ -442,9 +442,9 @@
         "name": "Posterior Parietal",
         "fileName": "_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-PostParietal_tractography.trk",
         "rgba255": [
-          148,
-          103,
-          189,
+          204,
+          102,
+          119,
           255
         ]
       },
@@ -472,9 +472,9 @@
         "name": "Superior Frontal",
         "fileName": "_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupFrontal_tractography.trk",
         "rgba255": [
-          140,
-          86,
-          75,
+          68,
+          170,
+          153,
           255
         ]
       },
@@ -482,9 +482,9 @@
         "name": "Superior Parietal",
         "fileName": "_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-SupParietal_tractography.trk",
         "rgba255": [
-          227,
+          221,
+          204,
           119,
-          194,
           255
         ]
       },
@@ -492,9 +492,9 @@
         "name": "Temporal",
         "fileName": "_acq-64dir_space-T1w_desc-preproc_dwi_space-RASMM_model-CSD_desc-prob-afq-Temporal_tractography.trk",
         "rgba255": [
-          127,
-          127,
-          127,
+          135,
+          33,
+          84,
           255
         ]
       },
