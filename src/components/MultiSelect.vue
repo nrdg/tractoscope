@@ -55,8 +55,6 @@ function toggleAll(){
 </script>
 
 <template>
-    {{ props.selected }}
-    {{ select }}
     <div id="multiselect">
         <select v-model="select">
             <option selected disabled value="select a bundle">select a bundle</option>
