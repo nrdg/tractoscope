@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import {onMounted, watch, computed} from 'vue'
+import {onMounted, computed} from 'vue'
 import SubjectSelect from './components/SubjectSelect.vue'
 import MultiSelect from './components/MultiSelect.vue'
 import NiivueRender from './components/NiivueRender.vue'
@@ -40,7 +40,9 @@ function toggleTrx(){
         dataStore.setLoadTrx(false);
     }
 }
+
 const dataStore = useDataStore();
+
 const dataset = computed({
     get() {
         return dataStore.getDatasetKey;

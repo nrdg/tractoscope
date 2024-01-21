@@ -1,14 +1,3 @@
-const AWS = require('aws-sdk');
-
-AWS.config.credentials = {
-    accessKeyId: 'dummy',
-    secretAccessKey: 'dummy'
-};
-
-const s3 = new AWS.S3({
-    signatureVersion: null,
-});
-
 //returns https link to object at key
 export function getUrl(params){
     return `https://${params.Bucket}.s3.amazonaws.com/${params.Key}`;
@@ -17,14 +6,10 @@ export function getUrl(params){
 //expects params{Bucket, Key}
 //returns https link to object at key
 export async function getSignedUrl(params) {
+
     return new Promise((resolve, reject) => {
-        s3.getSignedUrl('getObject', params, function(err, url) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(url);
-            }
-        });
+        const url = `https://${params.Bucket}.s3.amazonaws.com/{params.Key}`;
+        resolve(url);
     });
 }
 
