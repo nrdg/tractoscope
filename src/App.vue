@@ -15,7 +15,6 @@
             <select v-model="session" v-if="dataStore.getSessions.length > 1">
                 <option v-for="(item,index) in sessions" :value="item" :key="index">{{ item.folderName }}</option>
             </select>
-            Bundles:
             <MultiSelect :items="dataStore.getBundleNames" v-model:selected="selectedBundles"/>
             <br>
             Tract Profiles:
