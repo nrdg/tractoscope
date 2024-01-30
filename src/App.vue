@@ -121,4 +121,7 @@ onMounted(() => {
   vertical-align: middle;
   width: 150px;
 }
+.body {
+    font-family: 'Roboto', sans-serif;
+}
 </style>
