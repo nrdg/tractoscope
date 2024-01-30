@@ -1,5 +1,5 @@
 <script setup>
-import {computed, defineProps, defineEmits} from 'vue'
+import {computed, defineProps, defineEmits, ref} from 'vue'
 
 
 const props = defineProps({
@@ -9,6 +9,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:selected'])
 
+
 const selected = computed({
     get(){
         return props.selected;
@@ -16,6 +17,21 @@ const selected = computed({
     set(value){
         const newValue = [...selected.value, value];
         emit('update:selected', newValue);
+    }
+});
+
+const selectValue = ref("select a bundle");
+
+const select = computed({
+    get(){
+        return selectValue.value;
+    },
+    set(value){
+        const newValue = [...selected.value, value];
+        emit('update:selected', newValue);
+        console.log("resetting value")
+        // Reset the selectValue to the default value
+        selectValue.value = "select a bundle";
     }
 });
 
@@ -40,7 +56,8 @@ function toggleAll(){
 
 <template>
     <div id="multiselect">
-        <select v-model="selected">
+        <select v-model="select">
+            <option selected disabled value="select a bundle">select a bundle</option>
             <option v-for="(item,index) in filteredItems" :value="item" :key="index">{{ item }}</option>
         </select>
         <button @click="toggleAll()">toggle all</button>

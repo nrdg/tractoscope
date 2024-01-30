@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div id = "canvas-container">
+        <div id="canvas-container">
             <canvas id="gl">Your system doesn't support canvas</canvas>
         </div>
         <div class="bottom-bar">
@@ -208,6 +208,14 @@ watch(() => dataStore.getScanLink, async (newVal) => {
             if(dataStore.getBundleType == "trx" && dataStore.getTrxUrl && !trxLoaded && !trxLoading){
                 trxLoading = true;
                 await loadTrxFile(dataStore.getTrxUrl)
+                updateTrxBundles();
+                let cmap = {
+                    R: [],
+                    G: [],
+                    B: [],
+                    I: []
+                }
+                nv.setMeshProperty(nv.meshes[0].id, "fiberGroupColormap", cmap)
                 trxLoading = false;
                 trxLoaded = true;
 
@@ -221,12 +229,6 @@ watch(() => dataStore.getScanLink, async (newVal) => {
 watch(() => dataStore.getSubject, async () => {
     await removeAllBundles()
     trxLoaded = false;
-})
-
-watch(() => trxLoaded, async (newVal) => {
-    if(newVal){
-        updateTrxBundles();
-    }
 })
 
 </script>
