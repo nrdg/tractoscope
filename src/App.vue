@@ -31,15 +31,6 @@ import NiivueRender from './components/NiivueRender.vue'
 import PngViewer from './components/PngViewer.vue'
 import { useDataStore } from './utilites/dataStore.js'
 
-function toggleTrx(){
-    if(dataStore.getLoadTrx == false){
-        dataStore.setLoadTrx(true);
-    }
-    else{
-        dataStore.setLoadTrx(false);
-    }
-}
-
 const dataStore = useDataStore();
 
 const dataset = computed({
