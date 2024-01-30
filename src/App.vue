@@ -112,4 +112,10 @@ onMounted(() => {
   vertical-align: middle;
   width: 150px;
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
 </style>
