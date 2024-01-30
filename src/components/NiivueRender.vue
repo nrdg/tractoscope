@@ -218,7 +218,7 @@ watch(() => dataStore.getScanLink, async (newVal) => {
                 nv.setMeshProperty(nv.meshes[0].id, "fiberGroupColormap", cmap)
                 trxLoading = false;
                 trxLoaded = true;
-
+                dataStore.selectedBundles = dataStore.getBundleNames
             }
         }else{
             volumeToLoad = newVal;
