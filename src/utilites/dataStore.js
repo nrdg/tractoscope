@@ -300,7 +300,11 @@ export const useDataStore = defineStore({
                         this.scan = this.scans[0];
                     }
                 }else{
-                    this.scan = this.scans[0];
+                    if(this.scans.find(scan => scan.name == this.getDataset.scans[0])){
+                        this.scan = this.scans.find(scan => scan.name == this.getDataset.scans[0]);
+                    }else{
+                        this.scan = this.scans[0];
+                    }
                 }
             } else {
                 this.scans = [];
